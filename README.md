@@ -1,0 +1,2 @@
+# GaziStudyAI
+My Graduation Project.
