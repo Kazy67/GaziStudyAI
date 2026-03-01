@@ -433,6 +433,7 @@ venv/
 vector_db/
 chroma/
 chromadb/
+ai-service/materials/
 
 # 3. Angular Frontend
 src/environments/environment.ts
