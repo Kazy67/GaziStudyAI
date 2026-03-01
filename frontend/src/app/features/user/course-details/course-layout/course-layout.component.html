@@ -1,0 +1,140 @@
+<div
+  *ngIf="course$ | async as course"
+  class="min-h-screen transition-colors duration-300 bg-gray-50 dark:bg-gray-900"
+>
+  <!-- Hero Banner -->
+  <div
+    class="relative overflow-hidden shadow-xl bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900"
+  >
+    <!-- Background Pattern/Overlay -->
+    <div
+      class="absolute inset-0 z-0 bg-center bg-cover opacity-10"
+      [style.backgroundImage]="'url(' + getImageUrl(course.imageUrl) + ')'"
+    ></div>
+    <div
+      class="absolute inset-0 z-0 bg-gradient-to-t from-slate-900/80 to-transparent"
+    ></div>
+
+    <div
+      class="relative z-10 container flex flex-col items-center gap-8 px-4 py-12 mx-auto md:flex-row md:items-start"
+    >
+      <!-- Course Image -->
+      <div
+        class="flex-shrink-0 w-32 h-32 overflow-hidden shadow-2xl rounded-2xl md:w-48 md:h-48 ring-4 ring-white/10"
+      >
+        <img
+          [src]="getImageUrl(course.imageUrl)"
+          alt="Course Image"
+          class="object-cover w-full h-full transform transition-transform duration-500 hover:scale-110"
+          (error)="course.imageUrl = null"
+        />
+        <div
+          *ngIf="!course.imageUrl"
+          class="flex items-center justify-center w-full h-full bg-slate-800 text-slate-400"
+        >
+          <svg
+            class="w-12 h-12"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Course Details -->
+      <div class="flex-1 text-center md:text-left">
+        <h1
+          class="mb-2 text-3xl font-extrabold text-transparent text-white md:text-5xl bg-clip-text bg-gradient-to-r from-white to-blue-200"
+        >
+          {{ getLocalizedName(course) }}
+        </h1>
+
+        <!-- Badges -->
+        <div class="flex flex-wrap justify-center gap-3 mb-6 md:justify-start">
+          <span
+            class="px-3 py-1 text-sm font-semibold text-blue-900 bg-blue-100 rounded-full dark:bg-blue-800 dark:text-blue-100"
+          >
+            {{ "COURSE_DETAILS.YEAR" | translate }} {{ course.yearLevel }}
+          </span>
+          <span
+            class="px-3 py-1 text-sm font-semibold text-purple-900 bg-purple-100 rounded-full dark:bg-purple-800 dark:text-purple-100"
+          >
+            {{ course.credits || 0 }} AKTS
+          </span>
+          <span
+            class="px-3 py-1 text-sm font-semibold text-emerald-900 bg-emerald-100 rounded-full dark:bg-emerald-800 dark:text-emerald-100"
+          >
+            {{ course.teacherName }}
+          </span>
+        </div>
+
+        <!-- Description -->
+        <div class="relative max-w-3xl">
+          <p
+            class="text-lg leading-relaxed text-blue-100/90 transition-all duration-300"
+            [class.line-clamp-3]="!showFullDescription()"
+          >
+            {{ getLocalizedDescription(course) }}
+          </p>
+          <button
+            (click)="toggleDescription()"
+            class="mt-2 text-sm font-medium text-blue-300 hover:text-white hover:underline focus:outline-none"
+          >
+            {{
+              showFullDescription()
+                ? ("COURSE_DETAILS.SHOW_LESS" | translate)
+                : ("COURSE_DETAILS.READ_MORE" | translate)
+            }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div
+    class="sticky top-0 z-20 transition-colors duration-300 bg-white border-b border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95"
+  >
+    <div class="container px-4 py-3 mx-auto">
+      <nav
+        class="flex space-x-2 overflow-x-auto md:space-x-4 no-scrollbar items-center"
+        aria-label="Tabs"
+      >
+        <a
+          *ngFor="let tab of tabs"
+          [routerLink]="[tab.route]"
+          routerLinkActive="bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-gray-900"
+          class="px-5 py-2.5 text-sm font-medium transition-all duration-200 rounded-full whitespace-nowrap text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
+        >
+          {{ tab.label | translate }}
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="container px-4 py-8 mx-auto animate-fade-in min-h-[500px]">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<div
+  *ngIf="(course$ | async) === null"
+  class="flex items-center justify-center h-screen text-gray-500"
+>
+  <div class="flex flex-col items-center gap-4">
+    <div
+      class="w-12 h-12 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"
+    ></div>
+    <p class="text-lg font-medium">
+      {{ "COURSE_DETAILS.LOADING" | translate }}
+    </p>
+  </div>
+</div>

@@ -1,0 +1,148 @@
+<div
+  class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+>
+  <div class="mb-4">
+    <span
+      class="px-2 py-1 text-xs font-bold text-blue-700 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-200"
+    >
+      {{ "EXAM.PAGE_REPLACEMENT.TITLE" | translate }} -
+      {{
+        question.visualType || ("EXAM.PAGE_REPLACEMENT.ALGORITHM" | translate)
+      }}
+    </span>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mt-2">
+      {{ question.questionText }}
+    </h3>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+      {{ "EXAM.PAGE_REPLACEMENT.FRAMES_LABEL" | translate }}:
+      <span class="font-mono font-bold">{{ question.inputData.frames }}</span>
+    </p>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-center border-collapse">
+      <thead>
+        <tr>
+          <th
+            class="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 font-bold text-gray-700 dark:text-gray-300 w-24"
+          >
+            {{ "EXAM.PAGE_REPLACEMENT.REFERENCE_HEADER" | translate }}
+          </th>
+          <th
+            *ngFor="let ref of question.inputData.referenceString"
+            class="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 font-mono font-bold text-lg min-w-[50px]"
+          >
+            {{ ref }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of frameRows; let frameIndex = index">
+          <td
+            class="p-2 border dark:border-gray-600 font-semibold bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm"
+          >
+            {{ "EXAM.PAGE_REPLACEMENT.FRAME_ROW_LABEL" | translate }}
+            {{ frameIndex + 1 }}
+          </td>
+          <td
+            *ngFor="
+              let ref of question.inputData.referenceString;
+              let stepIndex = index
+            "
+            class="border dark:border-gray-600 p-1"
+          >
+            <input
+              type="text"
+              [(ngModel)]="userFrames[stepIndex][frameIndex]"
+              [disabled]="isSubmitted"
+              class="w-full text-center p-1 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-1 focus:ring-blue-500 text-sm"
+              placeholder="-"
+            />
+          </td>
+        </tr>
+
+        <tr>
+          <td
+            class="p-2 border dark:border-gray-600 font-semibold bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm"
+          >
+            {{ "EXAM.PAGE_REPLACEMENT.STATUS_LABEL" | translate }}
+          </td>
+          <td
+            *ngFor="
+              let ref of question.inputData.referenceString;
+              let stepIndex = index
+            "
+            class="border dark:border-gray-600 p-1"
+          >
+            <select
+              [(ngModel)]="userStatus[stepIndex]"
+              [disabled]="isSubmitted"
+              class="w-full text-xs p-1 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-1 focus:ring-blue-500"
+              [ngClass]="{
+                'bg-green-100 text-green-800 border-green-500':
+                  isSubmitted && isValidStatus(stepIndex),
+                'bg-red-100 text-red-800 border-red-500':
+                  isSubmitted && !isValidStatus(stepIndex),
+              }"
+            >
+              <option value="">-</option>
+              <option value="MISS">MISS</option>
+              <option value="HIT">HIT</option>
+            </select>
+            <div
+              *ngIf="isSubmitted && !isValidStatus(stepIndex)"
+              class="text-[10px] text-red-600 font-bold mt-1"
+            >
+              {{ "EXAM.PAGE_REPLACEMENT.CORRECT_ANSWER_LABEL" | translate }}:
+              {{ question.solutionData.steps[stepIndex]?.status }}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    class="mt-6 flex flex-col md:flex-row items-start md:items-end gap-6 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg"
+  >
+    <div class="w-full md:w-auto">
+      <label
+        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+      >
+        {{ "EXAM.PAGE_REPLACEMENT.TOTAL_FAULTS_LABEL" | translate }}
+      </label>
+      <div class="flex items-center gap-2">
+        <input
+          type="number"
+          [(ngModel)]="userFaults"
+          [disabled]="isSubmitted"
+          class="w-24 border rounded p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500"
+          [ngClass]="{
+            'border-green-500 ring-2 ring-green-200':
+              isSubmitted &&
+              userFaults !== null &&
+              userFaults == question.solutionData.totalPageFaults,
+            'border-red-500 ring-2 ring-red-200':
+              isSubmitted &&
+              (userFaults === null ||
+                userFaults != question.solutionData.totalPageFaults),
+          }"
+        />
+        <div *ngIf="isSubmitted">
+          <span
+            *ngIf="userFaults == question.solutionData.totalPageFaults"
+            class="text-green-600 font-bold ml-2"
+            >✓ {{ "EXAM.CORRECT" | translate }}</span
+          >
+          <span
+            *ngIf="userFaults != question.solutionData.totalPageFaults"
+            class="text-sm text-red-600 font-bold ml-2"
+          >
+            {{ "EXAM.PAGE_REPLACEMENT.CORRECT_ANSWER_LABEL" | translate }}:
+            {{ question.solutionData.totalPageFaults }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

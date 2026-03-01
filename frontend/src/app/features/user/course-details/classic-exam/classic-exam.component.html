@@ -1,0 +1,475 @@
+<div
+  class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 md:p-8 transition-colors duration-300"
+>
+  <p-toast></p-toast>
+  <!-- Header -->
+  <header class="mb-8 flex justify-between items-center">
+    <div>
+      <h1
+        class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400"
+      >
+        {{ courseName || ("COURSE_DETAILS.LOADING" | translate) }}
+      </h1>
+      <h2 class="text-xl text-gray-600 dark:text-gray-400">
+        {{ "EXAM.CLASSIC_GENERATOR_TITLE" | translate }}
+      </h2>
+    </div>
+    <p-button
+      *ngIf="currentPhase === 'exam'"
+      (onClick)="currentPhase = 'config'"
+      label="{{ 'EXAM.EXIT_EXAM' | translate }}"
+      icon="pi pi-power-off"
+      severity="danger"
+      [outlined]="true"
+      size="small"
+    >
+    </p-button>
+  </header>
+
+  <!-- LOADING STATE -->
+  <div
+    *ngIf="currentPhase === 'loading'"
+    class="flex flex-col items-center justify-center min-h-[50vh] animate-fade-in-up"
+  >
+    <!-- Visual Loader -->
+    <div class="relative w-32 h-32 mb-8">
+      <!-- Outer Ring -->
+      <div
+        class="absolute inset-0 border-4 border-gray-200 dark:border-gray-700 rounded-full"
+      ></div>
+      <!-- Spinning Ring -->
+      <div
+        class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"
+      ></div>
+      <!-- Icon Center -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-12 h-12 text-blue-500 animate-pulse"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+          />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Text Feedback -->
+    <h3
+      class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 mb-2"
+    >
+      {{ "EXAM.GENERATING" | translate }}
+    </h3>
+    <p class="text-gray-500 dark:text-gray-400 max-w-md text-center">
+      {{ "EXAM.GENERATING_DESC" | translate }}
+    </p>
+
+    <!-- Progress Indicator steps (Fake visual steps) -->
+    <div class="flex space-x-2 mt-8">
+      <div
+        class="w-2 h-2 rounded-full bg-blue-500 animate-bounce"
+        style="animation-delay: 0ms"
+      ></div>
+      <div
+        class="w-2 h-2 rounded-full bg-blue-500 animate-bounce"
+        style="animation-delay: 150ms"
+      ></div>
+      <div
+        class="w-2 h-2 rounded-full bg-blue-500 animate-bounce"
+        style="animation-delay: 300ms"
+      ></div>
+    </div>
+  </div>
+
+  <!-- CONFIGURATION PHASE -->
+  <div
+    *ngIf="currentPhase === 'config'"
+    class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700"
+  >
+    <div class="p-8 space-y-8">
+      <!-- Weeks Selection -->
+      <div>
+        <label
+          class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider"
+          >{{ "EXAM.SELECT_TOPICS" | translate }}</label
+        >
+        <!-- Empty State / Loading Check -->
+        <div
+          *ngIf="availableWeeks.length === 0"
+          class="p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-lg"
+        >
+          {{ "EXAM.LOADING_TOPICS" | translate }}...
+        </div>
+
+        <div
+          *ngIf="availableWeeks.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-1 custom-scrollbar"
+        >
+          <div
+            *ngFor="let week of availableWeeks"
+            (click)="toggleWeek(week.id)"
+            [class.ring-2]="selectedWeeks.includes(week.id)"
+            [class.ring-blue-500]="selectedWeeks.includes(week.id)"
+            [class.bg-blue-50]="selectedWeeks.includes(week.id)"
+            [class.dark:bg-blue-900]="selectedWeeks.includes(week.id)"
+            class="cursor-pointer p-3 border rounded-lg transition-all duration-200 hover:shadow-md border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 flex items-center justify-between group"
+          >
+            <span class="text-sm font-medium"
+              >{{ week.id }}. {{ week.label }}</span
+            >
+            <div
+              class="w-5 h-5 rounded border border-gray-400 dark:border-gray-500 flex items-center justify-center transition-colors"
+              [class.bg-blue-500]="selectedWeeks.includes(week.id)"
+              [class.border-transparent]="selectedWeeks.includes(week.id)"
+            >
+              <svg
+                *ngIf="selectedWeeks.includes(week.id)"
+                class="w-3 h-3 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="3"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <p class="mt-2 text-xs text-right text-gray-500 dark:text-gray-400">
+          {{ selectedWeeks.length }} {{ "EXAM.TOPICS_SELECTED" | translate }}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Question Count -->
+        <div>
+          <label
+            class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider"
+          >
+            {{ "EXAM.QUESTION_COUNT_LABEL" | translate }}
+            <span class="text-blue-600 dark:text-blue-400 text-lg">{{
+              questionCount
+            }}</span>
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="5"
+            step="1"
+            [(ngModel)]="questionCount"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600"
+          />
+          <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <span>1</span><span>2</span><span>3</span><span>4</span
+            ><span>5</span>
+          </div>
+        </div>
+
+        <!-- Difficulty -->
+        <div>
+          <label
+            class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider"
+            >{{ "EXAM.DIFFICULTY" | translate }}</label
+          >
+          <div class="flex rounded-lg shadow-sm overflow-hidden">
+            <button
+              *ngFor="let diff of ['Easy', 'Medium', 'Hard']"
+              (click)="difficulty = $any(diff)"
+              [class.bg-green-500]="difficulty === 'Easy' && diff === 'Easy'"
+              [class.text-white]="difficulty === 'Easy' && diff === 'Easy'"
+              [class.bg-blue-500]="difficulty === 'Medium' && diff === 'Medium'"
+              [class.text-white]="difficulty === 'Medium' && diff === 'Medium'"
+              [class.bg-red-500]="difficulty === 'Hard' && diff === 'Hard'"
+              [class.text-white]="difficulty === 'Hard' && diff === 'Hard'"
+              [class.bg-gray-100]="difficulty !== diff"
+              [class.dark:bg-gray-700]="difficulty !== diff"
+              [class.text-gray-700]="difficulty !== diff"
+              [class.dark:text-gray-300]="difficulty !== diff"
+              class="flex-1 py-3 px-4 text-sm font-medium transition-colors focus:outline-none border-r border-gray-200 dark:border-gray-600 last:border-0 hover:bg-opacity-90"
+            >
+              {{ "EXAM.DIFFICULTIES." + (diff | uppercase) | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button
+        (click)="startExam()"
+        [disabled]="selectedWeeks.length === 0 || isGenerating"
+        class="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg transform transition hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 flex items-center justify-center space-x-2"
+      >
+        <span
+          *ngIf="isGenerating"
+          class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+        ></span>
+        <span>{{
+          (isGenerating ? "EXAM.GENERATING" : "EXAM.GENERATE_EXAM") | translate
+        }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- EXAM PHASE -->
+  <div
+    *ngIf="currentPhase === 'exam'"
+    class="max-w-5xl mx-auto space-y-12 pb-20"
+  >
+    <ng-container *ngIf="!isRetaking">
+      <div
+        *ngFor="let q of questions; let i = index"
+        class="opacity-0 animate-fade-in-up"
+        [style.animation-delay]="i * 100 + 'ms'"
+      >
+        <div class="flex items-center mb-4">
+          <div
+            class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 font-bold mr-4"
+          >
+            {{ i + 1 }}
+          </div>
+          <div class="h-px bg-gray-200 dark:bg-gray-700 flex-grow"></div>
+        </div>
+
+        <!-- DYNAMIC COMPONENT RENDERER -->
+        <!-- Using ngSwitch based on visualType strings -->
+        <ng-container [ngSwitch]="true">
+          <!-- CPU Scheduling -->
+          <div *ngSwitchCase="q.visualType.includes('cpu_scheduling')">
+            <div class="mb-2 flex justify-end" *ngIf="submitted">
+              <span
+                class="px-3 py-1 text-sm font-bold rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': (questionScores[i] || 0) > 80,
+                  'bg-yellow-100 text-yellow-800':
+                    (questionScores[i] || 0) >= 50 &&
+                    (questionScores[i] || 0) <= 80,
+                  'bg-red-100 text-red-800': (questionScores[i] || 0) < 50,
+                }"
+              >
+                {{ "EXAM.SCORE_LABEL" | translate }}
+                {{ questionScores[i] || 0 | number: "1.0-0" }}%
+              </span>
+            </div>
+            <app-cpu-scheduling
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            >
+            </app-cpu-scheduling>
+          </div>
+
+          <!-- Bankers Algorithm -->
+          <div
+            *ngSwitchCase="!!q.visualType && q.visualType.includes('bankers')"
+          >
+            <div class="mb-2 flex justify-end" *ngIf="submitted">
+              <span
+                class="px-3 py-1 text-sm font-bold rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': (questionScores[i] || 0) > 80,
+                  'bg-yellow-100 text-yellow-800':
+                    (questionScores[i] || 0) >= 50 &&
+                    (questionScores[i] || 0) <= 80,
+                  'bg-red-100 text-red-800': (questionScores[i] || 0) < 50,
+                }"
+              >
+                {{ "EXAM.SCORE_LABEL" | translate }}
+                {{ questionScores[i] || 0 | number: "1.0-0" }}%
+              </span>
+            </div>
+            <app-bankers-algorithm
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            >
+            </app-bankers-algorithm>
+          </div>
+
+          <!-- Page Replacement -->
+          <div
+            *ngSwitchCase="
+              !!q.visualType && q.visualType.includes('page_replacement')
+            "
+          >
+            <div class="mb-2 flex justify-end" *ngIf="submitted">
+              <span
+                class="px-3 py-1 text-sm font-bold rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': (questionScores[i] || 0) > 80,
+                  'bg-yellow-100 text-yellow-800':
+                    (questionScores[i] || 0) >= 50 &&
+                    (questionScores[i] || 0) <= 80,
+                  'bg-red-100 text-red-800': (questionScores[i] || 0) < 50,
+                }"
+              >
+                {{ "EXAM.SCORE_LABEL" | translate }}
+                {{ questionScores[i] || 0 | number: "1.0-0" }}%
+              </span>
+            </div>
+            <app-page-replacement
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            >
+            </app-page-replacement>
+          </div>
+
+          <!-- Memory Allocation -->
+          <div
+            *ngSwitchCase="
+              !!q.visualType &&
+              (q.visualType.includes('memory_allocation') ||
+                q.visualType.includes('memory'))
+            "
+          >
+            <div class="mb-2 flex justify-end" *ngIf="submitted">
+              <span
+                class="px-3 py-1 text-sm font-bold rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': (questionScores[i] || 0) > 80,
+                  'bg-yellow-100 text-yellow-800':
+                    (questionScores[i] || 0) >= 50 &&
+                    (questionScores[i] || 0) <= 80,
+                  'bg-red-100 text-red-800': (questionScores[i] || 0) < 50,
+                }"
+              >
+                {{ "EXAM.SCORE_LABEL" | translate }}
+                {{ questionScores[i] || 0 | number: "1.0-0" }}%
+              </span>
+            </div>
+            <app-memory-allocation
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            >
+            </app-memory-allocation>
+          </div>
+
+          <!-- Theory / Generic -->
+          <div
+            *ngSwitchCase="
+              !!q.visualType &&
+              (q.visualType.includes('theory') || q.visualType === 'generic')
+            "
+          >
+            <div class="mb-2 flex justify-end" *ngIf="submitted">
+              <span
+                class="px-3 py-1 text-sm font-bold rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': (questionScores[i] || 0) > 80,
+                  'bg-yellow-100 text-yellow-800':
+                    (questionScores[i] || 0) >= 50 &&
+                    (questionScores[i] || 0) <= 80,
+                  'bg-red-100 text-red-800': (questionScores[i] || 0) < 50,
+                }"
+              >
+                {{ "EXAM.SCORE_LABEL" | translate }}
+                {{ questionScores[i] || 0 | number: "1.0-0" }}%
+              </span>
+            </div>
+            <app-generic-theory
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            >
+            </app-generic-theory>
+          </div>
+
+          <!-- Generic Theory (Fallback) -->
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <!-- Submit Button Section -->
+    <div class="flex justify-center pt-8" *ngIf="!submitted">
+      <button
+        (click)="submitExam()"
+        class="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-lg shadow-lg transform transition-all hover:-translate-y-1 hover:shadow-xl"
+      >
+        {{ "EXAM.SUBMIT_EXAM" | translate }}
+      </button>
+    </div>
+
+    <!-- Final Score Results Block -->
+    <div
+      *ngIf="submitted && finalScore !== null"
+      class="mt-8 p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-indigo-100 dark:border-indigo-900 text-center relative overflow-hidden animate-fade-in-up"
+    >
+      <div
+        class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+      ></div>
+
+      <h3 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+        {{ "EXAM.EXAM_COMPLETED_TITLE" | translate }}
+      </h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-8">
+        {{ "EXAM.OVERALL_PERFORMANCE" | translate }}
+      </p>
+
+      <div
+        class="relative inline-flex flex-col items-center justify-center p-10 bg-gray-50 dark:bg-gray-900 rounded-full w-48 h-48 mb-8 shadow-inner"
+      >
+        <span
+          class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400"
+        >
+          {{ finalScore | number: "1.0-1" }}%
+        </span>
+        <span class="text-sm font-medium text-gray-400 mt-2">{{
+          "EXAM.AVERAGE_SCORE" | translate
+        }}</span>
+      </div>
+
+      <div class="flex justify-center gap-4">
+        <p-button
+          (onClick)="retakeExam()"
+          label="{{ 'EXAM.RETAKE_EXAM' | translate }}"
+          icon="pi pi-refresh"
+          severity="success"
+          [outlined]="true"
+        ></p-button>
+        <p-button
+          (onClick)="currentPhase = 'config'"
+          label="{{ 'EXAM.START_NEW_EXAM' | translate }}"
+          icon="pi pi-plus"
+          [outlined]="true"
+        ></p-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+</style>

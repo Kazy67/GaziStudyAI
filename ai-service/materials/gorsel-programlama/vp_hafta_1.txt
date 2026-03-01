@@ -1,0 +1,1050 @@
+import re
+
+# The full content provided in the prompt
+pdf_content = """
+--- PAGE 1 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+BECERİ
+E-SINAV
+ஆ
+ONIVERSIT
+ Gay
+1926
+UYGULAMA
+BMT-214 IGÖRSEL PROGRAMLAMA
+UZAKTAN EĞİTİM UYGULAMA VE ARAŞTIRMA MERKEZİ
+ telefon 01112 202 8200 eposta pozem@guzi.edu.t adres azi   Binası Noort
+ Ims. gazi.edu.tr
+guzem.gaz.BOLU uzaktanegitim.geuduch
+
+--- PAGE 2 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Nesne Yönelimli Programlama
+Nesne Yönelimli Programlama
+Encapsulation
+Inheritance
+Polymorphism
+C# Tanımı
+• C#'ın Genel Özellikleri
+• C# ile Yapılabilecekler
+• C# nasıl çalışır
+• Java ve C# Arasındaki Farklar
+Microsoft .NET Framework
+OOPS (Object-Oriented Programming System)
+Abstraction
+Encapsulation
+Polymorphism
+Inheritance
+Net Framework'ün Yararları
+Class
+Object
+Visual Studio
+Prof. Dr. O. Ayhan ERDEM
+UZAKTAN EĞİTİM UYGULAMA
+28.02.2023
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+2
+
+--- PAGE 3 ---
+Nesne Yönelimli Programlama (Object Oriented
+ Programming) Nedir?
+ETKİLEŞIM
+BECERİ
+EGITIM
+E-SINAV
+UYGULAMA
+ÖĞRENME
+C# programı yazmaya başlamadan önce nesne yönelimli programlamanın
+ temel prensiplerini kavramak yararlıdır.
+Nesne Yönelimli Programlama (Object Oriented Programming) Nedir?
+ • Nesne yönelimli programlama normal bir işlemi çok daha hızlı ve kolay bir
+ şekilde yapmanızı sağlamaktadır.
+Nesne yönelimli programlamadan önce
+ birçok projeye yapısal programlama işe yaramaz hale gelmişti.
+Nesne
+ yönelimli programlama, yapısal programlamaya özgü en iyi kavramları almış
+ ve bunları bazı yeni kavramlarla birleştirmiştir.
+Bu sayede programlar farklı ve
+ daha iyi şekilde organize edilebilmiştir.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+3
+guzen uzaktanegitim
+و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 4 ---
+Nesne Yönelimli Programlama (Object Oriented
+ Programming) Nedir?
+ETIILESIM
+BECERİ
+ÖĞRENME
+EGITIM
+• En genel anlamda, bir program iki yöntemden biri kullanılarak
+ organize edilebilir: kodu etrafında (meydana gelenler) veya verileri
+ etrafında (etkilenenler).
+Sadece yapısal programlama teknikleri
+ kullanılarak programlar genellikle kod etrafında organize edilir.
+Bu
+ yöntem ayrıca "veriye etki eden kod" olarak da düşünülebilir.
+Karmaşıklığı daha iyi ele alabilen bir yöntemlere ihtiyaç vardı ve
+ çözüm, nesne yönelimli programlamaydı. Nesne yönelimli programlar
+ diğer şekilde çalışırlar.
+Bu tür programlar "koda erişimi kontrol eden
+ veri" temel prensibine dayanarak veri etrafında organize edilirler.
+Nesne yönelimli bir dilde, verileri ve bu verilere etki etmeye izin
+ verilen kod tanımlanır.
+Böylece, bir veri tipi bu veri üzerine
+ uygulanabilecek işlemler tam olarak tanımlar.
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem
+Prof. Dr. O. Ayhan ERDEM
+E-SINAV
+UYGULAMA
+DISTANCE EDUCATION
+uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+4
+
+--- PAGE 5 ---
+Nesne Yönelimli Programlama (Object Oriented
+Programming) Nedir?
+ETIILESIM
+BECERİ
+EGITIM
+E-SINAV
+UYGULAMA
+ÖĞRENME
+• Nesne yönelimli programlamanın prensiplerini desteklemek amacıyla, C# da
+ dahil olmak üzere tüm nesne yönelimli diller üç ortak özelliğe sahiptir.
+Bunlar;
+•
+Kapsülleme (encapsulation),
+Çok biçimlilik (polymorphism) ve
+• Kalıtım (inheritance) dır.
+Prof. Dr. O. Ayhan ERDEM
+UZAKTAN EĞİTİM UYGULAMA
+28.02.2023
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim  و
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+5
+
+--- PAGE 6 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERI
+UYGULAMA
+ÖĞRENME
+Encapsulation Nedir ?
+• Türkçe'deki karşılığı kapsüllemedir. Nesne yönelimli programlamanın ilk
+ prensibi "kapsülleme (encapsulation)" olarak adlandırılır.
+Bu özellik, dilin
+ nesne kullanıcısından gereksiz uygulama ayrıntılarını saklar. C#ın temel veri
+ paketleme birimi sınıftır (class).
+Sınıf, bir nesnenin şeklini tanımlar. Sınıf,
+ hem verileri hem de bu veriler üzerinde işlem yapacak kodu belirtir.
+C#'ta,
+ nesneleri inşa etmek amacıyla sınıf spesifikasyonu kullanılmaktadır.
+ Nesneler bir sınıfın örnekleridir.
+Yani, sınıf aslında bir nesnenin ne şekilde
+ inşa edileceğini belirten birtakım planlardan ibarettir.
+Oluşturulan bir "sınıf
+ (class)" içerisinde kullanıcının işlemlerini daha kolay gerçekleştirebilmesi
+ için bazı İşlemler birleştirilerek tek bir işlem gibi gösterilir.
+Bu birleştirme
+ işlemine "encapsulation" denir.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzen
+uzaktanegitim
+و
+DISTANCE EDUCATION
+APPLICATION & RESEARCH CENTER
+6
+
+--- PAGE 7 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• Erişim belirteçleri (access modifier)
+• Erişim belirteçleri sayesinde kapsülleme çok daha kolay yapılmaktadır.
+ Erişim belirteçleri, oluşturulan sınıf veya sınıf içindeki elemanların
+ erişim seviyelerini belirlemek için kullanılan anahtar kelimeler
+ grubuna verilen isimdir.
+Metotlar ve değişkenler bir anahtar sözcük ile
+ önceden belirlenen sınırlar dahilinde kullanılabilir. Bu anahtar
+kelimeler şu şekilde sıralanabilir.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+7
+guzem uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 8 ---
+1. public
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• public damgası bir değişkeni, bir metodu ya da bir sınıfı niteleyebilir.
+ Nitelediği öğeler herkese açık olur.
+Başka pakette olsa bile, program
+ içindeki, her kod onlara erişebilir.
+public damgalı bir sınıfın
+ değişkenlerine ve metotlarına kendi alt-sınıfları ve dışarıdaki başka
+ sınıflar kısıtsız erişebilir.
+public damgalı değişkenler ve metotlar için de
+ kısıtsız erişim vardır. Uygulama
+programlarında main() metodunun public damgalı olmasının nedeni
+budur.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims
+DISTANCE EDUCATION
+APPLICATION & RESEARCH CENTER
+8
+
+--- PAGE 9 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+2. private
+• Bazı değişken, metot ya da sınıflara başka sınıftaki kodların erişmesini
+ engellemek isteyebiliriz. Bunun için private nitelemesini
+ kullanırız.
+private erişim belirtkesi, public belirtkesinin karşıtı
+gibidir. "private" damgalı öğelere yalnız aynı sınıftaki kodlar erişebilir,
+ başka sınıftaki kodlar erişemez. Kendi alt-sınıfları bile erişemez.
+Bir alt-
+ sınıf, atasının public ve ön-tanımlı öğelerine erişebilir, ama private
+ öğelerine erişemez.
+Onlara erişebilmesi için, super class interface-
+ fonksiyonu kullanılır. Kapsülleme "private" değişkenlerin metotlar gibi
+ kullanılmasına yardımcı olur.
+Okuma (Read Only) işleminin
+ yanısıra okuma - yazma (Read - Write) işleminin yapılmasını sağlar.
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem
+Prof. Dr. O. Ayhan ERDEM
+DISTANCE EDUCATION
+uzaktanegitim Im
+APPLICATION & RESEARCH CENTER
+9
+
+--- PAGE 10 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERI
+UYGULAMA
+ÖĞRENME
+3. protected
+• Bir sınıf içindeki değişken ve metotlara alt-sınıfların erişebilmesini,
+ ama paket içindeki ya da program içindeki başka kodların erişmesini
+ engellemek isteyebiliriz.
+Bunun için söz konusu
+öğeyi, "protected" damgası ile nitelemek yetecektir. Bu demektir ki,
+ alt-sınıf, üst-sınıfın protected damgalı öğelerine sanki public öğelermiş
+ gibi erişir.
+Görüldüğü gibi, protected belirtkesi, ön-tanımlı belirtke
+ ile private belirtkesinin işlevleri arasında bir işleve sahiptir.
+Alt sınıflara
+ erişme yetkisi verdiği için, kalıtım (inheritance) olgusunda önemli rol
+ oynar.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+10
+guzem
+uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 11 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+4. Ön-tanımlı (default) belirtke
+Bir öğenin önüne hiçbir erişim belirtkesinin konmadığı durumdur. Erişim belirtkesi
+ konmamışsa ön-tanımlı (default) belirtke etkin olur.
+Buna, bazı kaynaklarda dostça erişim
+ (frendly access) denir.
+a. paket bildirimi
+Paketler yalnızca ön-tanımlı erişime sahiptir, başka erişim belirtkesi almazlar. Paket içindeki her sınıf
+ pakette olan her değişken ve metoda erişebilir.
+Ama başka paketlerdeki sınıflar erişemez.
+b. erişim belirtkesi (default) sınıf bildirimi
+Sınıf bildiriminde, sınıfın önüne hiçbir erişim belirtkesi konmazsa, o sınıf içindeki değişken ve
+ metotlara o sınıfı içeren paketteki bütün kodlar erişebilir.
+c. erişim belirtkesiz (default) metot bildirimi
+Metot bildiriminde hiçbir erişim belirtkesi konulmazsa, default belirke geçerlidir. Bu halde, class'ın
+ kendisi, alt-sınıflar ve aynı paket içindeki diğer sınıflar erişebilir.
+d. erişim belirtkesiz (default) değişken bildirimi
+Değişken bildiriminde hiçbir erişim belirtkesi konulmazsa, ön-tanımlı (default) belirke geçerlidir.
+Bu
+ halde, sınıfın kendisi, alt-sınıfları ve aynı paket içindeki diğer sınıflar erişebilir.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+11
+guzem
+uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 12 ---
+Inheritance
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• Inheritance türkçe kalıtım anlamına gelmektedir. Kalıtım
+prensibi nesnelerin bir nesne oluşturulmasını ortaya koyar bir
+ nesnenin özelliklerinin farklı nesneler tarafından da kullanılabilmesine
+olanak sağlayan OOP özelliğidir. C# dilinde sadece tek bir sınıftan
+ miras alınabilir.
+Üst sınıf (Süper sınıf) özelliklerini alt sınıflarda
+ kullanmak için "extends deyimi kullanılır
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem
+uzaktanegitim Ims و
+DISTANCE EDUCATION
+APPLICATION & RESEARCH CENTER
+12
+
+--- PAGE 13 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Extends: Herhangi bir sınıfın özelliklerini ve işlevlerini miras olarak alması için kullanılan
+ deyimdir.
+Kalıtımın Faydaları
+• Daha önce yazılmış sınıf içindeki kod parçacıklarının tekrar tekrar yazılmadan başka
+ sınıflar içinde kullanılması sağlar.
+Bu işlem iş yükünü hafifletir ve zaman kazandırır.
+ •
+ Projelerde daha önce kullanılan sınıflar, denenmiş hatasız anlamındadır.
+Kısaca daha çok
+ güven arz etmektedir.
+• if, else, switch gibi kontrol ifadelerinin kullanıldığı sınıflar kötü tasarım örnekleri olarak ele
+ alındıklarından, kalıtımın nimetlerinden faydalanabiliriz.
+• Kalıtım kullanılmasaydı, her nesne kendi özelliklerinin tümünü açıkça tanımlamak zorunda
+ kalacaktı.
+Kalıtım sayesinde bir nesnenin kendi sınıfı içinde sadece kendisini eşsiz kılan
+ özellikleri tanımlaması yeterlidir.
+Nesne, genel özelliklerini atalarından kalıtım yoluyla
+ devralabilir. Böylece, bir nesnenin daha genel bir durumun spesifik bir örneği olmasını
+ mümkün kılan, kalıtım mekanizmasıdır.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+13
+guzem uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 14 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Polymorphism Nedir ?
+Polymorphism çok biçimlilik anlamına gelmektedir. Genel bir
+ etkinlikler sınıfına erişmek için bir arayüze imkân veren bir özelliktir.
+Çok
+ biçimlilik prensibi bir işlemin veya metodun bir çok nesne tarafından
+ kullanılabilmesi anlamına gelir.
+Statik ve dinamik olmak üzere ikiye
+ ayrılır.
+• Statik çok biçimlilik: Metot ve operatörlerin aşırı yüklenmesi
+ (overload) olarak belirtilir.
+• Dinamik çok biçimlilik: Özet sınıflardan miras alma yoluyla işlemlerin
+ gerçekleştirilmesi işlemine verilen isimdir.
+Prof. Dr. O. Ayhan ERDEM
+28.02.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+14
+guzem
+uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 15 ---
+28.02.2023
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERI
+UYGULAMA
+ÖĞRENME
+• Nesneye Yönelik Programlama, programcıların o dağınık ve anlaşılmaz
+ yapılarını tamamen ortadan kaldırıyor diyebiliriz.
+Bu teknoloji sizlere
+ yapacağınız işin parçalara ayırıp organize bir şekilde hareket etmenizi sağlar.
+Yani bir araba yapacaksanız, tekerlek, ayna, iskelet, direksiyon, pedal vs. her
+ şeyi ayrı ayrı yapıp bir bütün haline getirmenizi sağlıyor.
+Bu sayede siz
+ tekerlekteki sorunu ararken ayna, direksiyona vs. boşuna bakmamış
+ bunların kodlarını incelemekten kurtulmuş oluyorsunuz.
+Aynı zamanda
+ OOP(Object Oriented Programming) sayesinde kodlarınız sizin dışınızda
+ gören kişiler tarafından da kolayca algılanabilir hale gelmektedir.
+Sonuç
+ olarak, çok biçimlilik bir nesnenin bir işlemi farklı şekillerde yapabileceğini
+ gösteren bir kavramdır.
+Birbirine benzeyen nesneleri ortak özellikleriyle ele
+ alabilmenizi ya da bir nesnenin aynı işi farklı şekillerde yapabilmesini sağlar.
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+Prof. Dr. O. Ayhan ERDEM
+guzem uzaktanegitim Ims و
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+15
+
+--- PAGE 16 ---
+C# Programlama Dili
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• C# Anders Heljsberg ve ekibi tarafından, Microsoft'un .NET platformu için
+ geliştirilen nesne yönelimli bir programlama dilidir.
+İlk uyarlaması 2002 yılında
+ .NET Framework 1.0 ile yayınlanmıştır. C# dili güçlü nesne yaklaşımlı (object-
+ oriented) yapısı ile Microsoft .NET platformunun temelini oluşturur.
+Söz dizimi
+ bakımından C ve C++ 'a benzemesi programcılar tarafından öğrenilmesini
+ kolaylaştırmaktadır.
+Ayrıca Microsoft, C# adı altında yeni bir programlama dilini de
+ tanıtmıştır.
+• C# ismi; # keskin (Sharp) sembolün yazılı bir notanın perdede daha yüksek bir yarı
+ ton olması gerektiğini belirten müzik notasından esinlenilerek oluşturulmuştur.
+Bu
+ kavram, C++ programlama dilinin adlandırılmasına benzer.
+• C# yapısı itibari ile daha kolay, esnek ve taşınabilir olması bakımından da ön plana
+ çıkmaktadır.
+Bu nedenle 4 tane + işaretinin birleşimini andıran bemol işareti (#) ile
+ ifade edilir.
+C# dili her ne kadar Microsoft'a ait olsa da ECMA (ECMA-334) ve ISO
+ (ISO/IEC 23270:2006) tarafından uluslararası standart olarak tanımlanmıştır.
+Prof. Dr. O. Ayhan ERDEM
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+16
+guzem uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 17 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• C#, basit, modern, genel amaçlı ve nesne yönelimli (OOP) bir programlama
+ dili olarak tasarlanmıştır.
+Diğer bazı dillerden (özellikle Java'dan) anahtar
+ kavramları ödünç almıştır.
+• $C\#_{2}$ geliştiricilerin çeşitli güvenli ve sağlam uygulamalar oluşturmasını
+ sağlayan zarif ve "type-safe" bir programlama dilidir.
+• C# dilini; Windows istemci uygulamalarında, XML web hizmetlerinde,
+ dağıtılmış bileşenlerde, istemci-sunucu uygulamalarında, veritabanı
+ uygulamalarında ve çok daha fazla alanda kullanabiliriz.
+• C#, .NET frameworkte "sınıf çerçevesi" içinde kanıtlanmış işlevselliği
+ kullanmak için özel olarak tasarlanmıştır.
+Bu nedenle C# ile yazılmış
+ Windows uygulamaları, Microsoft.NET framework'ün uygulamayı çalıştıran
+ bilgisayara yüklenmesi gerekir.
+Prof. Dr. O. Ayhan ERDEM
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+17
+guzem uzaktanegitim Im
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 18 ---
+C# 'ın Genel Özellikleri
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+• Basit ve genel amaçlı bir dil olması
+UYGULAMA
+ÖĞRENME
+• Platformdan bağımsız bir dil olması
+• Kullanımı kolay modern bir dil olması
+• % 100 Nesneye yönelik programlama dili olması
+• Gelecek tabanlı uygulamalar için uygun ve sağlam bir dil olması
+• Çöp toplama ve kaynak yönetimi ile programların belleğini çok daha verimli
+ kullanan bir dil olması
+Prof. Dr. O. Ayhan ERDEM
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+guzen uzaktanegitim  و
+APPLICATION & RESEARCH CENTER
+18
+
+--- PAGE 19 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+C# İle Yapılabilecekler
+• Konsol uygulaması geliştirme
+• Windows uygulaması geliştirme
+• NET uygulaması geliştirme
+• Web servisleri yazma
+• Mobil uygulama geliştirme (PDA, cep telefonları vb. için)
+• DLL yazma
+Prof. Dr. O. Ayhan ERDEM
+UZAKTAN EĞİTİM UYGULAMA
+01.03.2021
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim
+Ims و
+DISTANCE EDUCATION
+APPLICATION & RESEARCH CENTER
+19
+
+--- PAGE 20 ---
+Nasıl Çalışır?
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+ÖĞRENME
+ • C# Java dili gibi çalışma anında derleme (JIT) prensibi ile çalışan temelli bir dildir.
+Visual Studio'da yazdığımız
+ C# kodu derlendiğinde; .NET Framework işletim sistemi ve program arasında arabirim görevindeki Common
+ Language Runtime (CLR) tarafından, .NET platformunun ortak ara dili olan MSIL'a (Microsoft Intermediate
+ Language) dönüştürülerek derlenir.
+Derlenen program çalıştırıldığında; MSIL Assembly formatındaki kodumuz .NET Framework tarafından işleme
+ alınır ve CLR tarafından bellek temizleme (Garbage Collection) gibi işlemlerden geçirilerek, çalışma anında
+ derleme (JIT) ile bilgisayar üzerinde çalışan bir makine diline dönüşür.
+Bu çalışma prensibi, C gibi doğrudan derlenerek çalıştırılan programlama dillerden daha yavaş çalışmasına
+ neden olur.
+Fakat bu çalışma yapısı C# ile yazılan kodun platformdan bağımsız, farklı işletim sistemleri
+ arasında taşınabilir olmasını sağlamaktadır.
+.Net platformunun gelişmiş CLR sistemi, C# rakibi olan Java
+ programlama dilinden daha hızlı çalışmasını hızlı çalışmasını sağlamaktadır.
+ADO.NET gibi .NET veri tabanı teknolojilerini kullanan C#, C# 3 den itibaren yerleşik sorgu dili LINQ' yu da
+ kullanmaya başlamıştır.
+C# dili Microsoft dışında geliştirilen açık kaynak kodlu, ECMA standartlarını temel alan Mono projesi
+ sayesinde Linux işletim sisteminde çalıştırılabilir.
+Xamarin ile IOS, Android gibi mobil platformlarda kod
+ yazılabilir.
+2015 yılında .NET Framework 4.5 ile birlikte C# 6 sürümü gelmiştir.
+Prof. Dr. O. Ayhan ERDEM
+UZAKTAN EĞİTİM UYGULAMA
+01.03.2021
+VE ARAŞTIRMA MERKEZİ
+guzem
+uzaktanegitim Im
+DISTANCE EDUCATION
+UYGULAMA
+APPLICATION & RESEARCH CENTER
+20
+
+--- PAGE 21 ---
+Java ve C# Arasındaki Farklar
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+1) Java'da pointer (işaretçi) ve pointer aritmetiği işlemleri yoktur. Buna karşın
+ C# her ne kadar bazı kısıtlamalar olsa da, unsafe block yapıları ile pointer
+ işlemlerine izin verir.
+2) Java, switch yapılarında sadece integer ve char tiplerinde işlem yapar.
+Her
+ ne kadar enumaration yapısının Java'ya eklenmesi ile bu kısıtlama bir nevi
+ aşılsa da, doğrudan String tipi ile switch komutu kullanılamamaktadır.
+Ancak
+ C# ile, string tipleri ile de işlem yapılabilir. Java 7 ile bu eksiklik kapatılmıştır.
+3) Partial class yapısı, sınıfların, interfacelerin ve Java'da bulunmayan struct
+ yapısının birden fazla kaynak dosyaya bölünebilmesini sağlar.
+Partial class
+ özelliği C# da mevcut iken, Java'da bu tür bir özellik bulunmamaktadır.
+Prof. Dr. O. Ayhan ERDEM
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem
+uzaktanegitim Ims و
+DISTANCE EDUCATION
+21
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 22 ---
+Java ve C# Arasındaki Farklar
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+4) C++ da bulunan virtual method özelliği C# ile de karşımıza çıkmaktadır.
+Java'da tüm sınıf
+ metotları otomatik olarak virtual olarak tanımlıdır. Bu sayede, herhangi bir sınıfı
+ genişlettiğinizde (extends) super sınıfın methodlarını herhangi bir ekleme gerektirmeden,
+ doğrudan override edilebilmektedir.
+Ancak C# da bu böyle değil, C++ da olduğu gibidir.
+C#
+ ile, herhangi bir sınıfın metodunu override etmek için super classda bu metot virtual olarak
+ tanımlanmalıdır.
+Java'da final metotlar tanımlanarak, metotların override edilmesi
+önlenebilir.
+5) Preprocessor (Önişlemci) direktifleri C# ile kullanılabilir. Bu sayede, kodun belirli
+ bölgelerini belirli durumlar için derlenmesi sağlanır.
+Ancak Java'da preprocessor özelliği
+ bulunmamaktadır.
+6) Generic tipler Java ve C# dillerinde mevcuttur. Ancak Java'da, generic tipler primitive
+ tiplerle kullanılamazken, C# ile kullanılabilmektedir.
+7) C# da go to komutu varken, Java'da yoktur.
+8) C# bazı kısıtlamalar dahilinde operator overloading işlemine izin verirken Java, izin
+ vermez.
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem
+Prof. Dr. O. Ayhan ERDEM
+DISTANCE EDUCATION
+22
+uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 23 ---
+Java ve C# Arasındaki Farklar
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECER
+UYGULAMA
+ÖĞRENME
+9) 4. maddedeki özellikler doğrultusunda C# da method override işlemini yapabilmek için, override
+ anahtar sözcüğünü kullanmak gerekmektedir.
+Override anahtar sözcüğü kullanılmadan yapılan
+ işlemler C# da, yeni bir metot olarak ele alınır.
+Ancak Java ile herhangi bir anahtar sözcük
+ gerektirmeden doğrudan super class methodları override edilebilir.
+10) Java daki her primitive data type 'in C# da bir karşılığı vardır.
+Ancak C#, Java'ya oranla çok daha
+ fazla primitive data type sunar.
+Java'daki tüm primitive typeların aynı isimle karşılığı C# da da
+ bulunmaktadır. Ancak Java'daki byte'ın karşılığı C# da sbyte'dır.
+C# byte veri tipi unsigned'dır. Bunun
+ haricinde C# Java'da olmayan işaretsiz tamsayı değerleri de sunar.
+ulong, ushort, uint ve decimal
+ tipler Java'da yoktur.
+11) C#, Java'da olmayan method pointerlar sunar. Delegate adı verilen bu yapı ile C# da, methodlar
+ parametre olarak arak başka başka metotlara geçirilebilir.
+Delegate'ler, C# da event handling (olay yönetimi) ve
+ callbackler için kullanılır.
+12) Olay yönetimi Java'da Observer tasarım şablonu ile gerçekleştirilirken, C# da olay yönetimi, dil
+ seviyesinde delegate ler yardımı ile yapılmaktadır.
+13) C# da Java'da bulunan checked exception sistemi yoktur. C# sadece, çalışma zamanında
+ yönetilen unchecked exception sistemini destekler.
+Prof. Dr. O. Ayhan ERDEM
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+01.03.2021
+VE ARAŞTIRMA MERKEZİ
+23
+guzem
+uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 24 ---
+Java ve C# Arasındaki Farklar
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECER
+ÖĞRENME
+14) C#, Java'da setter ve getter metotlar ile yapılabilen instance field işlemlerini Properties adı
+ verilen bir mekanizma ile yapılmasını sağlar.
+Bu sayede ekstra getter setter metotlar yazılmasına
+ gerek kalmaz.
+15) C#, Java'da bulunmayan ve indexer adı verilen bir yapı ile [] operatörünü overload ederek, sınıf
+ örnekleri üzerinde array tarzı işlemler yapılabilmesini sağlar.
+16) C# da, $C/C++$ da bulunan struct yapısı mevcut ve veri tipi olarak kullanılırken Java'da bu yapı
+ bulunmuyor.
+17) C# da, Exception tanımlamak ve yakalamak gibi bir zorunluluk yoktur.
+Java, ortaya çıkış felsefesi
+ gereği (robust application) buna izin vermez.
+18) Java'da C# da bulunan static class yapısı yoktur. Static sınıflar, instance field, instance constructor
+ gibi yapılara izin vermez.
+Başka bir sınıf tarafından genişletilemez.
+19) C# da iterasyon işlemini kolaylaştırmak için, Java'da bulunmayan yield adında bir anahtar sözcük
+ bulunmaktadır.
+20) C# da ref ve out gibi anahtar sözcükler ile methodlara parametre geçirilebilmektedir. Java'da
+ böyle bir yapı yoktur.
+UYGULAMA
+Prof. Dr. O. Ayhan ERDEM
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+24
+guzem uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 25 ---
+Microsoft .NET Framework
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• Framework: içerisinde uygulama geliştirme arayüzleri (API) ve
+ programcıların ihtiyaç duyduklarında çağırabilecekleri paylaşımlı bir kod
+ kütüphanesi barından paketlere denir.
+.NET Framework'ta ise paylaşımlı
+ kod kütüphanesi Framework Class Library (FCL) olarak adlandırılır. Bu
+ kütüphanedeki kodlar pek çok çeşit fonksiyon çalıştırabilmektedir.
+Bu
+ sayede programcılar ufak işlemler için gerekli fonksiyonları sıfırdan yazmak
+ zorunda kalmamaktadır.
+Diğer framework paketlerine kıyasla .NET, ayrıca
+ uygulamalar için çalışma alanı (runtime enviroment) da sunar.
+Java ve Ruby
+ on Rails gibi pek çok yazılım geliştirme platformu benzer çalışma alanları
+ sunmaktadır.
+Söz konusu .NET olunca, bu çalışma alanı Common Language
+ Runtime (CLR) olarak adlandırılır.
+Örneğin bir kullanıcı bir uygulamayı
+ çalıştırdığında, uygulamanın kodları çalışma alanında makine diline derlenir
+ ve ardından uygulama çalıştırılır.
+Prof. Dr. O. Ayhan ERDEM
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+25
+guzem uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 26 ---
+Visual
+ Basic
+Visual
+ C++
+NET
+.NET
+Visual
+ J#
+NET
+Visual
+ C#
+ NET
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Microsoft Intermediate
+Unified class library
+Language (MSIL)
+.NET
+ Framework
+Common Language Runtime (CLR)
+Native code
+01.03.2021
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims السكن
+APPLICATION & RESEARCH CENTER
+26
+
+--- PAGE 27 ---
+ETKİLEŞİM
+EGITIM
+E-DERS
+E-SINAV
+BECERİ
+ÖĞRENME
+Uygulamaları çalışma alanları içinde çalıştırmanın birden fazla avantajı mevcuttur.
+ Bunların en büyüğü ise uyumluluktur.
+Geliştiriciler kodlarını C#, C++, F#, Visual Basic gibi
+ sık kullanılan programlama dillerinde yazabilir ve bu kodlar .NET destekli bütün
+donanımlar üzerinde çalıştırılabilir.
+• Yayımlanmış .NET Framework sürümleri:
+• .NET Framework 4.X (4.5-4.8)
+• .NET Framework 3.5
+• .NET Framework 3.0, Service Pack 1 (SP1) en son hizmet paketidir.
+• .NET Framework 2.0, Service Pack 1 (SP1) en son hizmet paketidir.
+• .NET Framework 1.1, Service Pack 1 (SP1) en son hizmet paketidir.
+• .NET Framework 1.0, Service Pack 3 (SP3) en son hizmet paketidir.
+Bilgisayarda birkaç .NET Framework sürümü yüklü olabilir. Her bir .NET Framework
+ sürümü bilgisayardaki diğer sürümlerle bir arada bulunabilir
+Prof. Dr. O. Ayhan ERDEM
+UYGULAMA
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+01.03.2021
+VE ARAŞTIRMA MERKEZİ
+27
+guzem uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 28 ---
+01.03.2021
+.NET Framework'ün Yararları
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• Ticari uygulamaların daha kolay yüklenmesi:
+• Microsoft'un ve üçüncü tarafların ürünü birçok ticari uygulama, temel işlevlerini
+ desteklemek için .NET Framework'ü kullanmaktadır. .NET Framework
+yüklediyseniz, bu uygulamaların yüklenmesi daha kolaydır. Destek için .NET
+ Framework'ü kullanan bazı uygulamalar aşağıda verilmiştir:
+• Microsoft Encarta 2005
+• Microsoft Windows Live OneCare
+• Intuit QuickBooks
+• HP Image Zone
+• Streamload
+• PayPal
+• Grouper
+Prof. Dr. O. Ayhan ERDEM
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim
+و
+APPLICATION & RESEARCH CENTER
+28
+
+--- PAGE 29 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• Daha kolay güncelleştirme: .NET Framework yüklendikten sonra, Microsoft Update
+ hizmeti tarafından otomatik olarak güncelleştirilir.
+Denetim Masası aracılığıyla Otomatik
+ Güncelleştirmeler'i alıyorsanız, bilgisayarda yüklü tüm .NET Framework sürümleri
+ güncelleştirilerek her zaman en son hizmet paketine sahip olursunuz.
+Aşağıdaki yararlar yalnızca .NET Framework 2.0'da bulunur:
+• Dokunmadan Dağıtım ile daha kolay uygulama kullanımı: .NET Framework 2.0 ile, bir
+ URL'den uygulama çalıştırabilirsiniz.
+Bu özellik, yerel olarak yüklü bir uygulamanın zengin
+ kullanımını ve uygulamanızı bir URL'den başlatmanın kolaylığını sağlar.
+Bu özellik, bilhassa
+ kuruluşlarda dağıtım zahmeti olmadan daha zengin uygulamalar sağlamak için
+kullanışlıdır.
+• Windows XP kullanıcılarının Windows Vista için hazırlanması: Microsoft WinFX, Microsoft
+ Windows Vista'nın programlama altyapısıdır.
+WinFX, .NET Framework 2.0 üzerine
+ kuruludur ve Windows Vista'da yeni zengin uygulama deneyimleri sağlar. sağlar.
+WinFX,
+ Windows XP kullanıcıları tarafından da kullanılabilecektir. .NET Framework 2.0, Windows
+ XP kullanıcılarına WinFX için daha kolay bir güncelleştirme deneyimi sağlar.
+Prof. Dr. O. Ayhan ERDEM
+01.03.2021
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+29
+guzem
+uzaktanegitim Im
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 30 ---
+01.03.2021
+Visual Studio Nedir?
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• Visual Studio, birçok programlama dilini kullanarak program, uygulama ya da web
+ sitesi yapabileceğiniz bir IDE yani entegre geliştirme ortamıdır.
+Microsoft
+ Windows için bilgisayar programları, web siteleri, web uygulamaları, web
+ hizmetleri ve mobil uygulamalar geliştirmek için kullanılır.
+• Visual Studio, Windows API, Windows Forms, Windows Presentation Foundation,
+ Windows Store ve Microsoft Silverlight gibi Microsoft yazılım geliştirme
+ platformlarını kullanır.
+Hem yerel kod hem de yönetilen kod üretebilir.
+• Visual Studio, IntelliSense'i (kod tamamlama bileşeni) ve kod yeniden düzenleme
+ işlemini destekleyen bir kod düzenleyici içerir.
+Entegre hata ayıklayıcı, hem kaynak
+ düzeyinde hata ayıklayıcı hem de makine düzeyinde hata ayıklayıcı olarak çalışır.
+Diğer yerleşik araçlar arasında bir kod profili oluşturucu, GUI uygulamaları
+ oluşturmak için form tasarımcısı, web tasarımcısı, sınıf tasarımcısı ve veritabanı
+ şeması tasarımcısı bulunur.
+Neredeyse her düzeyde işlevselliği artıran eklentileri
+kabul eder.
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+Prof. Dr. O. Ayhan ERDEM
+DISTANCE EDUCATION
+30
+guzem
+uzaktanegitim  و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 31 ---
+01.03.2021
+Visual Studio hangi dilleri destekler?
+EGITIM
+E-DERS
+E-SINAV
+BECER
+UYGULAMA
+ÖĞRENME
+• Visual Studio, farklı programlama dillerini destekler ve dile özgü bir
+ hizmet olması koşuluyla, kod düzenleyicisinin ve hata ayıklayıcının
+ hemen hemen tüm programlama dillerini desteklemesine olanak
+ tanır.
+Yerleşik diller arasında C, C ++ ve C ++ / CLI (Visual C ++ ile),
+ VB.NET (Visual Basic .NET ile), C # (Visual C# ile), F # (Visual Studio
+ 2010'dan itibaren) ve TypeScript (Visual Studio 2013 Update 2'den
+ itibaren) bulunur.
+• Diğer dillerin yanı sıra Python, Ruby, Node.js ve M gibi diğer dilleri
+ destekleme, ayrı olarak yüklenen dil servisleri aracılığıyla sağlanır.
+Aynı
+ zamanda XML / XSLT, HTML / XHTML, JavaScript ve CSS'yi de
+destekler.
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+Prof. Dr. O. Ayhan ERDEM
+DISTANCE EDUCATION
+31
+guzem
+uzaktanegitim Ims و
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 32 ---
+KAYNAKLAR
+• The Complete Reference C# - Herbert Schildt
+• C# Eğitim Kitabı - Murat Yücedağ
+• C# Programming in Easy Steps - Mike mcGrath
+•
+İnternet: http://gelecegiyazanlar.turkcell.com.tr
+•
+internet: http://www.sertayhalka.com
+•
+internet: http://www.forum.datakent.com
+• internet: http://kimkurdu.com
+• internet: http://cemelma.wordpress.com
+Prof. Dr. O. Ayhan ERDEM
+UZAKTAN EĞİTİM UYGULAMA
+01.03.2021
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims يكن
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+DISTANCE EDUCATION
+32
+APPLICATION & RESEARCH CENTER
+"""
+
+# Extract text by removing tags
+cleaned_text = re.sub(r'\', '', pdf_content)
+
+# Write to a file
+file_path = "Hafta_1_Converted.txt"
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(cleaned_text.strip())

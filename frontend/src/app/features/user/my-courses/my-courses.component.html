@@ -1,0 +1,72 @@
+<div
+  class="min-h-screen p-8 transition-colors duration-300 bg-gray-50 dark:bg-slate-900"
+>
+  <div class="w-full max-w-5xl mx-auto">
+    <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-white">
+      {{ "COURSE.MY_COURSES" | translate }}
+    </h1>
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <!-- Card Loop -->
+      <div
+        *ngFor="let year of years()"
+        class="relative h-64 overflow-hidden transition-all duration-500 bg-white border border-gray-200 cursor-pointer dark:bg-slate-950 rounded-2xl dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 group hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 perspective-1000"
+      >
+        <!-- Content Container -->
+        <div
+          class="relative w-full h-full transition-transform duration-700 preserve-3d"
+        >
+          <!-- Default State (Number) -->
+          <div
+            class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 group-hover:opacity-0 group-hover:scale-90"
+          >
+            <!-- Use a massive font size for the number to match screenshot style -->
+            <span
+              class="mb-2 font-bold leading-none text-gray-900 text-[12rem] dark:text-white"
+              >{{ year.id }}</span
+            >
+            <span
+              class="text-2xl font-medium text-gray-600 dark:text-slate-300"
+              >{{ year.translationKey | translate }}</span
+            >
+          </div>
+
+          <!-- Hover State (List) -->
+          <div
+            class="absolute inset-0 flex flex-col items-start justify-center p-8 transition-all duration-300 translate-y-4 opacity-0 bg-white/95 dark:bg-slate-900/95 group-hover:opacity-100 group-hover:translate-y-0 delay-75"
+          >
+            <div
+              class="flex flex-col justify-center w-full h-full pl-6 border-l-4 border-blue-500"
+            >
+              <h3 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
+                {{ year.translationKey | translate }}
+              </h3>
+              <ul
+                class="space-y-3 overflow-y-auto max-h-[12rem] pr-2 custom-scrollbar"
+              >
+                <li
+                  *ngFor="let course of year.courses"
+                  class="flex items-center text-gray-700 transition-colors cursor-pointer dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 group/item"
+                  [routerLink]="['/course', course.id]"
+                >
+                  <span
+                    class="flex-shrink-0 w-2 h-2 mr-3 transition-colors bg-blue-500 rounded-full group-hover/item:bg-blue-600 dark:group-hover/item:bg-blue-400"
+                  ></span>
+                  <span class="text-lg font-medium truncate">{{
+                    getCourseName(course)
+                  }}</span>
+                </li>
+                <li
+                  *ngIf="year.courses.length === 0"
+                  class="italic text-gray-500 dark:text-slate-500"
+                >
+                  {{ "COURSE.COMING_SOON" | translate }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

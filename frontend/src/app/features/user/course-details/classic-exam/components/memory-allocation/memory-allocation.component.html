@@ -1,0 +1,119 @@
+<div
+  class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+>
+  <!-- Header -->
+  <div class="mb-6">
+    <span
+      class="px-2 py-1 text-xs font-bold text-green-700 bg-green-100 rounded dark:bg-green-900 dark:text-green-200 uppercase"
+    >
+      {{ question.visualType }}
+    </span>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mt-2">
+      {{ question.questionText }}
+    </h3>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Available Memory Partitions -->
+    <div class="space-y-4">
+      <h4 class="font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">
+        {{ "EXAM.MEMORY_ALLOCATION.AVAILABLE_PARTITIONS" | translate }}
+      </h4>
+      <div class="space-y-3 max-h-96 overflow-y-auto pr-2">
+        <div
+          *ngFor="let partition of question.inputData.partitions"
+          class="p-3 border rounded bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 flex justify-between items-center"
+        >
+          <span class="font-mono font-bold text-blue-600 dark:text-blue-400">
+            {{ partition.id }}
+          </span>
+          <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+            {{ partition.size }} KB
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Process Allocation Form -->
+    <div class="space-y-4">
+      <h4 class="font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">
+        {{ "EXAM.MEMORY_ALLOCATION.PROCESS_ALLOCATION" | translate }}
+      </h4>
+      <div class="space-y-4">
+        <div
+          *ngFor="let proc of question.inputData.processes"
+          class="p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-sm transition-colors duration-200"
+          [ngClass]="{
+            'border-green-500 bg-green-50 dark:bg-green-900/10':
+              isSubmitted && isAllocationCorrect(proc.id),
+            'border-red-500 bg-red-50 dark:bg-red-900/10':
+              isSubmitted && !isAllocationCorrect(proc.id),
+            'border-gray-200 dark:border-gray-600': !isSubmitted,
+          }"
+        >
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-gray-800 dark:text-gray-100">
+                {{ "EXAM.MEMORY_ALLOCATION.PROCESS" | translate }} {{ proc.id }}
+              </span>
+              <span
+                class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+              >
+                {{ proc.size }} KB
+              </span>
+            </div>
+
+            <!-- Result Icon -->
+            <div *ngIf="isSubmitted">
+              <i
+                *ngIf="isAllocationCorrect(proc.id)"
+                class="pi pi-check text-green-600 text-xl"
+              ></i>
+              <i
+                *ngIf="!isAllocationCorrect(proc.id)"
+                class="pi pi-times text-red-600 text-xl"
+              ></i>
+            </div>
+          </div>
+
+          <!-- Dropdown for Partition Selection -->
+          <div class="relative">
+            <select
+              [(ngModel)]="userAllocations[proc.id]"
+              [disabled]="isSubmitted"
+              class="w-full p-2.5 text-sm border rounded-lg appearance-none bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+              [ngClass]="{
+                'border-green-500 text-green-700 dark:text-green-300':
+                  isSubmitted && isAllocationCorrect(proc.id),
+                'border-red-500 text-red-700 dark:text-red-300':
+                  isSubmitted && !isAllocationCorrect(proc.id),
+              }"
+            >
+              <option [ngValue]="null">
+                {{ "EXAM.MEMORY_ALLOCATION.NOT_ALLOCATED" | translate }}
+              </option>
+              <option
+                *ngFor="let partition of question.inputData.partitions"
+                [value]="partition.id"
+              >
+                {{ partition.id }} ({{ partition.size }} KB)
+              </option>
+            </select>
+          </div>
+
+          <!-- Result Feedback -->
+          <div
+            *ngIf="isSubmitted && !isAllocationCorrect(proc.id)"
+            class="mt-2 text-sm text-red-600 dark:text-red-400 font-bold animate-pulse"
+          >
+            {{ "EXAM.MEMORY_ALLOCATION.CORRECT_ANSWER" | translate }}:
+            {{
+              findCorrectPartitionId(proc.id) ||
+                ("EXAM.MEMORY_ALLOCATION.NOT_ALLOCATED" | translate)
+            }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

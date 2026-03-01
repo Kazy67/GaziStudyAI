@@ -1,0 +1,44 @@
+<div class="card flex justify-center">
+  <button
+    type="button"
+    (click)="toggleLanguageMenu($event)"
+    class="flex items-center gap-2 px-3 py-2 rounded-lg bg-transparent hover:bg-slate-100 dark:bg-black/10 dark:hover:bg-black/20 transition-colors border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 cursor-pointer"
+  >
+    <img
+      [src]="getCurrentLanguage().flag"
+      [alt]="getCurrentLanguage().label"
+      class="w-5 h-5 rounded-full object-cover"
+    />
+    <span class="font-medium text-sm hidden sm:inline">{{
+      getCurrentLanguage().code | uppercase
+    }}</span>
+    <i class="pi pi-angle-down text-xs"></i>
+  </button>
+  <p-popover
+    #languagePopover
+    styleClass="!bg-white dark:!bg-gray-900 dark:!text-gray-200 !border-0 !shadow-xl rounded-lg overflow-hidden ring-1 ring-black/5 dark:ring-white/10"
+  >
+    <div class="flex flex-col min-w-[140px]">
+      <button
+        *ngFor="let lang of languages"
+        (click)="changeLanguage(lang.code)"
+        class="flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-200 transition-colors w-full text-left"
+        [class.bg-blue-50]="currentLang === lang.code"
+        [class.dark:bg-blue-900]="currentLang === lang.code"
+        [class.text-blue-600]="currentLang === lang.code"
+        [class.dark:text-blue-400]="currentLang === lang.code"
+      >
+        <img
+          [src]="lang.flag"
+          [alt]="lang.label"
+          class="w-5 h-5 rounded-full object-cover shadow-sm"
+        />
+        <span class="font-medium">{{ lang.label }}</span>
+        <i
+          *ngIf="currentLang === lang.code"
+          class="pi pi-check ml-auto text-blue-600 dark:text-blue-400 text-xs"
+        ></i>
+      </button>
+    </div>
+  </p-popover>
+</div>

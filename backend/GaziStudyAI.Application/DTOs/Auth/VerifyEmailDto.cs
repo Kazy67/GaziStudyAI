@@ -1,0 +1,8 @@
+﻿namespace GaziStudyAI.Application.DTOs.Auth
+{
+    public class VerifyEmailDto
+    {
+        public string Email { get; set; }
+        public string Code { get; set; }
+    }
+}

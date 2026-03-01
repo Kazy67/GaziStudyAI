@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaziStudyAI.WebAPI", "backend\GaziStudyAI.WebAPI.csproj", "{EEE9DACB-EBAB-498D-B82B-139148A2D722}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaziStudyAI.Common", "GaziStudyAI.Common\GaziStudyAI.Common.csproj", "{8821D276-89E6-4DED-89F7-6991BA978FAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaziStudyAI.Domain", "GaziStudyAI.Domain\GaziStudyAI.Domain.csproj", "{127E17B2-AAF4-4F93-ACA4-67ECA4364C5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaziStudyAI.Infrastructure", "GaziStudyAI.Infrastructure\GaziStudyAI.Infrastructure.csproj", "{DC6CC407-C091-4F4E-9283-F5C2FE95D88A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaziStudyAI.Application", "GaziStudyAI.Application\GaziStudyAI.Application.csproj", "{F22E9462-5AC9-4F7E-B60E-9BBFAF42319D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEE9DACB-EBAB-498D-B82B-139148A2D722}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE9DACB-EBAB-498D-B82B-139148A2D722}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE9DACB-EBAB-498D-B82B-139148A2D722}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEE9DACB-EBAB-498D-B82B-139148A2D722}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8821D276-89E6-4DED-89F7-6991BA978FAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8821D276-89E6-4DED-89F7-6991BA978FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8821D276-89E6-4DED-89F7-6991BA978FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8821D276-89E6-4DED-89F7-6991BA978FAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{127E17B2-AAF4-4F93-ACA4-67ECA4364C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{127E17B2-AAF4-4F93-ACA4-67ECA4364C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{127E17B2-AAF4-4F93-ACA4-67ECA4364C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{127E17B2-AAF4-4F93-ACA4-67ECA4364C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC6CC407-C091-4F4E-9283-F5C2FE95D88A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC6CC407-C091-4F4E-9283-F5C2FE95D88A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC6CC407-C091-4F4E-9283-F5C2FE95D88A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC6CC407-C091-4F4E-9283-F5C2FE95D88A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F22E9462-5AC9-4F7E-B60E-9BBFAF42319D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F22E9462-5AC9-4F7E-B60E-9BBFAF42319D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F22E9462-5AC9-4F7E-B60E-9BBFAF42319D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F22E9462-5AC9-4F7E-B60E-9BBFAF42319D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A6A456AE-7FF0-411F-AA65-BDCAA4BF7FD9}
+	EndGlobalSection
+EndGlobal

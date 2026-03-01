@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Autofill Background Fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #111827 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+    -webkit-text-fill-color: #f3f4f6 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Checkbox Dark Mode Styles */
+.p-checkbox .p-checkbox-box {
+    @apply border-2 transition-colors duration-200 bg-white border-gray-300;
+}
+
+.dark .p-checkbox .p-checkbox-box {
+    @apply bg-gray-700 border-gray-600;
+}
+
+/* Checked State - Light Mode */
+.p-checkbox .p-checkbox-box.p-highlight {
+    @apply bg-blue-600 border-blue-600;
+}
+
+/* Checked State - Dark Mode */
+.dark .p-checkbox .p-checkbox-box.p-highlight {
+    @apply bg-blue-500 border-blue-500;
+}
+
+/* Focus State */
+.p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-focus {
+    @apply ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 border-blue-500;
+}
+
+/* Hover State */
+.p-checkbox:not(.p-checkbox-disabled):hover .p-checkbox-box {
+    @apply border-blue-500;
+}
+
+/* Icon Color */
+.p-checkbox .p-checkbox-box .p-checkbox-icon {
+    @apply text-white;
+}
+

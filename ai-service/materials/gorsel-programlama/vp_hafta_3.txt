@@ -1,0 +1,1225 @@
+import re
+
+# The full content provided in the prompt for Hafta_3.pdf
+pdf_content_3 = """
+--- PAGE 1 ---
+ETKİLEŞİM
+E-DERS
+BECERİ
+ONIVERS/
+Gay
+1926
+EGITIM
+E-SINAV
+UYGULAMA
+C# Veri Tipleri
+UZAKTAN EĞİTİM UYGULAMA VE ARAŞTIRMA MERKEZİ
+telefon 01112 202 8200 eposta pozem@guzi.edu.t adres fazi
+ guzem.gaz.BOLU uzaktanegitim.geuduch
+Binası Noort
+ Ims. gazi.edu.tr
+
+--- PAGE 2 ---
+Tamsayılar
+C# 'ta dokuz tamsayı tipi tanımlıdır:
+char,
+• byte,
+. sbyte,
+short,
+. ushort,
+int,
+uint,
+. long ve
+ulong.
+Char tipi, karakterleri simgelemek için kullanılır. Geriye kalan
+ sekiz tamsayı tipi numerik hesaplamalar için kullanılır.
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 3 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Veri tipi, değişkenlerin tuttukları değerlerin türünü ve bellekte tutulacak boyutunu tanımlar.
+Değişkenleri veri tipleri ile tanımlarken, verinin boyutuna göre bir veri tipi seçilmelidir.
+
+The following table:
+"Veri Tipi
+","Boyut
+","Değer
+"
+"bool
+","2 Bayt
+","false
+ true
+"
+"byte
+","1 Bayt
+","0-255
+"
+"char
+","2 Bayt
+","Tek bir Unicode karakteri tutar
+"
+"decimal
+","16 Bayt
+","Maksimum 29 haneli sayı tutar
+ +/-
+ 79.228.162.514 264.337.593.543.950.33
+ 5 arasında değer alır
+"
+"double
+","8 Bayt
+","Negatif sayı aralığı:
+ -1.79769E+308 ile 4.94065E-324
+ Pozitif sayı aralığı:
+ 4.94065E-324 ile 1.79769E+308
+"
+"Int32 (int)
+","4 Bayt
+","-2.147.483,6482,147,483,647
+"
+"Int16 (short)
+","2 Bayt
+","32.768-32.767
+"
+"Int64 (long)
+","8 Bayt
+","-9.223.372.036.854.775.808
+ 9,223,372,036,854,775,807.
+"
+"float
+","4 Bayt
+","Negatif sayı aralığı:
+ -3.4028235E+ $+38$ ile-1.401298E-45
+"
+,,"Pozitif sayı aralığı:
+ 1.401298E-45 ile 3.4028235E+38
+"
+"string
+",,"Unicode
+ Maksimum
+ 2.147.483 647
+ karakter tutar
+"
+"sbyte
+","1 Bayt
+","-128
+ 127
+"
+"uint
+","4 Bayt
+","0-4.294.967.295
+"
+"ulong
+","8 Bayt
+","0-1.844674407370955e+16
+"
+"ushort
+","2 Bayt
+","65,535
+ 0
+"
+
+UZAKTAN EĞİTİM UYGULAMA
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 4 ---
+Tamsayılar
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+. Muhtemelen en yaygın olarak kullanılan tamsayı tipi int'dir. int tipi değişkenler genellikle
+ döngülerde, dizi indekslerinde ve genel amaçlı tamsayı matematiğinde kullanılır.
+int'den
+ daha geniş değer aralığına sahip bir tamsayıya ihtiyaç olursa işaretsiz sayılar için uint, ulong
+ işaretli sayıları için long kullanılabilir.
+En küçük tamsayı tipleri byte ve sbyte'tır. byte tipi 0-255 arasında işaretsiz bir değerdir.
+Byte tipindeki değişkenler özellikle ham ikili verilerle çalışırken, örneğin bir aygıt tarafından
+ üretilen bytestream halindeki veri kullanılırken, yararlı olur.
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+guzem uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 5 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Decimal-Karakter Tipleri
+Decimal Tipi:
+Parasal hesaplamalarda kullanılması planlanan değişken tipidir. Sayıları 28
+ ondalık basamağa kadar hatasız simgeleyebilir.
+Karakterler:
+C#'ta karakterler, Unicode denilen 16 bitlik karakter tipini kullanır. Unicode,
+ bütün dillerde mevcut olan karakterlerin tümünü simgelemeye yetecek kadar
+ büyük bir karakter seti tanımlar.
+char tipi 0 ile 65,535 aralığında değer alabilen
+ 16 bitlik bir tiptir.
+Standart 8 bitlik ASCII karakterleri Unicode'un bir alt
+ kümesidir. Yani ASCII karakterleri halen geçerli c# karakterleridir.
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem
+uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 6 ---
+Bool Tipi
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+bool tipi, doğru ve yanlış değerlerini simgeler. C# ta
+ doğru/yanlış değerleri, true/false özel amaçlı kelimeleriyle
+ tanımlanır.
+Yani bool tipinde bir değişken bu iki değerden birine
+ sahip olabilir.
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 7 ---
+EGITIM
+Değişken Tanımlamaları ESNA
+BECERİ
+ÖĞRENME
+UYGUI
+C#' ta program içerisinde kullanılacak tüm değişkenler, kullanılmadan önce tanımlanmalıdır.
+C# Anahtar Kelimeler:
+
+The following table:
+"abstract
+","const
+","exten
+","int
+","out
+","short
+","typeof
+"
+"as
+","continue
+","false
+","interface
+","override
+","sizeof
+","uint
+"
+"base
+","decimal
+","finally
+","internal
+","params
+","stackalloc
+","ulong
+"
+"bool
+","default
+","fixed
+","is
+","private
+","static
+","unchecked
+"
+"break
+","delegate
+","float
+","lock
+","protected
+","string
+","unsafe
+"
+"Byte
+","do
+","for
+","long
+","public
+","struct
+","ushort
+"
+"case
+","double
+","foreach
+","namespace
+","readonly
+","switch
+","using
+"
+"catch
+","else
+","goto
+","new
+","ref
+","this
+","virtual
+"
+"char
+","enum
+","if
+","null
+","return
+","throw
+","volatile
+"
+"checked
+","event
+","implicit
+","object
+","sbyte
+","true
+","void
+"
+"class
+","explicit
+","in
+","operator
+","sealed
+","try
+","while
+"
+
+C# dilinde tanımlı
+hâlihazırda 77 anahtar
+ kelime mevcuttur. Bu
+ kelimeler tabloda
+listelenmiştir. Bu anahtar
+ kelimeler değişken, sınıf
+ ve metot ismi olarak
+kullanılamaz.
+C#'ta bulunan anahtar kelimeler
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+guzem uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 8 ---
+Tanımlayıcılar
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+►C#'ta tanımlayıcı, bir metoda, değişkene, ve ya kullanıcı tarafından
+ tanımlanan herhangi başka bir öğeye atanan isimdir.
+Tanımlayıcılar bir
+ karakterden birkaç karaktere kadar değişen uzunluklarda olabilir. Değişken
+ isimleri alfabenin her hangi bir harfi ile veya alt çizgi (_) ile başlayabilir.
+Sonra
+ harf, rakam veya alt çizgi ile devam edebilir. C# dili büyük ve küçük harf
+ ayrımına sahip bir dildir.
+Yani "degisken1" ile "Degisken1" farklı isimlerdir.
+ Bir tanımlayıcı rakam ile başlayamaz.
+Örnek Tanımlayıcılar:
+Test
+X
+toplam_saat
+ornek1
+y2
+Degiskenim
+_ust
+taban_Deger
+UZAKTAN EĞİTİM UYGULAMA
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims لم
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 9 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+C# Constants (Sabit) Kullanımı
+Constants (Sabit) değeri program
+ çalışması sırasında değiştirilemeyen
+ değişkenlerdir. Bu değişkenlere ilk değerleri, değişken deklere edilirken verilmelidir
+ ve bu verilen değer kesinlikle çalışma zamanında değişmez.
+• Constant Tanımlamanın Faydaları
+- Kodumuzun okunması kolaylaşır.
+Bellekte daha az yer işgal eder.
+• Constant Kullanabileceğimiz Bir Kaç Örnek :
+Bir günün 24 saat olduğunu programımızda kullanıyorsak, -Işık Hızı, Pi sayısı gibi
+ sabitleri kullanıyorsak, constant kullanmak bize fayda sağlayacaktır.
+Örnek: const int $Pl=3.14159$;
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims لم
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 10 ---
+C# Komut Satırı Derleyicisi (csc.exe)
+C# Komut satırı derleyicisi kullanarak bir program geliştirmek ve çalıştırmak için
+ izlenmesigereken adımlar:
+1. Bir metin editörü kullanarak programı kodlayınız.
+2. Programı derleyiniz.
+3. Programı çalıştırınız.
+
+The following table:
+"1. Örnek
+",
+"class Ornek1
+","using System;
+"
+"{
+",
+"static void Main()
+","class Ornek1
+"
+"{
+","{
+"
+,"static void Main()
+"
+"System.Console.WriteLine(""1. Örnek"");
+","{
+"
+"}
+","Console.WriteLine(""1. Örnek"");
+"
+"}
+","}
+"
+,"}
+"
+
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 11 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Yukarıda bulunan iki kod parçası da aynı sonucu vermektedir.
+ Aralarındaki fark ise 2. Programda, system namespace'i programa
+ başında eklenmiş ve system namespace'i altında bulunan sınıflara
+ erişim sağlanmıştır.
+1. Programda ise system namespace'i programa
+ eklenmediğinden bu namespace altında bulunan sınıflara erişilirken
+ ilgili satırda bu namespace'in de belirtilmesi gerekmektedir.
+Yukarıdaki kodu "Ornek1.cs" adı ile kaydediniz.
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 12 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Microsoft Visual Studio 2008
+Microsoft Visual Studio 2008 Documenta
+Microsoft Visual Studio 2008
+Visual Studio Remote Tools
+Visual Studio Tools
+Dotfuscator Community Edition
+MFC-ATL Trace Tool
+Spy++
+05. Visual Studio 2008 Command Promp
+Visual Studio 2008 Remote Debugge
+Visual Studio 2008 Remote Debugge
+Visual Studio 2008 x64 Cross Tools (
+Visual Studio 2008 Command Prompt'u açarak
+ C:\Windows\sysmtem32> csc Ornek1.cs
+Komutu ile programı derleyiniz.
+ C:\Windows\sysmtem32> Ornek1
+ Komutu ile programı çalıştırınız.
+Setting environment for using Microsoft Visual Studio 2888 x86 tools.
+ C:\Windows\system32)
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+guzen uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 13 ---
+Visual Studio ile Program Geliştirmek
+UZAKTAN
+7.03.2023
+VE AR
+Start Page - Microsoft Visual Stanho
+New
+Close
+Verw
+Tools
+Defectod tоны
+Wiradow
+Help
+Propect...
+ Web Site...
+Ctrl+shift
+ Shift+Alt+
+Project From Existing Code.
+2008
+Dosya
+ menüsünden
+ Yeniseçanağı
+ seçilerek Proje
+ sekmesine
+ tiklayınız.
+Save All
+Source Control
+Foochie
+Recent   
+ Recent Projects
+ Exit
+2-
+New Project
+Project types
+Visual Ca
+Widows
+ Web
+Smart Device
+Office
+Database
+Reporting
+Test
+WOF
+Workfor
+Other Languages
+Other Project Types
+Ctrl+Shift+S
+Templates
+Visual Studio installed templates
+Windows Forms Application
+PP Application
+Console Application
+Windows Service
+WPP Liser Contes Library
+Hy Templates
+Search Online Templates....
+MSDN: Visual C#
+TNO to SOI Overview"
+ Wed, 19 Mar 2008 15:03:52
+ Video of Luke Hoban's In
+ Mum, 25  2008 17:00:21
+Heroes Happen Here
+ Wed, 27 Feb 2008 10:05:10
+ products provide a secure an
+ in your area at HeroesHappнен
+ Why Do  R
+NET Framework 3.5
+Class Ubrary
+WFP Browser Application
+Empty Project
+WPF Custom Control Library
+Windows Forms Control Library
+z1x Açılan yeni proje
+ #penceresinden
+ Boş proje
+ seçeneğini
+ seçerek tamam
+ deyiniz.
+Test Projects
+An empty project for creating a local application (NET Framework 3.5)
+Name:
+Locationc
+Solution Name:
+Project
+C:\Users Murat Documents leual Studio 2008 Projects
+ Projects
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Browse
+Create drectory for solution
+ Add to Source Control
+OK
+Caricel
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 14 ---
+7.03.2023
+EGITIM
+3
+Solution Explorer Projecti
+TILESIM
+E-DERS
+E-SINAV
+Solutuion
+Explorer üzerinde
+Solution Project (project)
+sağ tıklayarak
+Proiett
+Add
+BECERİ
+Buld
+UYGULAMA
+Sekmesinden
+Rebuild
+New Item
+Clean
+seçeneğini
+ÖĞRENME
+Publish...
+seçiniz.
+Add
+New Item...
+Add Reference...
+Existing Item....
+Add Service Reference...
+New Folder
+View Class Diagram
+Windows Form....
+Set as StartLip Project
+User Control...
+Debug
+Component...
+Add Solution to Source Control...
+Class...
+Cut
+X Remove
+Project Pro
+Rename
+Linload Project
+Project File
+☐
+Open Folder in Windows Explorer
+Propect Fol
+Sha
+Properties
+4-
+Add New Item-Projecti
+X
+Açılan
+Categores:
+Templates
+pencereden Code
+Voual C Item
+Visual Studio installed templates
+File nesnesini
+Code
+Data
+About Box
+General
+Application Marsfest File
+☑
+☐
+☑
+Application Configuration File
+seçerek Add
+Assembly Information File
+Web
+Sitmap Pie
+Wridons Form
+☑
+☑
+☑
+Cas
+butonuna
+WPP
+☑
+Class Diagram
+Component Class
+Custon Control
+☑
+☑
+Code File
+Cursor File
+DataSet
+Workflow
+HTML Page
+tıklayınız.
+Reporting
+Debugger Visual
+☑
+☐
+Icon File
+Installer Class
+Interface
+Script Fle
+LINQ to SQL Classes
+Local Database
+Local Database Cache
+Report
+☑
+☐
+☑
+MOI Parent Form
+Report Waard
+Resources File
+☐
+☐
+Service based Database
+A blank Cif code the
+Namec
+UZAKTAN EGİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+Codefilel.cs
+Add
+Cancel
+guzern
+uzaktanegitimms
+DISTANCE EDUCATION
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 15 ---
+The following table:
+"5-
+","using System;
+
+
+class Ornek2
+ {
+
+
+static void Main()
+ {
+ Console.WriteLine(""1. Örnek"");
+","Yandaki Örnek
+
+
+Kodu yazarak F5
+
+
+tuşu ile programı
+ çalıştırınız.
+"
+,"Console.WriteLine(""Programı Sonlandırmak İçin
+ Herhangi bir tuşa basınız"");
+ Console.ReadLine();
+ }
+ }
+",
+"6-
+","file:///C:/Users/Murat/Documents/Visual Studio 2008/Projects/Project1/Project1/bin/Debug/ 
+ 1. örnek
+ Programı Sonlandırnak İçin Herhangi bir tuga basınız
+","Ekran Çıktısı
+
+
+Yandaki gibi
+"
+,,"olacaktır.
+"
+
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 16 ---
+Aritmetik Operatörler
++.
+•/
+•*
+• %
+Toplama
+ Çıkarma
+Bölme
+Çarpma
+Mod Alma
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 17 ---
+7.03.2023
+Örnek 3
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECER
+UYGULAMA
+ÖĞRENME
+using System;
+class Ornek3
+101
+static void Main()
+{
+int x;
+int y:
+$x=100;$
+Console.WriteLine("x'in değeri " + x);
+ y = x/ 2;
+Console.Write("y'nin değeri $x/2$ :");
+Console.WriteLine(y);
+Console.ReadLine();
+}
+}
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 18 ---
+7.03.2023
+Örnek 3 - Ekran Çıktısı
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+X
+ÖĞRENME
+file:///C:/Users/Murat/Documents/Visual Studio 2008/Projects/Project1/Project1/bin/Debug/Projec
+x'in değeri 100
+ y'nin değeri x/2:50
+x ve y değişkenleri aynı anda tanımlanmak istenirse
+int x,y;
+şeklinde yazılabilir.
+x değişkeninin değeri başlangıçta atanmak istenirse
+int $x=100$
+şeklinde tanımlanabilir.
+"Console.WriteLine" ile "Console.Write"
+komutları arasındaki
+ilkinde yazdırma işleminden sonra kursorun bir alt satıra
+ ikincisin de ise aynı satırda kalmasıdır.
+UZAKTAN EĞİTİM UYGULAMA
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim
+Ims يكن
+fark
+ konumlanması
+DISTANCE EDUCATION
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 19 ---
+7.03.2023
+Örnek 4
+EGITIM
+ETIKİLEŞİM
+E-DERS
+E-SINAV
+BECER
+UYGULAMA
+GRENME
+using System;
+class Ornek4
+{
+static void Main()
+int ivar:
+double dvar;
+ivar $=100$
+dvar $=100.0;$
+Console.WriteLine("ivar'ın değeri " + ivar);
+Console.WriteLine("dvar'ın değeri "+dvar);
+ Console.WriteLine();
+ivarivar / 3;
+ dvar dvar / 3:
+Console.WriteLine("ivar'ın bölme işleminden sonraki değeri " + ivar);
+ Console.WriteLine("dvar'ın bölme işleminden sonraki " + dvar):
+Console.ReadLine();
+}
+}
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzen
+uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 20 ---
+Örnek 4 - Ekran Çıktısı
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+file:///C:/Users/Murat/Documents/Visual Studio 2008/Projects/Project1/Project1/bin/Debug/Projec...
+X
+ivar'ın değeri 100
+ dvar'ın değeri 100
+ivar'ın bölme işleminden sonraki değeri 33
+dvar'ın bölme işleminden sonraki 33,3333333333333
+ivar değişkeni 3 ile bölündüğünde tamsayı bölme işlemi gerçekleştiriliyor, ondalık
+kısım atılıyor ve sonuç 33 oluyor. Ancak dvar 3'e bölündüğünde ondalık kısım korunuyor.
+Boş bir satır eklemek için WriteLine() 'ı argümansız olarak çağırılması yeterlidir.
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzem
+uzaktanegitim Ims لم
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 21 ---
+Örnek 5 (Dairenin Alanını Hesaplayan Program)
+{
+using System;
+class Ornek5
+static void Main()
+{
+double dPi $=3.1416$;
+}
+}
+double dYariCap $=10.0;$
+double dAlan;
+dAlan dYariCap dYariCap  dPi;
+Console.WriteLine("Dairenin Alanı: " + dAlan);
+ Console.ReadLine();
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECER
+UYGULAMA
+ÖĞRENME
+UZAKTAN EĞİTİM UYGULAMA
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 22 ---
+Çıktı Seçenekleri
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECER
+UYGULAMA
+ÖĞRENME
+Şu ana kadar WriteLine() ifadesi kullanılarak verilerin çıktısı alındığında çıktı C#
+ tarafından sağlanan varsayılan biçim kullanılarak görüntüleniyordu.
+Ancak c#
+ verilerin nasıl gösterileceği konusunda ayrıntılı kontrol olanakları sunan gelişkin
+ bir biçimlendirme mekanizmasına sahiptir.
+Verilerin çıktısı alınırken listenin her bir parçası + işareti ile birbirinden ayrılabilir.
+Console.WriteLine("Örnek Çıktı Satırı");
+Console.WriteLine("Örnek " + "Çıktı " + "Satırı");
+Console.WriteLine $("1"+"+"+"+"+"2"2"2"2"2"2")$;
+ Console.WriteLine $(1+^{\prime\prime}+^{\prime\prime}+5+^{\prime\prime}=^{\prime\prime}+^{\prime\prime}?^{\prime\prime});$
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+DISTANCE EDUCATION
+guzem uzaktanegitim Ims يكن
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 23 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• Verilerin bu şekilde çıktısı alınırken bilgilerin görünümleri üzerinde bir
+ kontrol sağlanmaz. Örneğin
+Console.WriteLine( $"10/3="+10.0/3.0)$
+Satırının Çıktısı
+file:///C:/Users/Murat/Documents/Visual Studio 2008/Projects/Project1/Project1/...
+ 10/3
+ 3,33333333333333
+X
+Şeklinde olacaktır.
+Numerik verilerin ne şekilde biçimleneceğini kontrol etmek için sonraki
+ slaytta gösterildiği gibi biçimlendirme bilgisini ifadenin içine gömmemize
+ izin veren ikinci bir WriteLine() stili kullanılabilir.
+UZAKTAN EĞİTİM UYGULAMA
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzem uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 24 ---
+7.03.2023
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+Console.WriteLine $\{^{\prime\prime}3+3=\{0\}^{\prime\prime},6)$;
+{0} şeklinde belirtilen bölüme virgülden sonraki değişken ve değerler yazdırılır.
+Console.WriteLine("Şubat Ayı {0} ve ya {1} gün olabilir.", 28,29);
+Ekran Çıktısı
+Şubat Ayı 28 ve ya 29 gün olabilir.
+Console.WriteLine("Şubat Ayı {0,10} ve ya {1,5} gün olabilir.",28,29);
+Ekran Çıktısı
+Şubat Ayı 28 ve ya 29 gün olabilir.
+Birinci değeri yazdırmadan önce 10 karakter boşluk bırakılır. İkinci değerden önce 5 karakter boşluk bırakılır.
+ Console.WriteLine( $"10/3=\{0:\#.\#\#\}^{\prime\prime}$, $10.0/3.0)$;
+Ekran Çıktısı
+$10/3=3.33$
+UZAKTAN EĞİTİM UYGULAMA
+DISTANCE EDUCATION
+VE ARAŞTIRMA MERKEZİ
+guzem
+uzaktanegitim Ims لم
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 25 ---
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+• #.## ifadesi ile sonucun son ondalık kısmı iki basamak olarak
+ ayarlanmıştır.
+Console.WriteLine("Sonuç = {0:###,###.##}", 123153456.44545);
+Ekran çıktısı
+Sonuç $=123.153.456,45$
+• Sonucun para birimi olarak gösterilmesi için c biçimlendirme
+ belirleyicisi kullanılabilir.
+Console.WriteLine("Sonuç $=\{0:c\}^{\prime\prime}$, 564686.5465);
+Ekran çıktısı
+Sonuç = 564.486,55 TL
+UZAKTAN EĞİTİM UYGULAMA
+7.03.2023
+VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims يكن
+DISTANCE EDUCATION
+APPLICATION & RESEARCH CENTER
+
+--- PAGE 26 ---
+Örnek6
+
+The following table:
+"using System;
+"
+"class Ornek6
+ {
+"
+
+"static void Main()
+"
+"{
+"
+"decimal dcFiyat $=20$;
+ decimal dcIndirimOrani $=0.17m;$
+ decimal dcYeniFiyat $=0.0m;$
+"
+"dcYeni Fiyat =dcFiyat (dcFiyat
+ dcIndirimorani);
+"
+"Console.WriteLine(""İndirimli Fiyatı $=\{0:c\}""$, dcYeni Fiyat);
+ Console.ReadLine();
+"
+"}
+"
+
+Ekran Çıktısı:
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+file:///C:/Users/Murat/Documents/Visual Studio 2008/Projects/Project1/Project1/bin/Debug/Projec
+ İndirimli Fiyatı 16,60 TL
+X
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim
+Ims
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 27 ---
+Kaçış Karakterleri:
+
+The following table:
+"\b
+","Geri Al
+"
+"\f
+","Form Besleme
+"
+"\n
+","Yeni Satır
+"
+"\r
+","Paragra Sonu
+"
+"\t
+","Yatay Sekme
+"
+"\v
+","Düşey Sekme
+"
+"\ 
+","null
+"
+"V'
+","Tek Tırnak
+"
+"\""
+","Çift Tırnak
+"
+"11
+","Ters Bölü
+"
+
+EGITIM
+ETKİLEŞİM
+E-DERS
+E-SINAV
+BECERİ
+UYGULAMA
+ÖĞRENME
+7.03.2023
+UZAKTAN EĞİTİM UYGULAMA
+ VE ARAŞTIRMA MERKEZİ
+guzen uzaktanegitim Ims
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+
+--- PAGE 28 ---
+7.03.2023
+Örnek 7
+
+The following table:
+"using System;
+"
+"class Ornek7
+"
+"{
+"
+"static void Main()
+"
+" 
+"
+"Console.WriteLine(""Birinci Satır\nikinci Satır\nüçüncü Satır"");
+"
+"Console.WriteLine(""Bir\tİki\tÜç"");
+ Console.WriteLine(""Beş\tAltı\tYedi"");
+ Console.WriteLine("" \"" Tırnak İçinde \"""");
+ Console.ReadLine();
+"
+"1
+"
+"}
+"
+
+Ekran Çıktısı:
+file:///C:/Users/Murat/Documents/Visual Studio 2008/Projects/Project1/Project1/bin/Debug/Projec
+Birinci Satır
+İkinci Satır
+Üçüncü Satır
+Bir
+İki
+Üç
+Bes
+Altı
+Yedi
+"Tırnak İçinde "
+X
+EGITIM
+ETIKİLEŞİM
+E-DERS
+E-SINAV
+BECER
+UYGULAMA
+ÖĞRENME
+UZAI...
+VE ARAŞTIRMA MERKEZİ
+guzen
+uzaktanegitim
+Ims
+DISTANCE EDUCATION
+ APPLICATION & RESEARCH CENTER
+"""
+
+# Extract text by removing tags
+cleaned_text_3 = re.sub(r'\', '', pdf_content_3)
+
+# Write to a file
+file_path_3 = "Hafta_3_Converted.txt"
+with open(file_path_3, "w", encoding="utf-8") as f:
+    f.write(cleaned_text_3.strip())

@@ -416,3 +416,26 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# ==========================================
+# GAZI STUDY AI CUSTOM SECRETS & BUILD FILES
+# ==========================================
+
+# 1. .NET Backend Secrets
+# Ignore appsettings if you put your real SQL Server password in them!
+appsettings.Development.json
+# appsettings.json # (Uncomment this if your main appsettings has real passwords)
+
+# 2. Python FastAPI & AI Microservice
+.env
+venv/
+.venv/
+vector_db/
+chroma/
+chromadb/
+
+# 3. Angular Frontend
+src/environments/environment.ts
+src/environments/environment.development.ts
+.angular/
+dist/
