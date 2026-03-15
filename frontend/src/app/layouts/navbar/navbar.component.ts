@@ -4,26 +4,37 @@ import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/t
 import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
 import { LayoutService } from '../../core/services/layout.service';
 import { UserService } from '../../core/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
 import { UserProfile } from '../../core/models/user.model';
 import { environment } from '../../../environments/environment';
-import { RouterLink } from "@angular/router";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, ThemeSwitcherComponent, LanguageSwitcherComponent, RouterLink],
+  imports: [
+    CommonModule,
+    ThemeSwitcherComponent,
+    LanguageSwitcherComponent,
+    RouterLink,
+  ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent implements OnInit {
   layoutService = inject(LayoutService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
 
   user: UserProfile | null = null;
   displayImageUrl: string | null = null;
   initialsAvatarUrl: string | null = null;
 
   isUserMenuOpen = false;
+
+  get homeLink(): string {
+    return this.authService.isAdmin() ? '/admin/dashboard' : '/home';
+  }
 
   ngOnInit(): void {
     // Reactively update the user profile

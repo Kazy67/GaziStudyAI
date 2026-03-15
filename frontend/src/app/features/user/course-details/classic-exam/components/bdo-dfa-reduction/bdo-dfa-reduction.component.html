@@ -1,0 +1,218 @@
+<div class="space-y-6">
+  <!-- Question Header -->
+  <div
+    class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500"
+  >
+    <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100">
+      {{ question.questionText }}
+    </h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+      DFA İndirgeme (Minimizasyon)
+    </p>
+  </div>
+
+  <!-- Original DFA Table Display -->
+  <div
+    class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 overflow-x-auto"
+  >
+    <h3 class="font-semibold mb-3 text-gray-700 dark:text-gray-200">
+      İndirgenecek DFA Tablosu:
+    </h3>
+
+    <table
+      class="min-w-full text-sm text-left text-gray-600 dark:text-gray-300"
+    >
+      <thead
+        class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <tr>
+          <th scope="col" class="px-6 py-3 rounded-tl-lg">Durum</th>
+          <th scope="col" class="px-6 py-3">0</th>
+          <th scope="col" class="px-6 py-3">1</th>
+          <th scope="col" class="px-6 py-3 rounded-tr-lg">Kabul mü?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Assuming question.inputData.originalTable is array of {state, input0, input1, isAccept} -->
+        <tr
+          *ngFor="let row of question.inputData?.originalTable || []"
+          class="bg-white border-b dark:bg-gray-900 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800"
+        >
+          <td class="px-6 py-4 font-bold">{{ row.state }}</td>
+          <td class="px-6 py-4">{{ row.input0 }}</td>
+          <td class="px-6 py-4">{{ row.input1 }}</td>
+          <td class="px-6 py-4">
+            <span
+              *ngIf="row.isAccept"
+              class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
+              >EVET</span
+            >
+            <span
+              *ngIf="!row.isAccept"
+              class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+              >HAYIR</span
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div
+      *ngIf="
+        !question.inputData?.originalTable ||
+        question.inputData.originalTable.length === 0
+      "
+      class="text-center p-4 text-red-500"
+    >
+      Tablo verisi yüklenemedi. (inputData.originalTable eksik)
+    </div>
+  </div>
+
+  <!-- Step 1: Define Equivalence Groups -->
+  <div
+    class="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+  >
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-semibold text-gray-700 dark:text-gray-200">
+        Eşdeğerlik Kümelerini (Gruplarını) Oluştur
+      </h3>
+      <button
+        (click)="addGroup()"
+        [disabled]="isSubmitted"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm shadow transition-colors disabled:opacity-50 flex items-center gap-2"
+      >
+        <span class="text-lg">+</span> Yeni Grup Ekle
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div
+        *ngFor="let inp of groupInputs(); let i = index; trackBy: trackByFn"
+        class="flex items-center gap-3 animate-fade-in-up"
+      >
+        <span class="font-bold text-gray-500 dark:text-gray-400 w-6"
+          >{{ i + 1 }}.</span
+        >
+
+        <div class="flex-1 relative">
+          <input
+            type="text"
+            [(ngModel)]="groupInputs()[i]"
+            [disabled]="isSubmitted"
+            placeholder="Örn: q0, q1, q2"
+            class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+          />
+          <div
+            class="absolute right-3 top-3 text-xs text-gray-400 pointer-events-none"
+          >
+            Virgülle ayırın
+          </div>
+        </div>
+
+        <button
+          (click)="removeGroup(i)"
+          [disabled]="isSubmitted"
+          class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors disabled:opacity-50"
+          title="Grubu Sil"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <p
+        *ngIf="groupInputs().length === 0"
+        class="text-center text-gray-500 dark:text-gray-400 py-4 italic bg-gray-50 dark:bg-gray-900/50 rounded border border-dashed border-gray-300 dark:border-gray-700"
+      >
+        Henüz hiç grup oluşturmadınız. "+ Yeni Grup Ekle" butonunu kullanın.
+      </p>
+    </div>
+  </div>
+
+  <!-- Feedback / Results -->
+  <div
+    *ngIf="isSubmitted"
+    class="mt-6 p-6 rounded-xl border transition-colors animate-fade-in-up"
+    [ngClass]="{
+      'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800':
+        !loading && finalScore() >= 80,
+      'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800':
+        !loading && finalScore() < 80,
+      'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800':
+        loading,
+    }"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <h3
+        class="text-2xl font-bold flex items-center gap-2"
+        [ngClass]="{
+          'text-green-700 dark:text-green-300': !loading && finalScore() >= 80,
+          'text-red-700 dark:text-red-300': !loading && finalScore() < 80,
+          'text-indigo-700 dark:text-indigo-300': loading,
+        }"
+      >
+        <ng-container *ngIf="!loading">
+          Puanınız: {{ finalScore() }} / 100
+        </ng-container>
+        <ng-container *ngIf="loading">
+          <svg
+            class="animate-spin h-6 w-6 text-indigo-600 dark:text-indigo-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span>Yapay Zeka Değerlendiriyor...</span>
+        </ng-container>
+      </h3>
+    </div>
+
+    <div
+      *ngIf="!loading && feedback().length > 0"
+      class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">
+        Yapay Zeka Dönütü:
+      </h4>
+      <ul
+        class="list-disc pl-5 space-y-1 text-sm text-gray-600 dark:text-gray-300"
+      >
+        <li
+          *ngFor="let err of feedback()"
+          [ngClass]="
+            finalScore() === 100
+              ? 'text-green-600 dark:text-green-300'
+              : 'text-red-600 dark:text-red-300'
+          "
+        >
+          {{ err }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

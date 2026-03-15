@@ -109,7 +109,7 @@
 
         <div
           *ngIf="availableWeeks.length > 0"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-1 custom-scrollbar"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-1"
         >
           <div
             *ngFor="let week of availableWeeks"
@@ -353,6 +353,85 @@
               (scoreCalculated)="onScoreCalculated($event, i)"
             >
             </app-memory-allocation>
+          </div>
+
+          <!-- VP Code Completion -->
+          <div
+            *ngSwitchCase="q.visualType === 'vp_code_completion' ? true : false"
+          >
+            <app-vp-code-completion
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-vp-code-completion>
+          </div>
+
+          <!-- VP SQL Query -->
+          <div *ngSwitchCase="q.visualType === 'vp_sql_query' ? true : false">
+            <app-vp-sql-query
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-vp-sql-query>
+          </div>
+
+          <!-- BDO Regex -->
+          <div *ngSwitchCase="q.visualType === 'bdo_regex'">
+            <app-bdo-regex
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-bdo-regex>
+          </div>
+
+          <!-- BDO Automata Builder (DFA & NFA) -->
+          <div
+            *ngSwitchCase="
+              q.visualType === 'bdo_dfa_builder' ||
+              q.visualType === 'bdo_nfa_builder'
+            "
+          >
+            <app-bdo-automata-builder
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-bdo-automata-builder>
+          </div>
+
+          <!-- BDO PDA Builder -->
+          <div *ngSwitchCase="q.visualType === 'bdo_pda_builder'">
+            <app-bdo-pda-builder
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-bdo-pda-builder>
+          </div>
+
+          <!-- BDO DFA Reduction -->
+          <div *ngSwitchCase="q.visualType === 'bdo_dfa_reduction'">
+            <app-bdo-dfa-reduction
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-bdo-dfa-reduction>
+          </div>
+
+          <!-- BDO Grammar Derivation -->
+          <div *ngSwitchCase="q.visualType === 'bdo_grammar_derivation'">
+            <app-bdo-grammar-derivation
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-bdo-grammar-derivation>
+          </div>
+
+          <!-- BDO Turing Machine Trace -->
+          <div *ngSwitchCase="q.visualType === 'bdo_tm_trace'">
+            <app-bdo-tm-trace
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+            ></app-bdo-tm-trace>
           </div>
 
           <!-- Theory / Generic -->

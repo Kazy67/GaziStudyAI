@@ -10,6 +10,9 @@ namespace GaziStudyAI.Domain.Entities.Exams
         public Guid UserId { get; set; }
         public Guid CourseId { get; set; }
 
+        public Guid SessionId { get; set; } // Links multiple attempts of the same AI-generated exam
+        public int AttemptNumber { get; set; } = 1;
+
         public string? Topic { get; set; } = string.Empty; // "Hafta 1-5" or "Cpu Scheduling"
 
         public int QuestionCount { get; set; }

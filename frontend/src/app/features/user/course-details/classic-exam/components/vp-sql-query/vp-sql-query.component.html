@@ -1,0 +1,95 @@
+<div
+  class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+>
+  <!-- Header -->
+  <div class="mb-4">
+    <span
+      class="inline-block px-2 py-1 text-xs font-bold text-indigo-700 bg-indigo-100 rounded dark:bg-indigo-900 dark:text-indigo-200 uppercase"
+    >
+      SQL Query
+    </span>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mt-2">
+      {{ question.questionText }}
+    </h3>
+  </div>
+
+  <!-- Scenario Box -->
+  <div
+    class="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-l-4 border-indigo-500"
+  >
+    <h4
+      class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1"
+    >
+      Scenario
+    </h4>
+    <p class="text-gray-800 dark:text-gray-200 font-medium">
+      {{ question.inputData.scenario }}
+    </p>
+  </div>
+
+  <!-- SQL Terminal Input -->
+  <div class="relative">
+    <div
+      class="absolute top-0 left-0 w-full bg-gray-900 text-gray-400 px-4 py-1 text-xs font-mono rounded-t-lg border-b border-gray-700 flex justify-between items-center"
+    >
+      <span>sql-terminal</span>
+      <div class="flex space-x-1.5">
+        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+      </div>
+    </div>
+    <textarea
+      [(ngModel)]="userQuery"
+      [disabled]="isSubmitted"
+      rows="4"
+      spellcheck="false"
+      class="w-full pt-8 p-4 bg-black text-green-400 font-mono text-sm md:text-base rounded-lg border-2 focus:ring-0 focus:outline-none transition-colors resize-none shadow-inner"
+      [ngClass]="{
+        'border-gray-700 focus:border-indigo-500': !isSubmitted,
+        'border-green-500': isSubmitted && score === 100,
+        'border-red-500': isSubmitted && score === 0,
+      }"
+      placeholder="SELECT * FROM ..."
+    ></textarea>
+  </div>
+
+  <!-- Results Section -->
+  <div *ngIf="isSubmitted" class="mt-6 animate-fade-in-up">
+    <!-- Correct/Incorrect Alert -->
+    <div
+      class="p-4 rounded-lg flex items-start"
+      [ngClass]="{
+        'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300':
+          score === 100,
+        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300':
+          score === 0,
+      }"
+    >
+      <i
+        class="pi mr-3 mt-1 text-xl"
+        [ngClass]="{
+          'pi-check-circle': score === 100,
+          'pi-times-circle': score === 0,
+        }"
+      ></i>
+      <div>
+        <h4 class="font-bold text-lg mb-1">
+          {{
+            score === 100
+              ? ("EXAM.CORRECT_ANSWER" | translate)
+              : ("EXAM.WRONG_ANSWER" | translate)
+          }}
+        </h4>
+        <div *ngIf="score === 0" class="mt-2">
+          <p class="text-sm font-semibold mb-1">
+            {{ "EXAM.CORRECT_WAS" | translate }}:
+          </p>
+          <div class="bg-black/80 text-green-400 p-2 rounded font-mono text-sm">
+            {{ question.solutionData.correctQuery }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

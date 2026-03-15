@@ -1,0 +1,180 @@
+<div class="p-6 space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
+        Admin Dashboard
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400">
+        Overview of platform performance and statistics
+      </p>
+    </div>
+    <p-button
+      icon="pi pi-refresh"
+      (click)="loadDashboardData()"
+      label="Refresh"
+      [loading]="loading"
+      styleClass="p-button-outlined"
+    ></p-button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading && !dashboardData" class="flex justify-center p-12">
+    <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+  </div>
+
+  <!-- Error State -->
+  <div
+    *ngIf="error"
+    class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-4 rounded-lg"
+  >
+    {{ error }}
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="dashboardData" class="space-y-6 animate-fade-in">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <p-card styleClass="h-full shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+            <i
+              class="pi pi-users text-2xl text-blue-600 dark:text-blue-400"
+            ></i>
+          </div>
+          <div>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">
+              Total Students
+            </p>
+            <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
+              {{ dashboardData.totalStudents }}
+            </h3>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="h-full shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+            <i
+              class="pi pi-file text-2xl text-indigo-600 dark:text-indigo-400"
+            ></i>
+          </div>
+          <div>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">
+              Exams Generated
+            </p>
+            <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
+              {{ dashboardData.totalExamsGenerated }}
+            </h3>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="h-full shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+            <i
+              class="pi pi-chart-line text-2xl text-emerald-600 dark:text-emerald-400"
+            ></i>
+          </div>
+          <div>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">
+              Avg. Platform Score
+            </p>
+            <h3 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
+              {{ dashboardData.averagePlatformScore | number: "1.1-1" }}%
+            </h3>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Course Statistics -->
+      <p-card header="Course Performance" styleClass="h-full shadow-sm">
+        <div class="space-y-4">
+          <div
+            *ngFor="let course of dashboardData.courseStatistics"
+            class="space-y-2"
+          >
+            <div class="flex justify-between items-end">
+              <span class="font-medium text-slate-700 dark:text-slate-200">{{
+                course.courseName
+              }}</span>
+              <span class="text-sm text-slate-500 dark:text-slate-400"
+                >{{ course.examsTaken }} exams</span
+              >
+            </div>
+            <div class="relative pt-1">
+              <div class="flex mb-2 items-center justify-between">
+                <div>
+                  <p-tag
+                    [severity]="getScoreColor(course.averageScore)"
+                    [value]="(course.averageScore | number: '1.0-0') + '%'"
+                  ></p-tag>
+                </div>
+              </div>
+              <p-progressBar
+                [value]="course.averageScore"
+                [showValue]="false"
+                [style]="{ height: '8px' }"
+              ></p-progressBar>
+            </div>
+          </div>
+          <div
+            *ngIf="dashboardData.courseStatistics.length === 0"
+            class="text-center text-gray-500 py-4"
+          >
+            No course data available yet.
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Top Students Leaderboard -->
+      <p-card header="Top Performing Students" styleClass="h-full shadow-sm">
+        <p-table
+          [value]="dashboardData.topStudents"
+          [rowHover]="true"
+          styleClass="p-datatable-sm"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 50%">Name</th>
+              <th style="width: 25%">Exams</th>
+              <th style="width: 25%">Avg Score</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-student>
+            <tr>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs"
+                  >
+                    {{ student.fullName.charAt(0) }}
+                  </div>
+                  {{ student.fullName }}
+                </div>
+              </td>
+              <td class="text-center">{{ student.examsTaken }}</td>
+              <td>
+                <p-tag
+                  [severity]="getScoreColor(student.averageScore)"
+                  [value]="(student.averageScore | number: '1.1-1') + '%'"
+                ></p-tag>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="3" class="text-center p-4">
+                No top students data available.
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+</div>

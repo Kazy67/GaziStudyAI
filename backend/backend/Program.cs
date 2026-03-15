@@ -1,5 +1,6 @@
 using GaziStudyAI.Application.ServiceRegistration;
 using GaziStudyAI.Infrastructure.Context;
+using GaziStudyAI.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,7 +36,9 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
 
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero,
+
+        RoleClaimType = "Role"
     };
 });
 
@@ -80,6 +83,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
+
+await DbInitializer.SeedAdminUserAsync(app.Services, builder.Configuration);
+
 
 // --- PIPELINE CONFIGURATION ---
 

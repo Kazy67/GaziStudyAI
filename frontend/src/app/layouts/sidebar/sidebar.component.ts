@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Use CommonModule for ngClass, ngIf, etc. if needed
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LayoutService } from '../../core/services/layout.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,8 +13,14 @@ import { LayoutService } from '../../core/services/layout.service';
 })
 export class SidebarComponent {
   layoutService = inject(LayoutService);
+  authService = inject(AuthService);
+  router = inject(Router);
 
-  navItems = [
+  get homeLink(): string {
+    return this.authService.isAdmin() ? '/admin/dashboard' : '/home';
+  }
+
+  studentNavItems = [
     { label: 'Home', icon: 'pi pi-th-large', route: '/home' },
     { label: 'My Courses', icon: 'pi pi-book', route: '/my-courses' },
     {
@@ -27,8 +34,33 @@ export class SidebarComponent {
     { label: 'Settings', icon: 'pi pi-cog', route: '/settings' },
   ];
 
+  adminNavItems = [
+    {
+      label: 'Dashboard',
+      icon: 'pi pi-objects-column',
+      route: '/admin/dashboard',
+    },
+    { label: 'Manage Courses', icon: 'pi pi-list', route: '/admin/courses' },
+    {
+      label: 'Student Directory',
+      icon: 'pi pi-users',
+      route: '/admin/students',
+    },
+    {
+      label: 'AI Settings / Logs',
+      icon: 'pi pi-server',
+      route: '/admin/ai-settings',
+    },
+    { label: 'Settings', icon: 'pi pi-cog', route: '/settings' },
+  ];
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+
   logout() {
-    console.log('Logging out...');
-    // Implement logout logic here
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user_role');
+    this.router.navigate(['/auth/login']);
   }
 }

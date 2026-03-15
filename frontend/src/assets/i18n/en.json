@@ -57,6 +57,8 @@
     "LOADING": "Loading course details..."
   },
   "EXAM": {
+    "SUBMIT_SUCCESS": "Exam submitted successfully!",
+    "SUBMIT_FAILED": "Failed to submit exam.",
     "CONFIGURE_TITLE": "Configure Your Exam",
     "CONFIGURE_SUBTITLE": "Customize your practice session to target specific topics.",
     "TOPIC_RANGE": "Topic Range",
@@ -72,6 +74,7 @@
     },
     "QUESTION_COUNT": "Question Count",
     "QUESTION_COUNT_LABEL": "Question Count:",
+    "TOTAL_EXAMS_TAKEN": "Total Exams Taken",
     "TIME_MANAGEMENT": "Time Management",
     "TIMER_ON": "Timer On",
     "TIMER_OFF": "Timer Off",
@@ -162,7 +165,11 @@
     "SCORE_LABEL": "Score",
     "QUESTION": "Question",
     "GENERATE_FAILED": "Failed to generate exam",
-    "AI_SERVICE_ERROR": "Error communicating with AI service."
+    "AI_SERVICE_ERROR": "Error communicating with AI service.",
+    "CORRECT_ANSWER": "Correct Answer",
+    "WRONG_ANSWER": "Wrong Answer",
+    "CORRECT_WAS": "Correct answer was",
+    "ATTEMPT": "Attempt"
   },
   "VALIDATION_FAILED": "Validation failed. Please check your input.",
   "EMAIL_ALREADY_EXISTS": "Email already exists.",

@@ -328,6 +328,9 @@ namespace GaziStudyAI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AttemptNumber")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uniqueidentifier");
 
@@ -357,6 +360,9 @@ namespace GaziStudyAI.Infrastructure.Migrations
 
                     b.Property<double?>("Score")
                         .HasColumnType("float");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Topic")
                         .HasMaxLength(200)
@@ -503,8 +509,8 @@ namespace GaziStudyAI.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6ec11cc2-22d2-4db0-8d4c-b5d2b42f0f78"),
-                            CreatedDate = new DateTime(2026, 2, 25, 13, 49, 48, 935, DateTimeKind.Utc).AddTicks(8952),
+                            Id = new Guid("3244a79f-792d-49db-9e98-bc02704d63f9"),
+                            CreatedDate = new DateTime(2026, 3, 2, 10, 46, 41, 181, DateTimeKind.Utc).AddTicks(3170),
                             EnableSsl = true,
                             IsActive = true,
                             Port = 587,

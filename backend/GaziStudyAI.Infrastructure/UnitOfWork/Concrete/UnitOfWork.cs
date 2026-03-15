@@ -1,4 +1,5 @@
 ﻿using GaziStudyAI.Domain.Entities.Courses;
+using GaziStudyAI.Domain.Entities.Exams;
 using GaziStudyAI.Domain.Entities.System;
 using GaziStudyAI.Infrastructure.Context;
 using GaziStudyAI.Infrastructure.Repositories.Abstract;
@@ -18,6 +19,8 @@ namespace GaziStudyAI.Infrastructure.UnitOfWork.Concrete
 
         public IGenericRepository<Course> CourseRepository { get; }
 
+        public IGenericRepository<Exam> ExamRepository { get; }
+
         public UnitOfWork(GaziStudyAIDbContext context)
         {
             _context = context;
@@ -27,6 +30,7 @@ namespace GaziStudyAI.Infrastructure.UnitOfWork.Concrete
             // 👇 Initialize generic repository
             EmailConfigurationRepository = new GenericRepository<EmailConfiguration>(_context);
             CourseRepository = new GenericRepository<Course>(_context);
+            ExamRepository = new GenericRepository<Exam>(_context);
         }
 
         public async Task<int> SaveChangesAsync()

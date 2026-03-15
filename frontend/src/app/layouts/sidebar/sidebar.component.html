@@ -7,7 +7,7 @@
   <div
     class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800"
   >
-    <div class="flex items-center gap-3 cursor-pointer" routerLink="/home">
+    <div class="flex items-center gap-3 cursor-pointer" [routerLink]="homeLink">
       <i class="pi pi-graduation-cap text-2xl text-blue-500"></i>
       <span
         class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent"
@@ -18,20 +18,41 @@
 
   <!-- Navigation -->
   <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-    <a
-      *ngFor="let item of navItems"
-      [routerLink]="item.route"
-      routerLinkActive="bg-blue-50 dark:bg-blue-600/10 text-blue-600 dark:text-blue-400 border-r-2 border-blue-500"
-      class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group relative cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
-    >
-      <i
-        [class]="
-          item.icon +
-          ' text-lg transition-colors group-hover:text-blue-500 dark:group-hover:text-blue-400'
-        "
-      ></i>
-      <span class="font-medium text-sm">{{ item.label }}</span>
-    </a>
+    <!-- Student Navigation -->
+    <ng-container *ngIf="!isAdmin">
+      <a
+        *ngFor="let item of studentNavItems"
+        [routerLink]="item.route"
+        routerLinkActive="bg-blue-50 dark:bg-blue-600/10 text-blue-600 dark:text-blue-400 border-r-2 border-blue-500"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group relative cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+      >
+        <i
+          [class]="
+            item.icon +
+            ' text-lg transition-colors group-hover:text-blue-500 dark:group-hover:text-blue-400'
+          "
+        ></i>
+        <span class="font-medium text-sm">{{ item.label }}</span>
+      </a>
+    </ng-container>
+
+    <!-- Admin Navigation -->
+    <ng-container *ngIf="isAdmin">
+      <a
+        *ngFor="let item of adminNavItems"
+        [routerLink]="item.route"
+        routerLinkActive="bg-blue-50 dark:bg-blue-600/10 text-blue-600 dark:text-blue-400 border-r-2 border-blue-500"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group relative cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+      >
+        <i
+          [class]="
+            item.icon +
+            ' text-lg transition-colors group-hover:text-blue-500 dark:group-hover:text-blue-400'
+          "
+        ></i>
+        <span class="font-medium text-sm">{{ item.label }}</span>
+      </a>
+    </ng-container>
   </nav>
 
   <!-- Bottom Actions -->

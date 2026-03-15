@@ -33,5 +33,31 @@ namespace GaziStudyAI.WebAPI.Controllers
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
+
+        [HttpPost("evaluate-classic")]
+        public async Task<IActionResult> EvaluateClassicQuestion([FromBody] EvaluateClassicQuestionDto request)
+        {
+            var result = await _aiExamService.EvaluateClassicQuestionAsync(request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPost("submit-result")]
+        public async Task<IActionResult> SubmitExamResult([FromBody] SubmitExamDto request)
+        {
+            Guid userId = GetUserId(); // Securely get the user from the token
+            var result = await _aiExamService.SaveExamResultAsync(userId, request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetDashboard()
+        {
+            Guid userId = GetUserId();
+            var result = await _aiExamService.GetStudentDashboardAsync(userId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
     }
 }

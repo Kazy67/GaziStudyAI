@@ -1,14 +1,20 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ExamResult, Question } from '../../../../core/models/exam.model';
+import {
+  ExamResult,
+  Question,
+  SubmitExamDto,
+} from '../../../../core/models/exam.model';
 import { GenerateTestRequest } from '../../../../core/models/test.model';
 import { ButtonModule } from 'primeng/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../../../core/services/course.service';
-import { switchMap, map } from 'rxjs';
+import { switchMap, map, finalize } from 'rxjs';
 import { ExamService } from '../../../../core/services/exam.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 export interface ExamConfig {
   startWeek: number;
@@ -22,7 +28,14 @@ export interface ExamConfig {
 @Component({
   selector: 'app-multiple-choice',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    TranslateModule,
+    ToastModule,
+  ],
+  providers: [MessageService],
   templateUrl: './multiple-choice.component.html',
   styleUrls: ['./multiple-choice.component.scss'],
 })
@@ -31,11 +44,13 @@ export class MultipleChoiceComponent implements OnInit {
   private courseService = inject(CourseService);
   private examService = inject(ExamService);
   public translate = inject(TranslateService);
+  private messageService = inject(MessageService);
 
   // Phase 1: Configuration
   weeks: { id: number; topicTr: string; topicEn: string }[] = [];
   difficulties = ['Easy', 'Medium', 'Hard'];
   courseName = '';
+  courseId = '';
 
   config: ExamConfig = {
     startWeek: 1,
@@ -55,9 +70,12 @@ export class MultipleChoiceComponent implements OnInit {
   startTime: number = 0;
   timeSpent: number = 0;
   examDate: Date = new Date();
+  sessionId: string = '';
+  attemptNumber: number = 1;
 
   // Phase 3: Grading
   loading = false;
+  submitLoading = false;
   result: ExamResult | null = null;
 
   ngOnInit() {
@@ -71,6 +89,7 @@ export class MultipleChoiceComponent implements OnInit {
         map((params) => params.get('id')),
         switchMap((id) => {
           if (!id) throw new Error('Course ID is required');
+          this.courseId = id;
           return this.courseService.getCourseById(id);
         }),
       )
@@ -141,13 +160,24 @@ export class MultipleChoiceComponent implements OnInit {
 
   generateExam() {
     this.loading = true;
+    this.sessionId = crypto.randomUUID();
+    this.attemptNumber = 1;
 
-    // Define course prefix based on course name or other logic
-    const prefix =
-      this.courseName.toLowerCase().includes('operating') ||
-      this.courseName.toLowerCase().includes('işletim')
-        ? 'os'
-        : 'vp';
+    // Define course prefix based on course name
+    const lowerName = this.courseName.toLowerCase();
+    let prefix = 'vp'; // Default to Visual Programming
+
+    if (lowerName.includes('operating') || lowerName.includes('işletim')) {
+      prefix = 'os';
+    } else if (
+      lowerName.includes('bicimsel') ||
+      lowerName.includes('automata') ||
+      lowerName.includes('formal')
+    ) {
+      prefix = 'bdo';
+    } else if (lowerName.includes('gorsel') || lowerName.includes('visual')) {
+      prefix = 'vp';
+    }
 
     // Construct request
     const request: GenerateTestRequest = {
@@ -229,36 +259,90 @@ export class MultipleChoiceComponent implements OnInit {
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.currentPhase = 'grading';
     this.loading = true;
+    this.submitLoading = true;
     this.examDate = new Date();
     this.timeSpent = Math.floor((Date.now() - this.startTime) / 1000);
 
-    // Simulate grading
-    setTimeout(() => {
-      let correct = 0;
-      const feedbackTopics = new Set<string>();
+    // Calculate score locally for immediate feedback
+    let correct = 0;
+    const feedbackTopics = new Set<string>();
 
-      this.questions.forEach((q, i) => {
-        if (this.userAnswers[i] === q.correctOptionIndex) {
-          correct++;
-        } else {
-          if (q.topic) feedbackTopics.add(q.topic);
-        }
+    this.questions.forEach((q, i) => {
+      if (this.userAnswers[i] === q.correctOptionIndex) {
+        correct++;
+      } else {
+        if (q.topic) feedbackTopics.add(q.topic);
+      }
+    });
+
+    this.result = {
+      score: Math.round((correct / this.questions.length) * 100),
+      total: this.questions.length,
+      correctAnswers: correct,
+      wrongAnswers: this.questions.length - correct,
+      feedback: Array.from(feedbackTopics),
+    };
+
+    // Prepare DTO for backend
+    const submitDto: SubmitExamDto = {
+      courseId: this.courseId,
+      sessionId: this.sessionId,
+      attemptNumber: this.attemptNumber,
+      topic: this.courseName,
+      questionCount: this.questions.length,
+      score: this.result.score,
+      difficulty: this.config.difficulty,
+      questions: this.questions.map((q, i) => ({
+        text: q.text,
+        type: 0, // MultipleChoice
+        isCorrect: this.userAnswers[i] === q.correctOptionIndex,
+        studentAnswer: q.options[this.userAnswers[i]] || '',
+        inputDataJson: JSON.stringify({ options: q.options }),
+        solutionJson: JSON.stringify({
+          answer: q.options[q.correctOptionIndex],
+        }),
+      })),
+    };
+
+    this.examService
+      .submitExam(submitDto)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.submitLoading = false;
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.isSuccess) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Exam submitted successfully!',
+            });
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: res.message || 'Failed to submit exam.',
+            });
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to submit exam.',
+          });
+        },
       });
-
-      this.result = {
-        score: Math.round((correct / this.questions.length) * 100),
-        total: this.questions.length,
-        correctAnswers: correct,
-        wrongAnswers: this.questions.length - correct,
-        feedback: Array.from(feedbackTopics),
-      };
-      this.loading = false;
-    }, 1500);
   }
 
   retakeExam() {
     this.loading = true;
     this.result = null;
+    this.attemptNumber++;
     this.userAnswers = new Array(this.questions.length).fill(-1);
     this.currentPhase = 'exam';
     this.startTime = Date.now();

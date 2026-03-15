@@ -34,6 +34,7 @@ namespace GaziStudyAI.Application.ServiceRegistration
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IAITestService, AITestService>();
             services.AddScoped<IAIExamService, AIExamService>();
+            services.AddScoped<IAdminService, AdminService>();
         }
     }
 }

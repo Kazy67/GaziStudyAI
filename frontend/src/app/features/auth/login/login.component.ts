@@ -71,8 +71,11 @@ export class LoginComponent {
         this.isLoading = false;
         if (response?.token) {
           localStorage.setItem('access_token', response.token);
+          if (response.role) localStorage.setItem('user_role', response.role);
         } else if (response?.data?.token) {
           localStorage.setItem('access_token', response.data.token);
+          if (response.data.role)
+            localStorage.setItem('user_role', response.data.role);
         }
 
         this.messageService.add({
@@ -80,7 +83,14 @@ export class LoginComponent {
           summary: this.translationService.instant('WELCOME_BACK'),
           detail: this.translationService.instant('LOGIN_SUCCESS'),
         });
-        setTimeout(() => this.router.navigate(['/home']), 1000);
+
+        setTimeout(() => {
+          if (this.authService.isAdmin()) {
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        }, 1000);
       },
       error: (err) => {
         this.isLoading = false;

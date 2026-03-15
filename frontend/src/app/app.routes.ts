@@ -103,6 +103,26 @@ export const routes: Routes = [
             (m) => m.MyCoursesComponent,
           ),
       },
+      // Admin Routes
+      {
+        path: 'admin/dashboard',
+        loadComponent: () =>
+          import('./features/admin/dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent,
+          ),
+      },
+      {
+        path: 'admin/courses',
+        redirectTo: 'admin/dashboard',
+      },
+      {
+        path: 'admin/students',
+        redirectTo: 'admin/dashboard',
+      },
+      {
+        path: 'admin/ai-settings',
+        redirectTo: 'admin/dashboard',
+      },
     ],
   },
   { path: '**', redirectTo: 'register' },

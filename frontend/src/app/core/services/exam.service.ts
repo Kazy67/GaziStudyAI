@@ -1,7 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GenerateTestRequest, GeneratedQuestion } from '../models/test.model';
-import { ClassicRequest, ClassicQuestion } from '../models/exam.model';
+import {
+  ClassicRequest,
+  ClassicQuestion,
+  SubmitExamDto,
+  StudentDashboardDto,
+  EvaluateClassicRequest,
+  EvaluationResult,
+} from '../models/exam.model';
 import { ServiceResult } from '../models/service-result.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -28,6 +35,28 @@ export class ExamService {
     return this.http.post<ServiceResult<ClassicQuestion[]>>(
       `${this.apiUrl}/generate-classic`,
       request,
+    );
+  }
+
+  evaluateClassicQuestion(
+    request: EvaluateClassicRequest,
+  ): Observable<ServiceResult<EvaluationResult>> {
+    return this.http.post<ServiceResult<EvaluationResult>>(
+      `${this.apiUrl}/evaluate-classic`,
+      request,
+    );
+  }
+
+  submitExam(data: SubmitExamDto): Observable<ServiceResult<boolean>> {
+    return this.http.post<ServiceResult<boolean>>(
+      `${this.apiUrl}/submit-result`,
+      data,
+    );
+  }
+
+  getDashboard(): Observable<ServiceResult<StudentDashboardDto>> {
+    return this.http.get<ServiceResult<StudentDashboardDto>>(
+      `${this.apiUrl}/dashboard`,
     );
   }
 }

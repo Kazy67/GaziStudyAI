@@ -1,0 +1,123 @@
+<div class="space-y-4">
+  <!-- Valid Alphabet Display -->
+  <div
+    class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+  >
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2 font-semibold">
+      Geçerli Alfabe:
+    </p>
+    <div class="flex gap-2">
+      <span
+        *ngFor="let letter of question.inputData.alphabet"
+        class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded font-mono text-gray-700 dark:text-gray-200 shadow-sm border border-gray-300 dark:border-gray-600"
+      >
+        {{ letter }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Question Text -->
+  <div
+    class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500"
+  >
+    <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100">
+      {{ question.questionText }}
+    </h3>
+  </div>
+
+  <!-- Answer Input -->
+  <div>
+    <label
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+      >Cevabınız (Düzenli İfade):</label
+    >
+    <input
+      type="text"
+      [ngModel]="studentRegex()"
+      (ngModelChange)="studentRegex.set($event)"
+      [disabled]="isSubmitted"
+      class="w-full p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-lg transition-colors placeholder-gray-400 dark:placeholder-gray-500"
+      placeholder="(a+b)*ab"
+    />
+  </div>
+
+  <!-- Feedback / Results -->
+  <div
+    *ngIf="isSubmitted"
+    class="mt-4 p-4 rounded-lg border transition-colors animate-fade-in-up"
+    [ngClass]="{
+      'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800':
+        !isLoading() && finalScore() >= 100,
+      'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800':
+        !isLoading() && finalScore() < 100,
+      'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800':
+        isLoading(),
+    }"
+  >
+    <div class="flex items-center gap-3 mb-2" *ngIf="!isLoading()">
+      <div
+        [ngClass]="
+          finalScore() >= 100
+            ? 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-200'
+            : 'bg-red-100 text-red-600 dark:bg-red-800 dark:text-red-200'
+        "
+        class="p-2 rounded-full"
+      >
+        <i
+          class="pi"
+          [ngClass]="finalScore() >= 100 ? 'pi-check' : 'pi-times'"
+        ></i>
+      </div>
+      <h4
+        class="font-bold text-lg"
+        [ngClass]="
+          finalScore() >= 100
+            ? 'text-green-700 dark:text-green-300'
+            : 'text-red-700 dark:text-red-300'
+        "
+      >
+        Puan: {{ finalScore() }} / 100
+      </h4>
+    </div>
+
+    <div
+      *ngIf="isLoading()"
+      class="flex items-center gap-3 mb-2 text-indigo-700 dark:text-indigo-300"
+    >
+      <svg
+        class="animate-spin h-6 w-6 text-indigo-600 dark:text-indigo-400"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <span class="font-bold text-lg">Yapay Zeka Değerlendiriyor...</span>
+    </div>
+
+    <ul class="list-disc pl-10 space-y-1 text-sm" *ngIf="!isLoading()">
+      <li
+        *ngFor="let err of feedback()"
+        [ngClass]="
+          finalScore() === 100
+            ? 'text-green-600 dark:text-green-300'
+            : 'text-red-600 dark:text-red-300'
+        "
+      >
+        {{ err }}
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,214 @@
+<div class="space-y-6">
+  <!-- Question Header -->
+  <div
+    class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500"
+  >
+    <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100">
+      {{ question.questionText }}
+    </h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+      Bağlamdan Bağımsız Gramer (CFG) Soldan Türetme
+    </p>
+  </div>
+
+  <!-- Section 1: Grammar Rules Display -->
+  <div
+    class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+  >
+    <h4
+      class="font-bold text-gray-700 dark:text-gray-200 mb-2 border-b border-gray-300 dark:border-gray-600 pb-1"
+    >
+      Gramer Kuralları
+    </h4>
+    <div class="font-mono text-sm space-y-1">
+      <!-- Assuming inputData.grammarRules is string[] -->
+      <div
+        *ngFor="let rule of question.inputData?.grammarRules || []"
+        class="text-gray-800 dark:text-gray-300 bg-white dark:bg-gray-900 px-2 py-1 rounded inline-block mx-1 border border-gray-300 dark:border-gray-600"
+      >
+        {{ rule }}
+      </div>
+      <p *ngIf="!question.inputData?.grammarRules" class="text-gray-500 italic">
+        Kural bilgisi bulunamadı.
+      </p>
+    </div>
+  </div>
+
+  <!-- Section 2: Derivation Steps -->
+  <div
+    class="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+  >
+    <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">
+      Türetme Adımları (Derivation Steps)
+    </h3>
+
+    <div class="flex flex-col items-center space-y-2">
+      <div
+        *ngFor="
+          let step of studentSteps();
+          let i = index;
+          trackBy: trackByIndex
+        "
+        class="w-full max-w-lg flex flex-col items-center animate-fade-in-up"
+      >
+        <!-- Arrow Icon (display for everyone except first item) -->
+        <div *ngIf="i > 0" class="text-gray-400 dark:text-gray-500 my-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
+
+        <!-- Step Input Row -->
+        <div class="flex w-full gap-2 items-center">
+          <span
+            class="w-8 text-right font-mono text-gray-400 text-sm select-none"
+            >{{ i + 1 }}.</span
+          >
+          <input
+            type="text"
+            [(ngModel)]="studentSteps()[i]"
+            [disabled]="isSubmitted"
+            placeholder="Adım içeriği (Örn: aS)"
+            class="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm text-center"
+          />
+          <!-- Remove Button (Don't allow removing first step if it's Start Symbol) -->
+          <button
+            *ngIf="i > 0"
+            (click)="removeStep(i)"
+            [disabled]="isSubmitted"
+            class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors disabled:opacity-50"
+            title="Adımı Sil"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <div *ngIf="i === 0" class="w-9"></div>
+          <!-- Spacer for alignment of first item -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Step Button -->
+    <div class="mt-6 flex justify-center">
+      <button
+        (click)="addStep()"
+        [disabled]="isSubmitted"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium shadow transition-colors disabled:opacity-50 flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Sonraki Adımı Ekle
+      </button>
+    </div>
+  </div>
+
+  <!-- Feedback / Results -->
+  <div
+    *ngIf="isSubmitted"
+    class="mt-6 p-6 rounded-xl border transition-colors animate-fade-in-up"
+    [ngClass]="{
+      'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800':
+        !loading && finalScore() >= 80,
+      'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800':
+        !loading && finalScore() < 80,
+      'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800':
+        loading,
+    }"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <h3
+        class="text-2xl font-bold flex items-center gap-2"
+        [ngClass]="{
+          'text-green-700 dark:text-green-300': !loading && finalScore() >= 80,
+          'text-red-700 dark:text-red-300': !loading && finalScore() < 80,
+          'text-indigo-700 dark:text-indigo-300': loading,
+        }"
+      >
+        <ng-container *ngIf="!loading">
+          Puanınız: {{ finalScore() }} / 100
+        </ng-container>
+        <ng-container *ngIf="loading">
+          <svg
+            class="animate-spin h-6 w-6 text-indigo-600 dark:text-indigo-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span>Yapay Zeka Değerlendiriyor...</span>
+        </ng-container>
+      </h3>
+    </div>
+
+    <div
+      *ngIf="!loading && feedback().length > 0"
+      class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">
+        Yapay Zeka Dönütü:
+      </h4>
+      <ul
+        class="list-disc pl-5 space-y-1 text-sm text-gray-600 dark:text-gray-300"
+      >
+        <li
+          *ngFor="let err of feedback()"
+          [ngClass]="
+            finalScore() === 100
+              ? 'text-green-600 dark:text-green-300'
+              : 'text-red-600 dark:text-red-300'
+          "
+        >
+          {{ err }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

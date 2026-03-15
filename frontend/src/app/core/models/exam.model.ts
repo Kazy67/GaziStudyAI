@@ -23,6 +23,18 @@ export interface ClassicRequest {
   difficulty: 'Easy' | 'Medium' | 'Hard';
 }
 
+export interface EvaluateClassicRequest {
+  visualType: string;
+  questionText: string;
+  solutionData: any;
+  studentData: any;
+}
+
+export interface EvaluationResult {
+  score: number;
+  feedback: string[];
+}
+
 export interface ExamConfig {
   startWeek: number;
   endWeek: number;
@@ -38,4 +50,42 @@ export interface ExamResult {
   correctAnswers: number;
   wrongAnswers: number;
   feedback: string[];
+}
+
+export interface SubmitQuestionDto {
+  text: string;
+  type: number;
+  studentAnswer?: string;
+  isCorrect: boolean;
+  inputDataJson?: string;
+  solutionJson?: string;
+}
+
+export interface SubmitExamDto {
+  courseId: string;
+  sessionId: string;
+  attemptNumber: number;
+  topic: string;
+  questionCount: number;
+  score: number;
+  difficulty: string;
+  questions: SubmitQuestionDto[];
+}
+
+export interface ExamHistoryDto {
+  examId: string;
+  courseNameEn: string;
+  courseNameTr: string;
+  topic: string;
+  score: number;
+  createdDate: Date;
+  attemptNumber: number;
+  questionCount: number;
+  difficulty: string;
+}
+
+export interface StudentDashboardDto {
+  totalExamsTaken: number;
+  averageScore: number;
+  recentExams: ExamHistoryDto[];
 }

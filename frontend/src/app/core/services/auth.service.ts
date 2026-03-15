@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginDto, RegisterDto, ResetPasswordDto, VerifyEmailDto } from '../models/auth.model';
-
-
+import {
+  LoginDto,
+  RegisterDto,
+  ResetPasswordDto,
+  VerifyEmailDto,
+} from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,5 +40,10 @@ export class AuthService {
 
   resetPassword(data: ResetPasswordDto): Observable<any> {
     return this.http.post(`${this.API_URL}/reset-password`, data);
+  }
+
+  isAdmin(): boolean {
+    const role = localStorage.getItem('user_role');
+    return role === 'Admin';
   }
 }

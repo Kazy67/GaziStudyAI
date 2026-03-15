@@ -40,24 +40,24 @@ async def generate_exam(request: ExamRequest):
         
         # 4. THE SMART PROMPT (Difficulty Integrated)
         prompt = f"""
-        You are an expert University Professor.
-        Analyze the lecture notes provided below and generate {request.question_count} multiple-choice questions.
+        You are an expert University Professor in Computer Science.
+        Analyze the Turkish lecture notes provided below and generate {request.question_count} multiple-choice questions.
 
         PARAMETERS:
-        - Language: STRICTLY TURKISH.
+        - Output Language: STRICTLY TURKISH (Soru ve şıklar tamamen Türkçe olmalıdır).
         - Difficulty Level: {request.difficulty.upper()}
-           * If EASY: Ask basic definitions and direct facts.
-           * If MEDIUM: Ask about concepts, differences, and how things work.
-           * If HARD: Ask analytical, scenario-based, or deep technical questions.
+           * EASY: Ask basic definitions, terminology, and direct facts from the text.
+           * MEDIUM: Ask about concepts, differences between models, and how specific algorithms/machines work.
+           * HARD: Ask analytical questions, scenario-based problems, or require the student to trace a process (e.g., state transitions, code execution).
 
         LECTURE NOTES:
         {context[:30000]}
 
         RULES:
-        1. All text (questions, correct answers, wrong answers) MUST be in Turkish.
-        2. Focus strictly on the technical content in the notes.
-        3. Provide 1 'correct_answer' and exactly 3 'distractors' (wrong answers).
-        4. Output ONLY raw JSON. No markdown blocks. Just the array.
+        1. All text (questions, correct answers, wrong answers) MUST be in natural, academic Turkish.
+        2. Focus strictly on the technical content in the notes. Do not hallucinate outside information.
+        3. Provide exactly 1 'correct_answer' and exactly 3 'distractors' (wrong answers) that are plausible but incorrect.
+        4. Output ONLY raw JSON. Do NOT wrap the JSON in markdown formatting like ```json. Just return the array.
 
         REQUIRED JSON FORMAT:
         [

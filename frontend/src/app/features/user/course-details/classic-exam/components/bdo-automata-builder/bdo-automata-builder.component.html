@@ -1,0 +1,242 @@
+<div class="space-y-6">
+  <!-- Question Header -->
+  <div
+    class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500"
+  >
+    <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100">
+      {{ question.questionText }}
+    </h3>
+  </div>
+
+  <!-- Step 1: Define States -->
+  <div
+    class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors"
+  >
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="font-semibold text-gray-700 dark:text-gray-200">
+        1. Durumları (States) Belirle
+      </h3>
+      <button
+        (click)="addState()"
+        [disabled]="isSubmitted"
+        class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-3 py-1 rounded text-sm transition-colors disabled:opacity-50"
+      >
+        + Durum Ekle
+      </button>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <div
+        *ngFor="let s of studentStates(); let i = index"
+        class="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-1 rounded-full flex items-center gap-2 shadow-sm transition-colors"
+      >
+        <span class="font-mono font-bold text-gray-800 dark:text-gray-200">{{
+          s
+        }}</span>
+        <button
+          (click)="removeState(i)"
+          [disabled]="isSubmitted"
+          class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-bold transition-colors disabled:opacity-50"
+        >
+          &times;
+        </button>
+      </div>
+      <p
+        *ngIf="studentStates().length === 0"
+        class="text-sm text-gray-400 dark:text-gray-500 italic"
+      >
+        Henüz durum eklenmedi.
+      </p>
+    </div>
+  </div>
+
+  <!-- Step 2: Start & Accept States -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Start State -->
+    <div
+      class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors"
+    >
+      <h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-200">
+        2. Başlangıç Durumu
+      </h3>
+      <select
+        [ngModel]="studentStartState()"
+        (ngModelChange)="studentStartState.set($event)"
+        [disabled]="isSubmitted"
+        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 transition-colors"
+      >
+        <option value="">-- Seçiniz --</option>
+        <option *ngFor="let s of studentStates()" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <!-- Accept States -->
+    <div
+      class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors"
+    >
+      <h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-200">
+        3. Kabul (Accept) Durumları
+      </h3>
+      <div class="flex flex-wrap gap-3">
+        <label
+          *ngFor="let s of studentStates()"
+          class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+        >
+          <input
+            type="checkbox"
+            [checked]="studentAcceptStates().includes(s)"
+            (change)="toggleAcceptState(s)"
+            [disabled]="isSubmitted"
+            class="rounded text-blue-600 w-4 h-4 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+          />
+          <span class="font-mono text-gray-800 dark:text-gray-200">{{
+            s
+          }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Transitions -->
+  <div
+    class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors"
+  >
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="font-semibold text-gray-700 dark:text-gray-200">
+        4. Geçişleri (Transitions) Tanımla
+      </h3>
+      <button
+        (click)="addTransition()"
+        [disabled]="isSubmitted"
+        class="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/60 px-3 py-1 rounded text-sm transition-colors disabled:opacity-50"
+      >
+        + Geçiş Ekle
+      </button>
+    </div>
+
+    <div class="space-y-2">
+      <div
+        *ngFor="let t of studentTransitions(); let i = index"
+        class="flex items-center gap-2 bg-white dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-700 shadow-sm transition-colors"
+      >
+        <!-- From State -->
+        <select
+          [(ngModel)]="t.from"
+          [disabled]="isSubmitted"
+          class="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm"
+        >
+          <option value="">[Nereden]</option>
+          <option *ngFor="let s of studentStates()" [value]="s">{{ s }}</option>
+        </select>
+
+        <span class="text-gray-400 dark:text-gray-500 font-bold">--</span>
+
+        <!-- Input Symbol -->
+        <select
+          [(ngModel)]="t.input"
+          [disabled]="isSubmitted"
+          class="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm"
+        >
+          <option value="">[Girdi]</option>
+          <option *ngFor="let a of question.inputData.alphabet" [value]="a">
+            {{ a }}
+          </option>
+        </select>
+
+        <span class="text-gray-400 dark:text-gray-500 font-bold">--></span>
+
+        <!-- To State -->
+        <select
+          [(ngModel)]="t.to"
+          [disabled]="isSubmitted"
+          class="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm"
+        >
+          <option value="">[Nereye]</option>
+          <option *ngFor="let s of studentStates()" [value]="s">{{ s }}</option>
+        </select>
+
+        <button
+          (click)="removeTransition(i)"
+          [disabled]="isSubmitted"
+          class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-2 rounded hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback / Results -->
+  <div
+    *ngIf="isSubmitted"
+    class="mt-6 p-6 rounded-xl border transition-colors animate-fade-in-up"
+    [ngClass]="{
+      'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800':
+        !loading && finalScore() >= 80,
+      'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800':
+        !loading && finalScore() < 80,
+      'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800':
+        loading,
+    }"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <h3
+        class="text-2xl font-bold flex items-center gap-2"
+        [ngClass]="{
+          'text-green-700 dark:text-green-300': !loading && finalScore() >= 80,
+          'text-red-700 dark:text-red-300': !loading && finalScore() < 80,
+          'text-indigo-700 dark:text-indigo-300': loading,
+        }"
+      >
+        <ng-container *ngIf="!loading">
+          Puanınız: {{ finalScore() }} / 100
+        </ng-container>
+        <ng-container *ngIf="loading">
+          <svg
+            class="animate-spin h-6 w-6 text-indigo-600 dark:text-indigo-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span>Yapay Zeka Değerlendiriyor...</span>
+        </ng-container>
+      </h3>
+    </div>
+
+    <div
+      *ngIf="!loading"
+      class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">
+        Yapay Zeka Dönütü:
+      </h4>
+      <ul
+        class="list-disc pl-5 space-y-1 text-sm text-gray-600 dark:text-gray-300"
+      >
+        <li
+          *ngFor="let err of feedback()"
+          [ngClass]="
+            finalScore() === 100
+              ? 'text-green-600 dark:text-green-300'
+              : 'text-red-600 dark:text-red-300'
+          "
+        >
+          {{ err }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

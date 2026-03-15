@@ -33,9 +33,38 @@ OS_CLASSIC_TOPICS = {
     12: ["page_replacement_fifo", "page_replacement_lru", "page_replacement_optimal"]
 }
 
+VP_CLASSIC_TOPICS = {
+    1: ["vp_code_completion", "generic_theory"],
+    2: ["vp_code_completion"], # Loops, If/Else
+    3: ["vp_code_completion"], # Data Types
+    4: ["vp_code_completion"], # Type Casting
+    5: ["vp_code_completion", "generic_theory"],
+    6: ["generic_theory"], # Form Controls
+    7: ["generic_theory"], # Form Properties
+    8: ["vp_code_completion", "vp_sql_query"], # OOP & Intro to DB
+    9: ["vp_sql_query"], # Access DB
+    10: ["vp_sql_query"], # SQL Commands (Select, Update, Like, Between)
+    11: ["generic_theory"] # Setup Creation
+}
+
+BDO_CLASSIC_TOPICS = {
+    1: ["bdo_regex", "generic_theory"],
+    2: ["bdo_dfa_builder"],
+    3: ["bdo_nfa_builder", "generic_theory"], # NFA is now separated!
+    4: ["generic_theory"],
+    5: ["generic_theory"],
+    6: ["bdo_dfa_reduction"],
+    7: ["bdo_regex"],
+    8: ["bdo_grammar_derivation"],
+    9: ["bdo_grammar_derivation", "generic_theory"],
+    10: ["bdo_pda_builder"],
+    11: ["bdo_tm_trace", "generic_theory"]
+}
+
 FALLBACK_CONTEXTS = {
     "os": "Genel İşletim Sistemleri Kuralları ve Tanımları.",
-    "vp": "Genel Görsel Programlama (.NET, C#) Kuralları."
+    "vp": "Genel Görsel Programlama (.NET, C#) Kuralları.",
+    "bdo": "Genel Biçimsel Diller ve Otomata Kuralları."
 }
 
 # ==========================================
@@ -66,6 +95,43 @@ def get_difficulty_rules(difficulty: str, topic_type: str) -> str:
         if diff == "easy": return "Use 4 Memory Partitions and 3 Processes."
         if diff == "medium": return "Use 5 Memory Partitions and 4 Processes."
         if diff == "hard": return "Use 6 Memory Partitions and 5 Processes."
+    
+    # === NEW VP DIFFICULTY RULES ===
+    elif "vp_code" in topic_type:
+        if diff == "easy": return "Write a very simple C# code snippet (e.g., basic variable assignment or a simple if/else). Max 4 lines."
+        if diff == "medium": return "Write an intermediate C# snippet (e.g., for/while loops, arrays, or simple methods)."
+        if diff == "hard": return "Write a complex C# snippet (e.g., nested loops, Object Oriented concepts, classes, inheritance, or complex switch statements)."
+    elif "vp_sql" in topic_type:
+        if diff == "easy": return "Ask for a simple SELECT query with one basic WHERE condition."
+        if diff == "medium": return "Ask for a query using LIKE, BETWEEN, or ORDER BY."
+        if diff == "hard": return "Ask for a complex UPDATE, INSERT, or a SELECT query with multiple AND/OR conditions."
+
+    # === NEW BDO DIFFICULTY RULES ===  
+    elif "bdo_regex" in topic_type:
+        if diff == "easy": return "Ask for a simple union or concatenation regex."
+        if diff == "medium": return "Ask for a regex with Kleene star and specific start/end conditions."
+        if diff == "hard": return "Ask for a complex regex with specific substring constraints (e.g., contains exactly two 'a's or no consecutive 'b's)."
+    elif "bdo_dfa_builder" in topic_type:
+        if diff == "easy": return "Generate a DFA that requires exactly 3 states."
+        if diff == "medium": return "Generate a DFA that requires 4 states and at least one loop."
+        if diff == "hard": return "Generate a DFA that requires 4-5 states, including a Trap (Dead) state."
+    elif "bdo_nfa_builder" in topic_type:
+        if diff == "easy": return "Generate an NFA using a simple lambda (λ) transition."
+        if diff == "medium": return "Generate an NFA that branches into multiple paths for the same input."
+        if diff == "hard": return "Generate an NFA for the union of two distinct languages using lambda transitions."
+    elif "bdo_pda_trace" in topic_type:
+        if diff == "easy": return "Use a simple a^n b^n language. Input string length exactly 4."
+        if diff == "medium": return "Use a palindrome language with a center marker. Input string length exactly 5."
+        if diff == "hard": return "Use a complex language like a^n b^2n. Input string length exactly 6."
+    elif "bdo_grammar_derivation" in topic_type:
+        if diff == "easy": return "Ask for a leftmost derivation with exactly 3 steps."
+        if diff == "medium": return "Ask for a leftmost derivation with 4 to 5 steps."
+        if diff == "hard": return "Ask for a derivation using Chomsky Normal Form (CNF) grammar with 6 or more steps."
+    elif "bdo_tm_trace" in topic_type:
+        if diff == "easy": return "Ask for a trace of a Turing Machine with maximum 3 steps. Only move Right (R)."
+        if diff == "medium": return "Ask for a trace of a TM with 4 to 5 steps. Include changing symbols."
+        if diff == "hard": return "Ask for a trace of a TM with 6+ steps involving changing directions (R and L)."
+        
     return "Keep it standard university level."
 
 def build_classic_prompt(prefix: str, topic: str, diff_rules: str, context: str, seed: int) -> str:
@@ -176,7 +242,213 @@ def build_classic_prompt(prefix: str, topic: str, diff_rules: str, context: str,
                 }}
             }}
             """
+
+    elif prefix == "vp":
+        if topic == "vp_code_completion":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR vp_code_completion:
+            1. Read the provided CONTEXT. Look at the VARIANT SEED ({seed}) and DIFFICULTY RULES to generate a UNIQUE C# code snippet.
+            2. Output valid JSON matching the schema below.
+            3. Replace ONE important piece of logic (a condition, keyword, or variable) in your code with exactly 5 underscores: "_____".
+            4. Put the exact missing string in 'correctCode'.
+
+            JSON SCHEMA TO FOLLOW:
+            {{
+                "visualType": "vp_code_completion",
+                "questionText": "Aşağıdaki C# kod bloğunda eksik bırakılan yeri (_____) uygun şekilde doldurunuz.",
+                "inputData": {{
+                    "codeSnippet": "// WRITE YOUR DYNAMIC C# CODE HERE.\\n// USE \\n FOR NEWLINES.",
+                    "language": "csharp"
+                }},
+                "solutionData": {{
+                    "correctCode": "the_missing_word"
+                }}
+            }}
+            """
             
+        elif topic == "vp_sql_query":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR vp_sql_query:
+            1. Read the provided CONTEXT. Look at the VARIANT SEED ({seed}) and DIFFICULTY RULES to generate a UNIQUE database scenario.
+            2. Output valid JSON matching the schema below.
+            3. Create a realistic database scenario in Turkish and put the correct SQL command in 'correctQuery'.
+
+            JSON SCHEMA TO FOLLOW:
+            {{
+                "visualType": "vp_sql_query",
+                "questionText": "Aşağıda istenen işlemi gerçekleştirecek SQL sorgusunu yazınız.",
+                "inputData": {{
+                    "scenario": "WRITE YOUR DYNAMIC SCENARIO HERE."
+                }},
+                "solutionData": {{
+                    "correctQuery": "SELECT * FROM Example"
+                }}
+            }}
+            """
+        
+    # ================= BDO PROMPTS =================
+    elif prefix == "bdo":
+        if topic == "bdo_regex":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR bdo_regex:
+            1. Create a scenario asking the student to write the Regular Expression (Düzenli İfade) for a given language.
+            
+            JSON SCHEMA TO FOLLOW:
+            {{
+                "visualType": "bdo_regex",
+                "questionText": "Alfabesi {{a, b}} olan ve [BURAYA KURALI YAZIN, Örn: 'ab' ile biten] dizgileri tanımlayan Düzenli İfadeyi (Regular Expression) yazınız.",
+                "inputData": {{
+                    "alphabet": ["a", "b"]
+                }},
+                "solutionData": {{
+                    "correctRegex": "(a+b)*ab"
+                }}
+            }}
+            """
+            
+        elif topic == "bdo_dfa_builder":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR bdo_dfa_builder:
+            1. Generate a valid mathematical DFA (Deterministic Finite Automata) problem.
+            2. Every state MUST have exactly ONE transition for every symbol in the alphabet.
+            
+            JSON SCHEMA TO FOLLOW:
+            {{
+                "visualType": "bdo_dfa_builder",
+                "questionText": "Alfabesi {{0, 1}} olan ve [BURAYA KURALI YAZIN, Örn: içinde '11' geçen] dizgileri kabul eden DFA'yı tasarlayınız.",
+                "inputData": {{
+                    "alphabet": ["0", "1"]
+                }},
+                "solutionData": {{
+                    "states": ["q0", "q1", "q2"],
+                    "startState": "q0",
+                    "acceptStates": ["q2"],
+                    "transitions": [
+                        {{"from": "q0", "input": "0", "to": "q0"}},
+                        {{"from": "q0", "input": "1", "to": "q1"}},
+                        {{"from": "q1", "input": "0", "to": "q0"}},
+                        {{"from": "q1", "input": "1", "to": "q2"}},
+                        {{"from": "q2", "input": "0", "to": "q2"}},
+                        {{"from": "q2", "input": "1", "to": "q2"}}
+                    ]
+                }}
+            }}
+            """
+
+        elif topic == "bdo_nfa_builder":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR bdo_nfa_builder:
+            1. Generate a valid mathematical NFA (Non-Deterministic Finite Automata) problem.
+            2. To prove it is an NFA, it MUST include either a lambda (λ) transition, OR multiple transitions from the same state using the same input symbol.
+            
+            JSON SCHEMA TO FOLLOW:
+            {{
+                "visualType": "bdo_nfa_builder",
+                "questionText": "Alfabesi {{0, 1}} olan ve [BURAYA KURALI YAZIN, Örn: '01' ile biten] dizgileri kabul eden NFA'yı tasarlayınız.",
+                "inputData": {{
+                    "alphabet": ["0", "1", "λ"]
+                }},
+                "solutionData": {{
+                    "states": ["q0", "q1", "q2"],
+                    "startState": "q0",
+                    "acceptStates": ["q2"],
+                    "transitions": [
+                        {{"from": "q0", "input": "0", "to": "q0"}},
+                        {{"from": "q0", "input": "1", "to": "q0"}},
+                        {{"from": "q0", "input": "0", "to": "q1"}}, 
+                        {{"from": "q1", "input": "1", "to": "q2"}}
+                    ]
+                }}
+            }}
+            """
+        elif topic == "bdo_dfa_reduction":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR bdo_dfa_reduction:
+            1. Generate a DFA transition table that needs to be minimized.
+            2. Provide the original table in inputData.
+            
+            JSON SCHEMA:
+            {{
+                "visualType": "bdo_dfa_reduction",
+                "questionText": "Aşağıdaki DFA tablosunu inceleyerek durumları indirgeyiniz ve eşdeğer durum gruplarını belirleyiniz.",
+                "inputData": {{
+                    "originalTable": [
+                        {{"state": "q0", "input0": "q1", "input1": "q2", "isAccept": false}},
+                        {{"state": "q1", "input0": "q1", "input1": "q2", "isAccept": false}}
+                    ]
+                }},
+                "solutionData": {{
+                    "equivalentGroups": [["q0", "q1"], ["q2"]]
+                }}
+            }}
+            """
+
+        elif topic == "bdo_grammar_derivation":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR bdo_grammar_derivation:
+            1. Provide a Context-Free Grammar.
+            2. Ask the student to write the leftmost derivation (soldan türetme) for a specific target string.
+            
+            JSON SCHEMA TO FOLLOW:
+            {{
+                "visualType": "bdo_grammar_derivation",
+                "questionText": "Aşağıdaki dilbilgisi kurallarını kullanarak '[BURAYA DİZGİ YAZIN, Örn: 0011]' dizgisinin soldan türetme adımlarını sırasıyla yazınız.",
+                "inputData": {{
+                    "grammarRules": ["S => 0S1", "S => 01"]
+                }},
+                "solutionData": {{
+                    "derivationSteps": ["S", "0S1", "0011"]
+                }}
+            }}
+            """
+        
+        elif topic == "bdo_pda_builder":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR bdo_pda_builder:
+            1. Generate a Pushdown Automata (PDA) design problem.
+            2. Transitions MUST include 'pop' and 'push' fields.
+            
+            JSON SCHEMA:
+            {{
+                "visualType": "bdo_pda_builder",
+                "questionText": "Alfabesi {{a, b}} olan ve [a^n b^n] dilini tanıyan PDA'yı tasarlayınız.",
+                "inputData": {{ "alphabet": ["a", "b"], "stackAlphabet": ["a", "Z0"] }},
+                "solutionData": {{
+                    "states": ["q0", "q1"],
+                    "startState": "q0",
+                    "acceptStates": ["q1"],
+                    "transitions": [
+                        {{"from": "q0", "input": "a", "pop": "Z0", "to": "q0", "push": "aZ0"}},
+                        {{"from": "q0", "input": "b", "pop": "a", "to": "q1", "push": "λ"}}
+                    ]
+                }}
+            }}
+            """
+
+        elif topic == "bdo_tm_trace":
+            return base_prompt + f"""
+            CRITICAL INSTRUCTION FOR bdo_tm_trace:
+            1. Provide Turing Machine transitions.
+            2. Ask the student to trace the tape and state step-by-step.
+            
+            JSON SCHEMA TO FOLLOW:
+            {{
+                "visualType": "bdo_tm_trace",
+                "questionText": "Aşağıda kuralları verilen Turing Makinesi için, başlangıç şeridi '[Örn: 101BB]' olan makinenin adım adım durumunu ve şerit içeriğini yazınız. (DİKKAT: Okuma kafasının konumunu göstermek için simgenin önüne * koyunuz, Örn: okuma kafası 0'ın üzerindeyse *01BB yazın).",
+                "inputData": {{
+                    "machineRules": ["q0, 1 -> q1, X, R", "q1, 0 -> q2, Y, L"],
+                    "initialTape": "*101BB"
+                }},
+                "solutionData": {{
+                    "traceSteps": [
+                        {{"step": 0, "state": "q0", "tape": "*101BB"}},
+                        {{"step": 1, "state": "q1", "tape": "X*01BB"}},
+                        {{"step": 2, "state": "q2", "tape": "*XY1BB"}}
+                    ]
+                }}
+            }}
+            """
+
     # --- FALLBACK / THEORY FOR ANY COURSE ---
     return base_prompt + """
     {
@@ -221,6 +493,14 @@ async def generate_classic_exam(request: ClassicRequest):
             for w in request.weeks:
                 if w in OS_CLASSIC_TOPICS:
                     available_topics.extend(OS_CLASSIC_TOPICS[w])
+        elif prefix == "vp": 
+            for w in request.weeks:
+                if w in VP_CLASSIC_TOPICS:
+                    available_topics.extend(VP_CLASSIC_TOPICS[w])
+        elif prefix == "bdo":
+            for w in request.weeks:
+                if w in BDO_CLASSIC_TOPICS:
+                    available_topics.extend(BDO_CLASSIC_TOPICS[w])
         
         if not available_topics:
             available_topics = ["generic_theory"]

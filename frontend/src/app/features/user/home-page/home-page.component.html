@@ -12,6 +12,33 @@
   </div>
 
   <!-- Stats Grid -->
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <!-- Total Exams Card -->
+    <div
+      class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center justify-center shadow-sm"
+    >
+      <div class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">
+        {{ "EXAM.TOTAL_EXAMS_TAKEN" | translate }}
+      </div>
+      <div class="text-4xl font-bold text-slate-800 dark:text-white">
+        {{ dashboardData?.totalExamsTaken || 0 }}
+      </div>
+    </div>
+
+    <!-- Average Score Card -->
+    <div
+      class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col items-center justify-center shadow-sm"
+    >
+      <div class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">
+        {{ "EXAM.AVERAGE_SCORE" | translate }}
+      </div>
+      <div class="text-4xl font-bold text-blue-600 dark:text-blue-400">
+        {{ dashboardData?.averageScore || 0 | number: "1.0-1" }}%
+      </div>
+    </div>
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Recent Activity Widget -->
     <div
@@ -25,47 +52,123 @@
           class="pi pi-clock text-slate-400 dark:text-slate-500 dark:text-slate-500 text-xl"
         ></i>
       </div>
-      <div class="flex-1 space-y-4">
-        <!-- Mock Content -->
+      <div class="flex-1 space-y-4 max-h-[300px] overflow-y-auto">
+        <!-- Loading State -->
         <div
-          class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          *ngIf="loading"
+          class="flex items-center justify-center h-full text-slate-400"
         >
-          <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-          <div class="flex-1">
-            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
-              Completed "Angular Basics"
-            </p>
-            <p class="text-xs text-slate-500">2 hours ago</p>
-          </div>
+          <i class="pi pi-spin pi-spinner text-2xl"></i>
         </div>
+
+        <!-- Empty State -->
         <div
-          class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          *ngIf="
+            !loading &&
+            (!dashboardData?.recentExams ||
+              dashboardData?.recentExams?.length === 0)
+          "
+          class="text-center py-4 text-slate-500 text-sm"
         >
-          <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-          <div class="flex-1">
-            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
-              Scored 85% in Math Mock
-            </p>
-            <p class="text-xs text-slate-500">Yesterday</p>
-          </div>
+          No recent activity found.
         </div>
-        <div
-          class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-        >
-          <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-          <div class="flex-1">
-            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
-              Watched "RxJS Deep Dive"
-            </p>
-            <p class="text-xs text-slate-500">2 days ago</p>
-          </div>
+
+        <!-- Dynamic List -->
+        <div class="space-y-3">
+          <ng-container *ngFor="let exam of dashboardData?.recentExams">
+            <div
+              class="group relative flex items-start gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-800 bg-white dark:bg-slate-800/50 shadow-sm hover:shadow-md transition-all duration-200"
+            >
+              <!-- Score Badge -->
+              <div
+                class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-full border-2 transition-transform group-hover:scale-105"
+                [ngClass]="{
+                  'border-green-100 bg-green-50 text-green-600 dark:bg-green-900/20 dark:border-green-900/50 dark:text-green-400':
+                    exam.score >= 70,
+                  'border-yellow-100 bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20 dark:border-yellow-900/50 dark:text-yellow-400':
+                    exam.score >= 40 && exam.score < 70,
+                  'border-red-100 bg-red-50 text-red-600 dark:bg-red-900/20 dark:border-red-900/50 dark:text-red-400':
+                    exam.score < 40,
+                }"
+              >
+                <span class="text-xs font-bold"
+                  >{{ exam.score | number: "1.0-0" }}%</span
+                >
+              </div>
+
+              <!-- Content -->
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start mb-1">
+                  <h4
+                    class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate pr-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                  >
+                    {{
+                      translate.currentLang === "tr"
+                        ? exam.courseNameTr
+                        : exam.courseNameEn
+                    }}
+                  </h4>
+                  <span
+                    class="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full whitespace-nowrap font-medium"
+                  >
+                    {{ "EXAM.ATTEMPT" | translate }} #{{ exam.attemptNumber }}
+                  </span>
+                </div>
+
+                <p
+                  class="text-xs text-slate-500 dark:text-slate-400 mb-3 truncate font-medium"
+                >
+                  {{ exam.topic }}
+                </p>
+
+                <!-- Metadata Row -->
+                <div class="flex items-center gap-3 text-xs text-slate-400">
+                  <!-- Difficulty Badge -->
+                  <span
+                    class="flex items-center px-1.5 py-0.5 rounded border text-[10px] font-semibold uppercase tracking-wide"
+                    [ngClass]="{
+                      'border-green-200 text-green-600 bg-green-50 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400':
+                        exam.difficulty === 'Easy',
+                      'border-blue-200 text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400':
+                        exam.difficulty === 'Medium',
+                      'border-red-200 text-red-600 bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400':
+                        exam.difficulty === 'Hard',
+                    }"
+                  >
+                    {{
+                      "EXAM.DIFFICULTIES." + (exam.difficulty | uppercase)
+                        | translate
+                    }}
+                  </span>
+
+                  <!-- Question Count -->
+                  <span
+                    class="flex items-center gap-1 text-slate-500 dark:text-slate-400"
+                  >
+                    <i class="pi pi-list text-[10px]"></i>
+                    {{ exam.questionCount }} Qs
+                  </span>
+
+                  <!-- Date -->
+                  <span
+                    class="flex items-center gap-1 ml-auto text-slate-400 dark:text-slate-500"
+                  >
+                    <i class="pi pi-clock text-[10px]"></i>
+                    {{ exam.createdDate | date: "MMM d" }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </div>
       </div>
+      <!--
       <button
         class="mt-4 w-full py-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         View All History
       </button>
+      -->
     </div>
 
     <!-- Quick Start Quiz Widget -->
