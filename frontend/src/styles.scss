@@ -32,18 +32,22 @@ input:-webkit-autofill:active {
     @apply border-2 transition-colors duration-200 bg-white border-gray-300;
 }
 
-.dark .p-checkbox .p-checkbox-box {
+.dark .p-checkbox:not(.p-highlight) .p-checkbox-box {
     @apply bg-gray-700 border-gray-600;
 }
 
 /* Checked State - Light Mode */
 .p-checkbox .p-checkbox-box.p-highlight {
-    @apply bg-blue-600 border-blue-600;
+    @apply bg-emerald-500 border-emerald-500 !important;
 }
 
 /* Checked State - Dark Mode */
 .dark .p-checkbox .p-checkbox-box.p-highlight {
-    @apply bg-blue-500 border-blue-500;
+    @apply bg-emerald-500 border-emerald-500 !important;
+}
+
+.dark .p-checkbox:not(.p-checkbox-disabled):hover .p-checkbox-box.p-highlight {
+    @apply bg-emerald-400 border-emerald-400 !important;
 }
 
 /* Focus State */
@@ -59,5 +63,137 @@ input:-webkit-autofill:active {
 /* Icon Color */
 .p-checkbox .p-checkbox-box .p-checkbox-icon {
     @apply text-white;
+}
+
+/* PrimeNG Table Dark Mode Fixes */
+.dark {
+    .p-datatable {
+        .p-datatable-header,
+        .p-datatable-thead > tr > th,
+        .p-datatable-tbody > tr > td,
+        .p-datatable-footer,
+        .p-paginator {
+            background-color: transparent !important;
+            border-color: #334155 !important; /* slate-700 */
+            color: #f1f5f9 !important; /* slate-100 */
+        }
+        
+        .p-datatable-thead > tr > th {
+            color: #94a3b8 !important; /* slate-400 */
+        }
+        
+        .p-datatable-tbody > tr {
+            background-color: transparent !important;
+        }
+
+        .p-datatable-tbody > tr:hover, 
+        .p-datatable-tbody > tr.p-highlight {
+            background-color: rgba(51, 65, 85, 0.4) !important; /* slate-700 with opacity */
+        }
+
+        /* Support striped dark mode lightly */
+        &.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+            background-color: rgba(15, 23, 42, 0.2) !important; /* slate-900 with opacity */
+        }
+
+        .p-paginator-element {
+            color: #94a3b8 !important; /* slate-400 */
+            
+            &:not(.p-highlight):not(.p-disabled):hover {
+                background-color: #334155 !important; /* slate-700 */
+                color: #f8fafc !important; /* slate-50 */
+            }
+
+            &.p-highlight {
+                background-color: #3b82f6 !important; /* blue-500 */
+                color: #ffffff !important;
+            }
+        }
+        
+        .p-sortable-column:not(.p-highlight):hover {
+            background-color: #334155 !important; /* slate-700 */
+            color: #f8fafc !important;
+        }
+    }
+
+    /* PrimeNG Input / Search styling for Dark Mode */
+    .p-inputtext {
+        background-color: #0f172a !important; /* slate-900 */
+        border-color: #334155 !important; /* slate-700 */
+        color: #f1f5f9 !important; /* slate-100 */
+        
+        &::placeholder {
+            color: #64748b !important; /* slate-500 */
+        }
+
+        &:enabled:hover {
+            border-color: #475569 !important; /* slate-600 */
+        }
+
+        &:enabled:focus {
+            outline: 0 none;
+            outline-offset: 0;
+            box-shadow: 0 0 0 1px #3b82f6 !important; /* blue-500 */
+            border-color: #3b82f6 !important; /* blue-500 */
+        }
+    }
+
+    .p-inputicon {
+        color: #64748b !important; /* slate-500 */
+    }
+
+    /* PrimeNG Card Dark Mode Fixes */
+    .p-card {
+        background-color: #1e293b !important; /* slate-800 */
+        color: #f1f5f9 !important; /* slate-100 */
+        border: 1px solid #334155 !important; /* slate-700 */
+        
+        .p-card-title {
+            color: #f1f5f9 !important; /* slate-100 */
+        }
+
+        .p-card-subtitle {
+            color: #94a3b8 !important; /* slate-400 */
+        }
+
+        .p-card-content {
+            padding: 0 !important;
+        }
+    }
+
+    /* PrimeNG Dialog / ConfirmDialog Dark Mode Fixes */
+    .p-dialog {
+        background-color: #1e293b !important; /* slate-800 */
+        border: 1px solid #334155 !important; /* slate-700 */
+        
+        .p-dialog-header {
+            background-color: #1e293b !important; /* slate-800 */
+            color: #f1f5f9 !important; /* slate-100 */
+            border-bottom: 1px solid #334155 !important; /* slate-700 */
+        }
+        
+        .p-dialog-content {
+            background-color: #1e293b !important; /* slate-800 */
+            color: #e2e8f0 !important; /* slate-200 */
+        }
+        
+        .p-dialog-footer {
+            background-color: #1e293b !important; /* slate-800 */
+            border-top: 1px solid #334155 !important; /* slate-700 */
+        }
+
+        .p-dialog-header-icon {
+            color: #94a3b8 !important; /* slate-400 */
+            &:hover {
+                color: #f1f5f9 !important; /* slate-100 */
+                background-color: #334155 !important; /* slate-700 */
+            }
+        }
+    }
+}
+
+/* Warning Icon in ConfirmDialog */
+.p-confirm-dialog .p-confirm-dialog-icon {
+    color: #f59e0b !important; /* amber-500 / orange for warning */
 }
 

@@ -1,5 +1,6 @@
 {
   "WELCOME": "Hoşgeldiniz",
+  "BACK": "Geri",
   "REGISTER": "Kayıt Ol",
   "FIRST_NAME": "Ad",
   "LAST_NAME": "Soyad",
@@ -229,5 +230,11 @@
     "ADD": "+ Ekle",
     "START": "Başlangıç:",
     "END": "Bitiş:"
+  },
+  "ADMIN": {
+    "ADD_NEW_COURSE": "Yeni Ders Ekle",
+    "MANAGE_COURSES": "Dersleri Yönet",
+    "MANAGE_COURSES_DESC": "Dersleri ekleyin, düzenleyin veya kaldırın ve detaylarını yönetin.",
+    "SEARCH_PLACEHOLDER": "Önek, isim ile ara..."
   }
 }

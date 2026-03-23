@@ -1,6 +1,8 @@
-﻿namespace GaziStudyAI.Application.DTOs.Course
+﻿using Microsoft.AspNetCore.Http;
+
+namespace GaziStudyAI.Application.DTOs.Course
 {
-    public class CourseDto
+    public class UpdateCourseDto
     {
         public Guid Id { get; set; }
         public string Prefix { get; set; } = string.Empty;
@@ -10,12 +12,14 @@
         public string DescriptionEn { get; set; } = string.Empty;
         public string TeacherName { get; set; } = string.Empty;
         public int? Credits { get; set; }
-        public string? ImageUrl { get; set; }
         public int YearLevel { get; set; }
-        public int StudentCount { get; set; } // Number of students enrolled in the course
+
+        // AI Settings
         public bool AllowTheoryQuestions { get; set; }
         public bool AllowCodeQuestions { get; set; }
         public bool AllowMathQuestions { get; set; }
-        public List<CourseWeekDto> Weeks { get; set; } = new List<CourseWeekDto>();
+
+        public IFormFile? Image { get; set; } // Nullable: If null, we keep the old image
+        public string? WeeksJson { get; set; }
     }
 }

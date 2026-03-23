@@ -4,6 +4,7 @@ using GaziStudyAI.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GaziStudyAI.Infrastructure.Migrations
 {
     [DbContext(typeof(GaziStudyAIDbContext))]
-    partial class GaziStudyAIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260315084212_AddingPrefixToCourse")]
+    partial class AddingPrefixToCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,15 +159,6 @@ namespace GaziStudyAI.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("AllowCodeQuestions")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AllowMathQuestions")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AllowTheoryQuestions")
-                        .HasColumnType("bit");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -522,8 +516,8 @@ namespace GaziStudyAI.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("827b4c26-47ac-4f66-a05b-df6b145e1ad6"),
-                            CreatedDate = new DateTime(2026, 3, 16, 8, 40, 52, 231, DateTimeKind.Utc).AddTicks(8218),
+                            Id = new Guid("1cca33b7-1bcf-44b0-9e73-aa1c390e1cbb"),
+                            CreatedDate = new DateTime(2026, 3, 15, 8, 42, 11, 871, DateTimeKind.Utc).AddTicks(5167),
                             EnableSsl = true,
                             IsActive = true,
                             Port = 587,

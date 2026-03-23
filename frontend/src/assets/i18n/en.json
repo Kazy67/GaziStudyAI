@@ -1,5 +1,6 @@
 {
   "WELCOME": "Welcome",
+  "BACK": "Back",
   "REGISTER": "Register",
   "FIRST_NAME": "First Name",
   "LAST_NAME": "Last Name",
@@ -229,5 +230,11 @@
     "ADD": "+ Add",
     "START": "Start:",
     "END": "End:"
+  },
+  "ADMIN": {
+    "ADD_NEW_COURSE": "Add New Course",
+    "MANAGE_COURSES": "Manage Courses",
+    "MANAGE_COURSES_DESC": "Add, edit, or remove courses and their details.",
+    "SEARCH_PLACEHOLDER": "Search by prefix, name..."
   }
 }

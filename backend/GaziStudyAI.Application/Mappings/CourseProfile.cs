@@ -14,7 +14,10 @@ namespace GaziStudyAI.Application.Mappings
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()); // Ignore the file upload, handled separately
 
             // Map Entity to DTO (For sending to Angular)
-            CreateMap<Course, CourseDto>();
+            CreateMap<Course, CourseDto>()
+                .ForMember(dest => dest.StudentCount,
+                    opt => opt.MapFrom(src => src.StudentCourses.Count(sc => sc.Status == "Active")));
+
         }
     }
 }

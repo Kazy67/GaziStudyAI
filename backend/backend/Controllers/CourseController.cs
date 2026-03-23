@@ -39,5 +39,59 @@ namespace GaziStudyAI.WebAPI.Controllers
             if (!result.IsSuccess) return NotFound(result);
             return Ok(result);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCourse(Guid id)
+        {
+            var result = await _courseService.DeleteCourse(id);
+            if (!result.IsSuccess) return NotFound(result);
+            return Ok(result);
+        }
+
+        [HttpPut]
+        // [Authorize(Roles = "Admin")] <-- Uncomment later
+        public async Task<IActionResult> UpdateCourse([FromForm] UpdateCourseDto request)
+        {
+            var result = await _courseService.UpdateCourseAsync(request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPost("{courseId}/weeks/{weekNumber}/upload-material")]
+        // [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UploadMaterial(Guid courseId, int weekNumber, IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest("File is required.");
+
+            var result = await _courseService.UploadCourseMaterialAsync(courseId, weekNumber, file);
+            if (!result.IsSuccess) return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{courseId}/materials")]
+        public async Task<IActionResult> GetMaterialsStatus(Guid courseId)
+        {
+            var result = await _courseService.GetCourseMaterialsStatusAsync(courseId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpDelete("materials/{weekTag}")]
+        // [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteMaterial(string weekTag)
+        {
+            var result = await _courseService.DeleteCourseMaterialAsync(weekTag);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("{courseId}/student-exam-setup")]
+        public async Task<IActionResult> GetStudentExamSetup(Guid courseId)
+        {
+            var result = await _courseService.GetStudentExamSetupAsync(courseId);
+            if (!result.IsSuccess) return NotFound(result);
+            return Ok(result);
+        }
     }
 }

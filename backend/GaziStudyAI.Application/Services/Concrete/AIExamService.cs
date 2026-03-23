@@ -23,6 +23,7 @@ namespace GaziStudyAI.Application.Services.Concrete
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri("http://127.0.0.1:8000/"); // Python API URL
+            _httpClient.Timeout = TimeSpan.FromMinutes(4);
             _uow = uow;
             _mapper = mapper;
         }
@@ -30,13 +31,22 @@ namespace GaziStudyAI.Application.Services.Concrete
         {
             try
             {
+                var course = await _uow.CourseRepository.GetAsync(c => c.Prefix.ToLower() == request.CoursePrefix.ToLower());
+
+                bool allowTheory = course?.AllowTheoryQuestions ?? true;
+                bool allowCode = course?.AllowCodeQuestions ?? false;
+                bool allowMath = course?.AllowMathQuestions ?? false;
+
                 // 👇 1. Create the anonymous object with EXACT snake_case names for Python
                 var pythonPayload = new
                 {
                     course_prefix = request.CoursePrefix,
                     weeks = request.Weeks,
                     question_count = request.QuestionCount,
-                    difficulty = request.Difficulty
+                    difficulty = request.Difficulty,
+                    allow_theory = allowTheory,
+                    allow_code = allowCode,
+                    allow_math = allowMath
                 };
 
                 // 👇 2. Serialize this new pythonPayload instead of 'request'

@@ -4,6 +4,7 @@ namespace GaziStudyAI.Application.DTOs.Course
 {
     public class CreateCourseDto
     {
+        public string Prefix { get; set; } = string.Empty;
         public string NameTr { get; set; } = string.Empty;
         public string NameEn { get; set; } = string.Empty;
         public string DescriptionTr { get; set; } = string.Empty;
@@ -12,6 +13,9 @@ namespace GaziStudyAI.Application.DTOs.Course
         public int? Credits { get; set; }
         public int YearLevel { get; set; }
         public IFormFile? Image { get; set; }
+        public bool AllowTheoryQuestions { get; set; }
+        public bool AllowCodeQuestions { get; set; }
+        public bool AllowMathQuestions { get; set; }
         public string? WeeksJson { get; set; }
     }
 }

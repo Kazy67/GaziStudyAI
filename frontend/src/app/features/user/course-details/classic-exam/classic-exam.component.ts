@@ -30,6 +30,7 @@ import { BdoPdaBuilderComponent } from './components/bdo-pda-builder/bdo-pda-bui
 import { BdoTmTraceComponent } from './components/bdo-tm-trace/bdo-tm-trace.component';
 import { BdoGrammarDerivationComponent } from './components/bdo-grammar-derivation/bdo-grammar-derivation.component';
 import { BdoDfaReductionComponent } from './components/bdo-dfa-reduction/bdo-dfa-reduction.component';
+import { GenericMathComponent } from './components/generic-math/generic-math.component';
 
 @Component({
   selector: 'app-classic-exam',
@@ -53,6 +54,7 @@ import { BdoDfaReductionComponent } from './components/bdo-dfa-reduction/bdo-dfa
     BdoDfaReductionComponent,
     BdoGrammarDerivationComponent,
     BdoTmTraceComponent,
+    GenericMathComponent,
   ],
   providers: [MessageService],
   templateUrl: './classic-exam.component.html',
@@ -72,6 +74,7 @@ export class ClassicExamComponent implements OnInit {
   courseName: string = '';
   courseId: string = '';
   availableWeeks: { id: number; label: string }[] = [];
+  validWeeks: number[] = [];
 
   // Config
   selectedWeeks: number[] = []; // IDs of selected weeks
@@ -112,42 +115,31 @@ export class ClassicExamComponent implements OnInit {
   }
 
   loadCourse(id: string) {
-    this.courseService.getCourseById(id).subscribe((result) => {
-      if (result.isSuccess && result.data) {
-        const course = result.data;
+    this.courseService.getStudentExamSetup(id).subscribe((result) => {
+      if (result.isSuccess && result.data?.course) {
+        console.log('ClassicExam loadCourse API result:', result);
+        const course = result.data.course;
+        // Make sure it's numbers
+        this.validWeeks = (result.data.validWeeks || []).map((v: any) =>
+          Number(v),
+        );
+        console.log('Valid weeks array:', this.validWeeks);
         this.courseName =
           this.translate.currentLang === 'tr' ? course.nameTr : course.nameEn;
 
-        // Derive prefix for AI
-        const nameLower = course.nameEn.toLowerCase();
-        // Check Turkish name too for better matching
-        const nameTrLower = (course.nameTr || '').toLowerCase();
-
-        if (nameLower.includes('visual') || nameTrLower.includes('görsel')) {
-          this.coursePrefix = 'vp';
-        } else if (
-          nameLower.includes('operating') ||
-          nameTrLower.includes('işletim')
-        ) {
-          this.coursePrefix = 'os';
-        } else if (
-          nameLower.includes('formal') ||
-          nameLower.includes('automata') ||
-          nameTrLower.includes('biçimsel') ||
-          nameTrLower.includes('otomata')
-        ) {
-          this.coursePrefix = 'bdo';
-        }
+        this.coursePrefix = course.prefix || '';
 
         console.log('Classic Exam Configured for Prefix:', this.coursePrefix);
 
         // Map weeks
         this.availableWeeks = course.weeks
-          .map((w) => ({
-            id: w.weekNumber,
+          .map((w: any) => ({
+            id: Number(w.weekNumber),
             label: this.translate.currentLang === 'tr' ? w.topicTr : w.topicEn,
           }))
-          .sort((a, b) => a.id - b.id);
+          .sort((a: any, b: any) => a.id - b.id);
+
+        console.log('Mapped available weeks:', this.availableWeeks);
 
         // Default select all or first few? Let's select none to force user.
       }
@@ -173,7 +165,7 @@ export class ClassicExamComponent implements OnInit {
 
   isAsyncType(type: string): boolean {
     // These types are graded by AI asynchronously
-    return type?.startsWith('bdo_');
+    return type?.startsWith('bdo_') || type?.startsWith('generic_');
   }
 
   calculateFinalScore() {

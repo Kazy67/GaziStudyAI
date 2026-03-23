@@ -1,0 +1,605 @@
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<div
+  class="p-6 bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-800 dark:text-slate-200"
+>
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1
+        class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400"
+      >
+        {{ "ADMIN.MANAGE_COURSES" | translate }}
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-1">
+        {{ "ADMIN.MANAGE_COURSES_DESC" | translate }}
+      </p>
+    </div>
+
+    @if (!isCreating()) {
+      <p-button
+        label="{{ 'ADMIN.ADD_NEW_COURSE' | translate }}"
+        icon="pi pi-plus"
+        severity="success"
+        (onClick)="toggleCreate()"
+      >
+      </p-button>
+    } @else {
+      <p-button
+        label="{{ 'BACK' | translate }}"
+        icon="pi pi-arrow-left"
+        severity="warn"
+        [outlined]="true"
+        (onClick)="toggleCreate()"
+      >
+      </p-button>
+    }
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="flex justify-center items-center py-20">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"
+      ></div>
+    </div>
+  }
+
+  <!-- List View with PrimeNG Table -->
+  @if (!isCreating() && !isLoading()) {
+    <div
+      class="card bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden p-2"
+    >
+      <p-table
+        #dt
+        [value]="courses()"
+        [rows]="10"
+        [paginator]="true"
+        [globalFilterFields]="['prefix', 'nameTr', 'nameEn', 'teacherName']"
+        [tableStyle]="{ 'min-width': '75rem' }"
+        styleClass="p-datatable-sm p-datatable-striped"
+        [rowHover]="true"
+        dataKey="id"
+      >
+        <ng-template pTemplate="caption">
+          <div class="flex items-center justify-between flex-wrap gap-2 pb-2">
+            <span class="text-xl font-semibold">Courses List</span>
+            <p-iconField iconPosition="left">
+              <p-inputIcon styleClass="pi pi-search" />
+              <input
+                pInputText
+                type="text"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                placeholder="{{ 'ADMIN.SEARCH_PLACEHOLDER' | translate }}"
+                class="w-full sm:w-80"
+              />
+            </p-iconField>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="prefix" style="width: 10%">
+              Prefix <p-sortIcon field="prefix" />
+            </th>
+            <th style="width: 10%">Image</th>
+            <th pSortableColumn="nameTr" style="width: 25%">
+              Name <p-sortIcon field="nameTr" />
+            </th>
+            <th pSortableColumn="teacherName" style="width: 20%">
+              Instructor <p-sortIcon field="teacherName" />
+            </th>
+            <th pSortableColumn="yearLevel" style="width: 10%">
+              <div class="flex justify-center items-center w-full gap-1">
+                Year <p-sortIcon field="yearLevel" />
+              </div>
+            </th>
+            <th pSortableColumn="studentCount" style="width: 10%">
+              <div class="flex justify-center items-center w-full gap-1">
+                Students <p-sortIcon field="studentCount" />
+              </div>
+            </th>
+            <th style="width: 10%">
+              <div class="flex justify-center items-center w-full">Actions</div>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-course>
+          <tr
+            class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/30"
+          >
+            <td>
+              <p-tag
+                [value]="course.prefix"
+                severity="info"
+                [rounded]="true"
+              ></p-tag>
+            </td>
+            <td>
+              <img
+                [src]="getImageUrl(course.imageUrl)"
+                [alt]="course.nameTr"
+                class="w-12 h-12 rounded-lg object-cover border border-slate-200 dark:border-slate-600 shadow-sm"
+              />
+            </td>
+            <td>
+              <div class="group relative cursor-pointer">
+                <div
+                  class="font-bold text-slate-800 dark:text-slate-100 group-hover:hidden transition-all duration-300"
+                >
+                  {{ course.nameTr }}
+                </div>
+                <!-- English name shown on hover -->
+                <div
+                  class="hidden group-hover:block font-medium text-blue-600 dark:text-blue-400 animate-fade-in"
+                >
+                  {{ course.nameEn }}
+                </div>
+                <!-- Subtitle visible always initially, maybe hides on hover if desired, preserving layout -->
+                <div
+                  class="text-xs text-slate-400 group-hover:text-slate-500 truncate max-w-xs"
+                >
+                  {{ course.nameEn }} (Alt)
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-slate-600 dark:text-slate-300">{{
+                course.teacherName
+              }}</span>
+            </td>
+            <td>
+              <div class="flex justify-center items-center w-full">
+                <div
+                  class="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm shadow-sm"
+                  [ngClass]="{
+                    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400':
+                      course.yearLevel === 1,
+                    'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400':
+                      course.yearLevel === 2,
+                    'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400':
+                      course.yearLevel === 3,
+                    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400':
+                      course.yearLevel === 4,
+                  }"
+                >
+                  {{ course.yearLevel }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-center items-center w-full">
+                <span
+                  class="font-semibold text-slate-600 dark:text-slate-400"
+                  >{{ course.studentCount || 0 }}</span
+                >
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-center items-center w-full gap-2">
+                <p-button
+                  icon="pi pi-database"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="info"
+                  pTooltip="Manage Materials"
+                  tooltipPosition="top"
+                  (onClick)="goToMaterials(course.id)"
+                >
+                </p-button>
+                <p-button
+                  icon="pi pi-pencil"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="secondary"
+                  pTooltip="Edit Course"
+                  tooltipPosition="top"
+                  (onClick)="editCourse(course)"
+                >
+                </p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="danger"
+                  pTooltip="Delete Course"
+                  tooltipPosition="top"
+                  (onClick)="deleteCourse(course.id)"
+                >
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center p-8">
+              <div
+                class="flex flex-col items-center justify-center text-slate-500"
+              >
+                <i class="pi pi-inbox text-4xl mb-2"></i>
+                <p>No courses found matching criteria.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+
+  <!-- Create View -->
+  @if (isCreating()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+      <!-- Left Column: Basic Info -->
+      <div class="lg:col-span-2 space-y-6">
+        <div
+          class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700"
+        >
+          <h2
+            class="text-lg font-semibold mb-6 text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-700 pb-2"
+          >
+            {{
+              editingCourseId()
+                ? "Update Course Information"
+                : "Basic Information"
+            }}
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Prefix -->
+            <div class="col-span-1">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Course Prefix <span class="text-red-500">*</span>
+              </label>
+              <input
+                [ngModel]="formVal.prefix"
+                (ngModelChange)="updateField('prefix', $event)"
+                type="text"
+                pInputText
+                placeholder="e.g. BMT101"
+                class="w-full"
+                [ngClass]="{
+                  'ng-invalid ng-dirty':
+                    (!formVal.prefix || formVal.prefix.includes(' ')) &&
+                    formVal.prefix !== '',
+                }"
+              />
+              <p class="text-xs text-slate-500 mt-1">
+                Unique code for the course (no spaces).
+              </p>
+              @if (formVal.prefix && formVal.prefix.includes(" ")) {
+                <p class="text-xs text-red-500 mt-1">
+                  No spaces allowed in prefix.
+                </p>
+              }
+            </div>
+
+            <!-- Credits -->
+            <div class="col-span-1">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Credits (AKTS)
+              </label>
+              <input
+                [ngModel]="formVal.credits"
+                (ngModelChange)="updateField('credits', $event)"
+                type="number"
+                pInputText
+                min="1"
+                max="30"
+                class="w-full"
+              />
+            </div>
+
+            <!-- Name TR -->
+            <div class="col-span-1">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Course Name (TR) <span class="text-red-500">*</span>
+              </label>
+              <input
+                [ngModel]="formVal.nameTr"
+                (ngModelChange)="updateField('nameTr', $event)"
+                type="text"
+                pInputText
+                class="w-full"
+                [ngClass]="{
+                  'ng-invalid ng-dirty':
+                    !formVal.nameTr && formVal.nameTr !== '',
+                }"
+              />
+            </div>
+
+            <!-- Name EN -->
+            <div class="col-span-1">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Course Name (EN) <span class="text-red-500">*</span>
+              </label>
+              <input
+                [ngModel]="formVal.nameEn"
+                (ngModelChange)="updateField('nameEn', $event)"
+                type="text"
+                pInputText
+                class="w-full"
+                [ngClass]="{
+                  'ng-invalid ng-dirty':
+                    !formVal.nameEn && formVal.nameEn !== '',
+                }"
+              />
+            </div>
+
+            <!-- Description TR -->
+            <div class="col-span-2">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Description (TR)
+              </label>
+              <textarea
+                [ngModel]="formVal.descriptionTr"
+                (ngModelChange)="updateField('descriptionTr', $event)"
+                rows="3"
+                pInputTextarea
+                class="w-full p-3 rounded-md border border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+              ></textarea>
+            </div>
+
+            <!-- Description EN -->
+            <div class="col-span-2">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Description (EN)
+              </label>
+              <textarea
+                [ngModel]="formVal.descriptionEn"
+                (ngModelChange)="updateField('descriptionEn', $event)"
+                rows="3"
+                pInputTextarea
+                class="w-full p-3 rounded-md border border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+              ></textarea>
+            </div>
+
+            <!-- Teacher -->
+            <div class="col-span-1">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Instructor Name
+              </label>
+              <input
+                [ngModel]="formVal.teacherName"
+                (ngModelChange)="updateField('teacherName', $event)"
+                type="text"
+                pInputText
+                class="w-full"
+              />
+            </div>
+
+            <!-- Year Level -->
+            <div class="col-span-1">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Year Level
+              </label>
+              <select
+                [ngModel]="formVal.yearLevel"
+                (ngModelChange)="updateField('yearLevel', $event)"
+                class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-primary-500 focus:border-primary-500"
+              >
+                <option [value]="1">Year 1</option>
+                <option [value]="2">Year 2</option>
+                <option [value]="3">Year 3</option>
+                <option [value]="4">Year 4</option>
+              </select>
+            </div>
+
+            <!-- File Input -->
+            <div class="col-span-2">
+              <label
+                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
+                Course Cover Image
+              </label>
+              <div class="flex items-center justify-center w-full">
+                <label
+                  class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                >
+                  <div
+                    class="flex flex-col items-center justify-center pt-5 pb-6"
+                  >
+                    @if (selectedFile()) {
+                      <p
+                        class="text-sm text-emerald-600 dark:text-emerald-400 font-medium mb-1 truncate max-w-[200px]"
+                      >
+                        {{ selectedFile()?.name }}
+                      </p>
+                      <p class="text-xs text-slate-500">File selected</p>
+                    } @else {
+                      <i
+                        class="pi pi-cloud-upload text-3xl text-slate-400 mb-2"
+                      ></i>
+                      <p class="text-sm text-slate-500 dark:text-slate-400">
+                        <span class="font-semibold">Click to upload</span> or
+                        drag and drop
+                      </p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400">
+                        SVG, PNG, JPG or GIF
+                      </p>
+                    }
+                  </div>
+                  <input
+                    type="file"
+                    class="hidden"
+                    (change)="onFileSelected($event)"
+                    accept="image/*"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <!-- AI Settings Checkboxes -->
+            <div
+              class="col-span-2 border-t border-slate-200 dark:border-slate-700 pt-6 mt-2"
+            >
+              <h3
+                class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-4"
+              >
+                Course Questions Types (AI Options)
+              </h3>
+              <div class="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                <div class="flex items-center">
+                  <p-checkbox
+                    [binary]="true"
+                    inputId="allowTheory"
+                    [ngModel]="formVal.allowTheoryQuestions"
+                    (ngModelChange)="
+                      updateField('allowTheoryQuestions', $event)
+                    "
+                  ></p-checkbox>
+                  <label
+                    for="allowTheory"
+                    class="ml-2 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    Allow Theory Questions
+                  </label>
+                </div>
+                <div class="flex items-center">
+                  <p-checkbox
+                    [binary]="true"
+                    inputId="allowCode"
+                    [ngModel]="formVal.allowCodeQuestions"
+                    (ngModelChange)="updateField('allowCodeQuestions', $event)"
+                  ></p-checkbox>
+                  <label
+                    for="allowCode"
+                    class="ml-2 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    Allow Code Questions
+                  </label>
+                </div>
+                <div class="flex items-center">
+                  <p-checkbox
+                    [binary]="true"
+                    inputId="allowMath"
+                    [ngModel]="formVal.allowMathQuestions"
+                    (ngModelChange)="updateField('allowMathQuestions', $event)"
+                  ></p-checkbox>
+                  <label
+                    for="allowMath"
+                    class="ml-2 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    Allow Math Questions
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button (Large) -->
+        <p-button
+          [label]="editingCourseId() ? 'Update Course' : 'Create Course'"
+          [loading]="isLoading()"
+          [disabled]="!isFormValid"
+          (onClick)="submitCourse()"
+          styleClass="w-full"
+          size="large"
+        >
+        </p-button>
+      </div>
+
+      <!-- Right Column: Curriculum (Sticky) -->
+      <div class="lg:col-span-1">
+        <div
+          class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 sticky top-6"
+        >
+          <div
+            class="flex justify-between items-center mb-4 border-b border-slate-100 dark:border-slate-700 pb-2"
+          >
+            <h2 class="text-lg font-semibold text-slate-800 dark:text-white">
+              Curriculum Weeks
+            </h2>
+            <p-button
+              label="Add Week"
+              icon="pi pi-plus"
+              size="small"
+              [text]="true"
+              (onClick)="addWeek()"
+            >
+            </p-button>
+          </div>
+
+          <div
+            class="space-y-4 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar"
+          >
+            @for (
+              week of courseWeeks();
+              track week.weekNumber;
+              let i = $index
+            ) {
+              <div
+                class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700 relative group animate-fade-in-up"
+              >
+                <div class="flex justify-between items-start mb-2">
+                  <span
+                    class="text-xs font-bold text-slate-500 uppercase tracking-widest"
+                  >
+                    Week {{ week.weekNumber }}
+                  </span>
+                  <p-button
+                    icon="pi pi-times"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="danger"
+                    size="small"
+                    (onClick)="removeWeek(i)"
+                    styleClass="w-6 h-6"
+                  >
+                  </p-button>
+                </div>
+
+                <div class="space-y-2">
+                  <input
+                    pInputText
+                    [value]="week.topicTr"
+                    (input)="
+                      updateWeek(i, 'topicTr', $any($event.target).value)
+                    "
+                    placeholder="Topic (Turkish)"
+                    class="w-full text-sm p-2"
+                  />
+                  <input
+                    pInputText
+                    [value]="week.topicEn"
+                    (input)="
+                      updateWeek(i, 'topicEn', $any($event.target).value)
+                    "
+                    placeholder="Topic (English)"
+                    class="w-full text-sm p-2"
+                  />
+                </div>
+              </div>
+            } @empty {
+              <div
+                class="text-center py-8 text-slate-400 dark:text-slate-500 text-sm italic border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg"
+              >
+                No weeks added yet.<br />Click "+ Add Week" to start.
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

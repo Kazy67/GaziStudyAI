@@ -3,7 +3,7 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { authGuard } from './core/guard/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'register', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'register',
     loadComponent: () =>
@@ -113,7 +113,17 @@ export const routes: Routes = [
       },
       {
         path: 'admin/courses',
-        redirectTo: 'admin/dashboard',
+        loadComponent: () =>
+          import('./features/admin/manage-courses/admin-manage-courses.component').then(
+            (m) => m.AdminManageCoursesComponent,
+          ),
+      },
+      {
+        path: 'admin/courses/:id/materials',
+        loadComponent: () =>
+          import('./features/admin/course-materials/course-materials').then(
+            (m) => m.CourseMaterials,
+          ),
       },
       {
         path: 'admin/students',

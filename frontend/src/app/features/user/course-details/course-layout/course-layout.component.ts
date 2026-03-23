@@ -55,7 +55,7 @@ export class CourseLayoutComponent implements OnInit {
     if (imagePath) {
       return `${environment.baseUrl}${imagePath}`;
     }
-    return 'assets/images/default-course.png'; // Fallback image
+    return 'assets/images/default-course.jpg'; // Fallback image
   }
 
   toggleDescription() {

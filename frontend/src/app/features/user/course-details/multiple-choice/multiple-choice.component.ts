@@ -17,8 +17,6 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
 export interface ExamConfig {
-  startWeek: number;
-  endWeek: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   questionCount: number;
   timerEnabled: boolean;
@@ -48,18 +46,19 @@ export class MultipleChoiceComponent implements OnInit {
 
   // Phase 1: Configuration
   weeks: { id: number; topicTr: string; topicEn: string }[] = [];
+  validWeeks: number[] = [];
   difficulties = ['Easy', 'Medium', 'Hard'];
   courseName = '';
   courseId = '';
+  coursePrefix = '';
 
   config: ExamConfig = {
-    startWeek: 1,
-    endWeek: 14,
     difficulty: 'Medium',
     questionCount: 10,
     timerEnabled: false,
     recommendedTime: 15,
   };
+  selectedWeeks: number[] = [];
 
   // Phase 2: Active Exam
   currentPhase: 'config' | 'exam' | 'grading' = 'config';
@@ -90,32 +89,49 @@ export class MultipleChoiceComponent implements OnInit {
         switchMap((id) => {
           if (!id) throw new Error('Course ID is required');
           this.courseId = id;
-          return this.courseService.getCourseById(id);
+          return this.courseService.getStudentExamSetup(id);
         }),
       )
       .subscribe({
         next: (result) => {
-          if (result.data) {
-            this.courseName = result.data.nameEn || result.data.nameTr || '';
-            if (result.data.weeks) {
-              this.weeks = result.data.weeks
-                .map((w) => ({
-                  id: w.weekNumber,
+          if (result.data?.course) {
+            console.log('MultipleChoice loadCourseWeeks API result:', result);
+            const course = result.data.course;
+            this.validWeeks = (result.data.validWeeks || []).map((v: any) =>
+              Number(v),
+            );
+            console.log('Valid weeks array:', this.validWeeks);
+            this.courseName = course.nameEn || course.nameTr || '';
+            this.coursePrefix = course.prefix || '';
+            if (course.weeks) {
+              this.weeks = course.weeks
+                .map((w: any) => ({
+                  id: Number(w.weekNumber),
                   topicTr: w.topicTr,
                   topicEn: w.topicEn,
                 }))
-                .sort((a, b) => a.id - b.id);
+                .sort((a: any, b: any) => a.id - b.id);
 
-              // Initialize config with loaded weeks
+              console.log('Mapped weeks:', this.weeks);
+
+              // Initialize config with loaded weeks that are actually valid if possible
               if (this.weeks.length > 0) {
-                this.config.startWeek = this.weeks[0].id;
-                this.config.endWeek = this.weeks[this.weeks.length - 1].id;
+                // Initialize default logic could go here or can keep selectedWeeks empty
               }
             }
           }
         },
         error: (err) => console.error('Failed to load course weeks', err),
       });
+  }
+
+  toggleWeek(weekId: number) {
+    const idx = this.selectedWeeks.indexOf(weekId);
+    if (idx > -1) {
+      this.selectedWeeks.splice(idx, 1);
+    } else {
+      this.selectedWeeks.push(weekId);
+    }
   }
 
   getWeekTopic(week: { id: number; topicTr: string; topicEn: string }): string {
@@ -141,16 +157,13 @@ export class MultipleChoiceComponent implements OnInit {
     if (this.config.recommendedTime > 60) this.config.recommendedTime = 60;
   }
 
-  onStartWeekChange() {
-    if (this.config.endWeek < this.config.startWeek) {
-      this.config.endWeek = this.config.startWeek;
-    }
-  }
-
   selectAllTopics() {
     if (this.weeks.length > 0) {
-      this.config.startWeek = this.weeks[0].id;
-      this.config.endWeek = this.weeks[this.weeks.length - 1].id;
+      if (this.selectedWeeks.length === this.validWeeks.length) {
+        this.selectedWeeks = []; // Deselect all
+      } else {
+        this.selectedWeeks = [...this.validWeeks]; // Select all valid
+      }
     }
   }
 
@@ -163,32 +176,10 @@ export class MultipleChoiceComponent implements OnInit {
     this.sessionId = crypto.randomUUID();
     this.attemptNumber = 1;
 
-    // Define course prefix based on course name
-    const lowerName = this.courseName.toLowerCase();
-    let prefix = 'vp'; // Default to Visual Programming
-
-    if (lowerName.includes('operating') || lowerName.includes('işletim')) {
-      prefix = 'os';
-    } else if (
-      lowerName.includes('bicimsel') ||
-      lowerName.includes('automata') ||
-      lowerName.includes('formal')
-    ) {
-      prefix = 'bdo';
-    } else if (lowerName.includes('gorsel') || lowerName.includes('visual')) {
-      prefix = 'vp';
-    }
-
     // Construct request
     const request: GenerateTestRequest = {
-      coursePrefix: prefix,
-      weeks: Array.from(
-        {
-          length:
-            Number(this.config.endWeek) - Number(this.config.startWeek) + 1,
-        },
-        (_, i) => Number(this.config.startWeek) + i,
-      ),
+      coursePrefix: this.coursePrefix,
+      weeks: [...this.selectedWeeks].sort((a, b) => a - b),
       questionCount: this.config.questionCount,
       difficulty: this.config.difficulty, // Already 'Easy', 'Medium', 'Hard'
     };

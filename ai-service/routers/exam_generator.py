@@ -14,6 +14,9 @@ class ClassicRequest(BaseModel):
     weeks: list[int]
     question_count: int
     difficulty: str
+    allow_theory: bool = True
+    allow_code: bool = False
+    allow_math: bool = False
 
 # ==========================================
 # 2. COURSE CONFIGURATIONS (Updated for W1-W12)
@@ -131,6 +134,16 @@ def get_difficulty_rules(difficulty: str, topic_type: str) -> str:
         if diff == "easy": return "Ask for a trace of a Turing Machine with maximum 3 steps. Only move Right (R)."
         if diff == "medium": return "Ask for a trace of a TM with 4 to 5 steps. Include changing symbols."
         if diff == "hard": return "Ask for a trace of a TM with 6+ steps involving changing directions (R and L)."
+
+    # === GENERIC CUSTOM COURSE RULES ===
+    elif "generic_math" in topic_type:
+        if diff == "easy": return "Ask a single-step, fundamental calculation."
+        if diff == "medium": return "Ask a multi-step calculation requiring formula application."
+        if diff == "hard": return "Ask a highly advanced, complex calculation requiring deep analytical problem-solving."
+    elif "generic_code" in topic_type:
+        if diff == "easy": return "Ask to complete a basic variable assignment or simple loop."
+        if diff == "medium": return "Ask to complete a core logic condition or function."
+        if diff == "hard": return "Ask to complete a complex algorithm or optimization logic."
         
     return "Keep it standard university level."
 
@@ -449,6 +462,47 @@ def build_classic_prompt(prefix: str, topic: str, diff_rules: str, context: str,
             }}
             """
 
+    elif topic == "generic_code":
+        return base_prompt + """
+        {
+            "visualType": "vp_code_completion",
+            "questionText": "Aşağıdaki kod bloğunda eksik bırakılan yeri (_____) uygun şekilde doldurunuz.",
+            "inputData": {
+                "codeSnippet": "// WRITE A DYNAMIC CODE SNIPPET HERE BASED ON THE CONTEXT.\n// USE \n FOR NEWLINES.",
+                "language": "python" 
+            },
+            "solutionData": {
+                "correctCode": "the_missing_syntax"
+            }
+        }
+        
+        CRITICAL INSTRUCTION FOR generic_code: 
+        1. Read the provided CONTEXT. Look at the VARIANT SEED to pick a specific coding concept mentioned in the text.
+        2. Write a code snippet and replace one important keyword or variable with '_____'.
+        """
+
+    elif topic == "generic_math":
+        return base_prompt + """
+        {
+            "visualType": "generic_math",
+            "questionText": "Aşağıdaki problemi çözünüz ve sayısal sonucu yazınız.",
+            "inputData": {
+                "problemStatement": "WRITE A DYNAMIC CALCULATION PROBLEM HERE BASED ON THE CONTEXT."
+            },
+            "solutionData": {
+                "correctAnswer": "42"
+            }
+        }
+        
+        CRITICAL INSTRUCTION FOR generic_math: 
+        1. Read the CONTEXT. Find a mathematical formula or numerical concept.
+        2. Create a math problem using those rules. Write the problem as a single, flowing paragraph.
+        3. VERY IMPORTANT LATEX RULES: 
+           - For variables or numbers INSIDE a sentence, you MUST use SINGLE dollar signs (e.g., "Adım büyüklüğü $h = 0.1$ olarak alınacaktır").
+           - DO NOT use double dollar signs ($$) inside sentences. It breaks the UI layout.
+           - ONLY use double dollar signs ($$) for the final, massive equation at the very end.
+        """
+
     # --- FALLBACK / THEORY FOR ANY COURSE ---
     return base_prompt + """
     {
@@ -501,11 +555,18 @@ async def generate_classic_exam(request: ClassicRequest):
             for w in request.weeks:
                 if w in BDO_CLASSIC_TOPICS:
                     available_topics.extend(BDO_CLASSIC_TOPICS[w])
+        else:
+            # === THE DYNAMIC COURSE GENERATOR ===
+            # If the course is a custom admin course, we use the checkboxes!
+            if request.allow_theory: available_topics.append("generic_theory")
+            if request.allow_code: available_topics.append("generic_code")
+            if request.allow_math: available_topics.append("generic_math")
         
         if not available_topics:
             available_topics = ["generic_theory"]
 
-        selected_topics = random.choices(available_topics, k=request.question_count)
+        selected_topics = [available_topics[i % len(available_topics)] for i in range(request.question_count)]
+        random.shuffle(selected_topics)
         generated_questions = []
 
         # We use enumerate so 'i' becomes the unique seed

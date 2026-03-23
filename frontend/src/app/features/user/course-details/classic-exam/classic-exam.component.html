@@ -113,18 +113,37 @@
         >
           <div
             *ngFor="let week of availableWeeks"
-            (click)="toggleWeek(week.id)"
+            (click)="validWeeks.includes(week.id) ? toggleWeek(week.id) : null"
+            [class.opacity-50]="!validWeeks.includes(week.id)"
+            [class.cursor-not-allowed]="!validWeeks.includes(week.id)"
+            [class.cursor-pointer]="validWeeks.includes(week.id)"
             [class.ring-2]="selectedWeeks.includes(week.id)"
             [class.ring-blue-500]="selectedWeeks.includes(week.id)"
             [class.bg-blue-50]="selectedWeeks.includes(week.id)"
             [class.dark:bg-blue-900]="selectedWeeks.includes(week.id)"
-            class="cursor-pointer p-3 border rounded-lg transition-all duration-200 hover:shadow-md border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 flex items-center justify-between group"
+            class="p-3 border rounded-lg transition-all duration-200 hover:shadow-md border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 flex items-center justify-between group"
           >
-            <span class="text-sm font-medium"
-              >{{ week.id }}. {{ week.label }}</span
-            >
+            <div class="flex flex-col">
+              <span class="text-sm font-medium"
+                >{{ week.id }}. {{ week.label }}</span
+              >
+              <span
+                *ngIf="!validWeeks.includes(week.id)"
+                class="text-xs text-red-500 font-semibold mt-0.5"
+              >
+                (Materyal Yok)
+              </span>
+            </div>
             <div
-              class="w-5 h-5 rounded border border-gray-400 dark:border-gray-500 flex items-center justify-center transition-colors"
+              class="w-5 h-5 rounded border flex flex-shrink-0 items-center justify-center transition-colors"
+              [class.border-gray-400]="
+                validWeeks.includes(week.id) && !selectedWeeks.includes(week.id)
+              "
+              [class.dark:border-gray-500]="
+                validWeeks.includes(week.id) && !selectedWeeks.includes(week.id)
+              "
+              [class.border-gray-300]="!validWeeks.includes(week.id)"
+              [class.bg-gray-200]="!validWeeks.includes(week.id)"
               [class.bg-blue-500]="selectedWeeks.includes(week.id)"
               [class.border-transparent]="selectedWeeks.includes(week.id)"
             >
@@ -462,6 +481,34 @@
               (scoreCalculated)="onScoreCalculated($event, i)"
             >
             </app-generic-theory>
+          </div>
+
+          <!-- Generic Math Component -->
+          <div
+            *ngSwitchCase="!!q.visualType && q.visualType === 'generic_math'"
+          >
+            <div *ngIf="submitted && !isRetaking" class="mb-4 flex justify-end">
+              <span
+                class="px-3 py-1 text-sm font-bold rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': (questionScores[i] || 0) >= 80,
+                  'bg-yellow-100 text-yellow-800':
+                    (questionScores[i] || 0) >= 50 &&
+                    (questionScores[i] || 0) <= 80,
+                  'bg-red-100 text-red-800': (questionScores[i] || 0) < 50,
+                }"
+              >
+                {{ "EXAM.SCORE_LABEL" | translate }}
+                {{ questionScores[i] || 0 | number: "1.0-0" }}%
+              </span>
+            </div>
+            <app-generic-math
+              [question]="q"
+              [isSubmitted]="submitted"
+              (scoreCalculated)="onScoreCalculated($event, i)"
+              (answerChange)="q.userAnswer = $event"
+            >
+            </app-generic-math>
           </div>
 
           <!-- Generic Theory (Fallback) -->

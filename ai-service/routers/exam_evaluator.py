@@ -153,6 +153,22 @@ def get_evaluation_prompt(request: EvaluateRequest) -> str:
         
         {json_format}
         """
+    
+    elif "generic_math" in q_type:
+        return f"""
+        You are grading a mathematical question.
+        QUESTION: {request.questionText}
+        PROBLEM: {json.dumps(request.solutionData, ensure_ascii=False)}
+        STUDENT'S ANSWER: {json.dumps(request.studentData, ensure_ascii=False)}
+        
+        GRADING PROTOCOL:
+        1. Extract the numerical or simple text answer from the student's data.
+        2. Compare it to the correct answer. Allow for slight formatting differences (e.g., "42" vs "42.0").
+        3. If correct, score 100. If wrong, score 0.
+        
+        FEEDBACK: Write in TURKISH. Explain the correct calculation briefly if they got it wrong.
+        {json_format}
+        """
 
     else:
         # Fallback generic grader

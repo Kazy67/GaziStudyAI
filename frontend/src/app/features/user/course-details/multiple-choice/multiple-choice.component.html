@@ -24,46 +24,76 @@
           class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide"
           >{{ "EXAM.TOPIC_RANGE" | translate }}</label
         >
-        <div class="flex flex-col md:flex-row gap-4 items-center">
-          <div class="relative w-full">
-            <label
-              class="absolute -top-2.5 left-3 bg-white dark:bg-gray-800 px-1 text-xs font-medium text-blue-600 dark:text-blue-400"
-              >{{ "EXAM.START_WEEK" | translate }}</label
-            >
-            <select
-              [(ngModel)]="config.startWeek"
-              (change)="onStartWeekChange()"
-              class="w-full p-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700/50 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all hover:bg-white dark:hover:bg-gray-700"
-            >
-              <option *ngFor="let w of weeks" [ngValue]="w.id">
-                {{ "EXAM.WEEK" | translate }} {{ w.id }}: {{ getWeekTopic(w) }}
-              </option>
-            </select>
-          </div>
-          <span
-            class="text-gray-400 dark:text-gray-500 font-bold hidden md:block"
-            >→</span
+        <!-- Empty State / Loading Check -->
+        <div
+          *ngIf="weeks.length === 0"
+          class="p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-lg"
+        >
+          {{ "EXAM.LOADING_TOPICS" | translate }}...
+        </div>
+
+        <div
+          *ngIf="weeks.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-1"
+        >
+          <div
+            *ngFor="let week of weeks"
+            (click)="validWeeks.includes(week.id) ? toggleWeek(week.id) : null"
+            [class.opacity-50]="!validWeeks.includes(week.id)"
+            [class.cursor-not-allowed]="!validWeeks.includes(week.id)"
+            [class.cursor-pointer]="validWeeks.includes(week.id)"
+            [class.ring-2]="selectedWeeks.includes(week.id)"
+            [class.ring-blue-500]="selectedWeeks.includes(week.id)"
+            [class.bg-blue-50]="selectedWeeks.includes(week.id)"
+            [class.dark:bg-blue-900]="selectedWeeks.includes(week.id)"
+            class="p-3 border rounded-lg transition-all duration-200 hover:shadow-md border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 flex items-center justify-between group"
           >
-          <div class="relative w-full">
-            <label
-              class="absolute -top-2.5 left-3 bg-white dark:bg-gray-800 px-1 text-xs font-medium text-blue-600 dark:text-blue-400"
-              >{{ "EXAM.END_WEEK" | translate }}</label
-            >
-            <select
-              [(ngModel)]="config.endWeek"
-              class="w-full p-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700/50 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all hover:bg-white dark:hover:bg-gray-700"
-            >
-              <option
-                *ngFor="let w of weeks"
-                [ngValue]="w.id"
-                [disabled]="w.id < config.startWeek"
+            <div class="flex flex-col">
+              <span class="text-sm font-medium">
+                {{ week.id }}. {{ getWeekTopic(week) }}
+              </span>
+              <span
+                *ngIf="!validWeeks.includes(week.id)"
+                class="text-xs text-red-500 font-semibold mt-0.5"
               >
-                {{ "EXAM.WEEK" | translate }} {{ w.id }}: {{ getWeekTopic(w) }}
-              </option>
-            </select>
+                (Materyal Yok)
+              </span>
+            </div>
+            <div
+              class="w-5 h-5 rounded border flex flex-shrink-0 items-center justify-center transition-colors"
+              [class.border-gray-400]="
+                validWeeks.includes(week.id) && !selectedWeeks.includes(week.id)
+              "
+              [class.dark:border-gray-500]="
+                validWeeks.includes(week.id) && !selectedWeeks.includes(week.id)
+              "
+              [class.border-gray-300]="!validWeeks.includes(week.id)"
+              [class.bg-gray-200]="!validWeeks.includes(week.id)"
+              [class.bg-blue-500]="selectedWeeks.includes(week.id)"
+              [class.border-transparent]="selectedWeeks.includes(week.id)"
+            >
+              <svg
+                *ngIf="selectedWeeks.includes(week.id)"
+                class="w-3 h-3 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="3"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+            </div>
           </div>
         </div>
-        <div class="mt-2 text-right">
+
+        <div class="mt-2 flex justify-between items-center">
+          <p class="text-xs text-gray-500 dark:text-gray-400">
+            {{ selectedWeeks.length }} {{ "EXAM.TOPICS_SELECTED" | translate }}
+          </p>
           <p-button
             [label]="'EXAM.SELECT_ALL_TOPICS' | translate"
             variant="text"
@@ -209,7 +239,7 @@
     <div class="pt-4">
       <button
         (click)="generateExam()"
-        [disabled]="loading"
+        [disabled]="loading || selectedWeeks.length === 0"
         class="group relative w-full py-4 px-6 text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl shadow-lg hover:shadow-xl font-bold text-lg tracking-wide transition-all duration-200 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 overflow-hidden"
       >
         <div
@@ -447,7 +477,6 @@
       <!-- Results Header / Summary -->
       <div class="p-8 md:p-10 relative overflow-hidden">
         <!-- Abstract Background Shape -->
-        
 
         <div
           class="flex flex-col md:flex-row items-center justify-between relative z-10 gap-8"

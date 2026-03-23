@@ -1,5 +1,6 @@
 export interface Course {
   id: string; // Guid -> string
+  prefix: string;
   nameTr: string;
   nameEn: string;
   descriptionTr: string;
@@ -8,6 +9,10 @@ export interface Course {
   credits: number | null;
   imageUrl: string | null;
   yearLevel: number;
+  studentCount: number;
+  allowTheoryQuestions?: boolean;
+  allowCodeQuestions?: boolean;
+  allowMathQuestions?: boolean;
   weeks: CourseWeek[];
 }
 
