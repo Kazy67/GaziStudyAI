@@ -90,6 +90,34 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'ai-study-room',
+        loadComponent: () =>
+          import('./features/user/study-room/study-room.component').then(
+            (m) => m.StudyRoomComponent,
+          ),
+      },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/user/history/history.component').then(
+            (m) => m.ExamHistoryComponent,
+          ),
+      },
+      {
+        path: 'history/:examId',
+        loadComponent: () =>
+          import('./features/user/history-detail/history-detail.component').then(
+            (m) => m.HistoryDetailComponent,
+          ),
+      },
+      {
+        path: 'performance',
+        loadComponent: () =>
+          import('./features/user/performance/performance.component').then(
+            (m) => m.PerformanceComponent,
+          ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./features/user/profile/profile.component').then(

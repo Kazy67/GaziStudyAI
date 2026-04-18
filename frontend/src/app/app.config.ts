@@ -15,6 +15,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
       },
       ripple: true,
     }),
+    provideCharts(withDefaultRegisterables()),
     importProvidersFrom(
       TranslateModule.forRoot({
         loader: {

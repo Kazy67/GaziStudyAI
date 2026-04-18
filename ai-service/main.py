@@ -4,6 +4,7 @@ from routers import test_generator # 👈 Import the new unified router
 from routers import exam_generator # 👈 Import the exam generator router
 from routers import exam_evaluator # 👈 Import the exam evaluator router
 from routers import ingestor # 👈 Import the ingestor router
+from routers import study_room # 👈 Import the study room chat router
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,6 +22,7 @@ app.include_router(test_generator.router) # 👈 Register it here
 app.include_router(exam_generator.router) # 👈 And the exam generator too!
 app.include_router(exam_evaluator.router) # 👈 Register the evaluator
 app.include_router(ingestor.router) # 👈 Register the ingestor router
+app.include_router(study_room.router) # 👈 Register the study room chat router
 
 @app.get("/")
 def read_root():

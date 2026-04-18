@@ -1,0 +1,120 @@
+// Reset Tailwind list styles specifically inside the parsed markdown container
+::ng-deep .raw-markdown {
+  p {
+    margin-bottom: 1em;
+  }
+  
+  ul, ol {
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+  }
+  
+  ul {
+    list-style-type: disc;
+  }
+  
+  ol {
+    list-style-type: decimal;
+  }
+  
+  li {
+    margin-bottom: 0.25em;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: inherit;
+  }
+  
+  h1 { font-size: 1.5em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.3em; margin-bottom: 0.5em; }
+  h2 { font-size: 1.3em; margin-top: 1.5em; margin-bottom: 0.5em; }
+  h3 { font-size: 1.1em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+  
+  pre {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    
+    code {
+      color: #e2e8f0 !important;
+      background-color: transparent;
+      padding: 0;
+      font-weight: normal;
+    }
+  }
+  
+  code {
+    color: #38bdf8;
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 0.15rem 0.3rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+  }
+
+  blockquote {
+    border-left: 4px solid #cbd5e1;
+    padding-left: 1em;
+    color: #64748b;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-style: italic;
+  }
+
+  strong, b {
+    font-weight: 700;
+  }
+
+  table {
+    width: 100%;
+    margin-bottom: 1em;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 0.5em;
+    border: 1px solid #e2e8f0;
+  }
+
+  th {
+    background-color: #f8fafc;
+    font-weight: bold;
+  }
+}
+
+// Dark mode overrides
+:host-context(.dark) ::ng-deep .raw-markdown {
+  h1 { border-color: #334155; }
+  
+  code {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  blockquote {
+    border-left-color: #475569;
+    color: #94a3b8;
+  }
+
+  th, td {
+    border-color: #334155;
+  }
+
+  th {
+    background-color: #0f172a;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

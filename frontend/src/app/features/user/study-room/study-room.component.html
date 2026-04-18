@@ -1,0 +1,212 @@
+<div
+  class="h-[calc(100vh-13rem)] w-full flex flex-col md:flex-row bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xl"
+>
+  <!-- LEFT SIDEBAR: Courses List -->
+  <div
+    class="w-full md:w-1/4 h-full bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex-col shadow-sm z-10 hidden md:flex"
+  >
+    <div
+      class="p-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0"
+    >
+      <h2
+        class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2"
+      >
+        <i class="pi pi-bolt text-indigo-500"></i> AI Study Room
+      </h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+        Ders materyallerinizle yapay zeka destekli sohbet edin.
+      </p>
+    </div>
+
+    <!-- Course Selection List -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-3">
+      <div
+        *ngFor="let course of courses()"
+        (click)="selectCourse(course.id)"
+        class="cursor-pointer p-4 rounded-xl border transition-all"
+        [ngClass]="
+          selectedCourseId() === course.id
+            ? 'bg-indigo-50 border-indigo-500 dark:bg-indigo-900/20 dark:border-indigo-500 shadow-sm'
+            : 'bg-white border-slate-200 hover:border-slate-300 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-slate-600'
+        "
+      >
+        <div
+          class="font-semibold text-slate-800 dark:text-slate-200 break-words"
+        >
+          {{ course.nameTr }}
+        </div>
+        <div
+          class="text-xs text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wider font-semibold"
+        >
+          {{ course.prefix }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT CHAT AREA -->
+  <div
+    class="w-full md:w-3/4 h-full flex flex-col bg-slate-50 dark:bg-slate-900 rounded-br-3xl overflow-hidden"
+  >
+    <!-- Header for Mobile only -->
+    <div
+      class="md:hidden p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-between"
+    >
+      <h2
+        class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2"
+      >
+        <i class="pi pi-bolt text-indigo-500"></i> AI Study Room
+      </h2>
+      <!-- Simple fast course switcher for mobile -->
+      <select
+        class="bg-slate-100 dark:bg-slate-700 border-none rounded-lg text-sm p-2 text-slate-800 dark:text-white outline-none"
+        [ngModel]="selectedCourseId()"
+        (ngModelChange)="selectCourse($event)"
+      >
+        <option [ngValue]="null" disabled selected>Ders Seçiniz</option>
+        <option *ngFor="let c of courses()" [ngValue]="c.id">
+          {{ c.nameTr }}
+        </option>
+      </select>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <ng-container *ngIf="!selectedCourseId()">
+      <div
+        class="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500 dark:text-slate-400 animate-fade-in"
+      >
+        <div
+          class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6"
+        >
+          <i
+            class="pi pi-comments text-5xl text-slate-300 dark:text-slate-600"
+          ></i>
+        </div>
+        <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-3">
+          Sohbete Başlayın
+        </h3>
+        <p class="max-w-md text-slate-500 dark:text-slate-400">
+          Devam etmek ve yapay zeka ile kişiselleştirilmiş bir şekilde çalışmak
+          için sol taraftan bir ders seçin.
+        </p>
+      </div>
+    </ng-container>
+
+    <!-- CHAT INTERFACE STATE -->
+    <ng-container *ngIf="selectedCourseId()">
+      <!-- Messages Area -->
+      <div
+        #chatContainer
+        class="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth flex flex-col items-center"
+      >
+        <div class="w-full max-w-4xl space-y-6">
+          <div
+            *ngFor="let msg of messages()"
+            class="flex w-full group"
+            [ngClass]="msg.role === 'user' ? 'justify-end' : 'justify-start'"
+          >
+            <!-- USER MESSAGE -->
+            <div
+              *ngIf="msg.role === 'user'"
+              class="flex gap-4 max-w-[85%] md:max-w-[75%] items-end"
+            >
+              <div
+                class="bg-indigo-600 text-white rounded-2xl rounded-tr-sm px-5 py-3 shadow-sm text-sm sm:text-base leading-relaxed"
+              >
+                {{ msg.text }}
+              </div>
+              <div
+                class="w-8 h-8 rounded-full bg-indigo-500 flex-shrink-0 flex items-center justify-center text-white border-2 border-slate-50 dark:border-slate-900 shadow-sm"
+              >
+                <i class="pi pi-user text-sm"></i>
+              </div>
+            </div>
+
+            <!-- AI MESSAGE -->
+            <div
+              *ngIf="msg.role === 'ai'"
+              class="flex gap-4 max-w-[95%] md:max-w-[85%] items-start"
+            >
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex-shrink-0 flex items-center justify-center text-white border-2 border-slate-50 dark:border-slate-900 shadow-sm mt-1"
+              >
+                <i class="pi pi-sparkles text-sm"></i>
+              </div>
+              <div class="flex flex-col gap-1 w-full relative">
+                <span
+                  class="text-xs font-bold text-slate-500 dark:text-slate-400 pl-1 uppercase tracking-wider"
+                  >GaziStudy AI</span
+                >
+                <div
+                  class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-sm px-5 py-4 shadow-sm"
+                >
+                  <!-- Marked HTML Content -->
+                  <div
+                    class="raw-markdown text-sm md:text-base leading-relaxed overflow-x-auto"
+                    [appMathjax]="msg.parsedText || ''"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Typing Indicator -->
+          <div
+            *ngIf="isTyping()"
+            class="flex gap-4 max-w-[95%] md:max-w-[85%] items-start"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex-shrink-0 flex items-center justify-center text-white border-2 border-slate-50 dark:border-slate-900 shadow-sm mt-1"
+            >
+              <i class="pi pi-sparkles text-sm"></i>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-xs font-bold text-slate-500 dark:text-slate-400 pl-1 uppercase tracking-wider"
+                >GaziStudy AI</span
+              >
+              <div
+                class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl rounded-tl-sm px-5 py-4 shadow-sm flex items-center gap-2 h-12 w-20"
+              >
+                <div
+                  class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.3s]"
+                ></div>
+                <div
+                  class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.15s]"
+                ></div>
+                <div
+                  class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div
+        class="w-full shrink-0 p-4 sm:p-6 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 rounded-br-3xl"
+      >
+        <div
+          class="max-w-4xl mx-auto relative flex items-center shadow-lg rounded-2xl"
+        >
+          <input
+            type="text"
+            [(ngModel)]="userInput"
+            (keyup.enter)="sendMessage()"
+            placeholder="Ders konusuyla ilgili bir soru sorun..."
+            class="w-full pl-6 pr-16 py-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-400/20 outline-none text-slate-800 dark:text-slate-200 transition-all"
+            [disabled]="isTyping()"
+          />
+          <button
+            (click)="sendMessage()"
+            [disabled]="isTyping() || !userInput().trim()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 dark:disabled:bg-slate-700 disabled:text-slate-400 text-white flex items-center justify-center transition-all cursor-pointer disabled:cursor-not-allowed shadow-sm"
+          >
+            <i class="pi pi-send"></i>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

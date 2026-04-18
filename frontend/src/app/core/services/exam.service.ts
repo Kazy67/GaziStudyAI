@@ -54,9 +54,33 @@ export class ExamService {
     );
   }
 
+  getStudentExamHistory(): Observable<ServiceResult<any[]>> {
+    return this.http.get<ServiceResult<any[]>>(`${this.apiUrl}/history`);
+  }
+
+  getExamReview(examId: string): Observable<ServiceResult<any>> {
+    return this.http.get<ServiceResult<any>>(
+      `${this.apiUrl}/history/${examId}`,
+    );
+  }
+
   getDashboard(): Observable<ServiceResult<StudentDashboardDto>> {
     return this.http.get<ServiceResult<StudentDashboardDto>>(
       `${this.apiUrl}/dashboard`,
+    );
+  }
+
+  getAnalytics(): Observable<ServiceResult<any>> {
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/analytics`);
+  }
+
+  sendChatMessage(request: {
+    courseId: string;
+    message: string;
+  }): Observable<ServiceResult<string>> {
+    return this.http.post<ServiceResult<string>>(
+      `${this.apiUrl}/study-room/chat`,
+      request,
     );
   }
 }

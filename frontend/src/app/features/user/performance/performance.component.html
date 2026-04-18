@@ -1,0 +1,152 @@
+<div
+  class="h-full bg-slate-50 dark:bg-slate-900 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8"
+>
+  <div class="max-w-7xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h1
+        class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3"
+      >
+        <i class="pi pi-chart-line text-blue-500"></i> Performans Analizi
+      </h1>
+    </div>
+
+    <!-- Loading State -->
+    <div
+      *ngIf="isLoading()"
+      class="flex flex-col items-center justify-center p-12 bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-2xl animate-pulse"
+    >
+      <div class="rounded-full bg-slate-100 dark:bg-slate-700 p-4 mb-4">
+        <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+      </div>
+      <h3 class="text-lg font-medium text-slate-700 dark:text-slate-300">
+        Loading Analytics...
+      </h3>
+    </div>
+
+    <!-- Analytics Content -->
+    <ng-container *ngIf="!isLoading() && analyticsData() as data">
+      <!-- KPI Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- Total Exams Card -->
+        <div
+          class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm flex items-center justify-between transition-all hover:shadow-md"
+        >
+          <div>
+            <p
+              class="text-sm font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase mb-1"
+            >
+              Total Exams
+            </p>
+            <p class="text-4xl font-extrabold text-slate-900 dark:text-white">
+              {{ data.totalExamsTaken }}
+            </p>
+          </div>
+          <div
+            class="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800/30"
+          >
+            <i class="pi pi-check-square text-2xl"></i>
+          </div>
+        </div>
+
+        <!-- Overall Average Card -->
+        <div
+          class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm flex items-center justify-between transition-all hover:shadow-md"
+        >
+          <div>
+            <p
+              class="text-sm font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase mb-1"
+            >
+              Overall Average
+            </p>
+            <p
+              class="text-4xl font-extrabold"
+              [ngClass]="{
+                'text-green-600 dark:text-green-400':
+                  data.overallAverageScore >= 80,
+                'text-amber-500 dark:text-amber-400':
+                  data.overallAverageScore >= 50 &&
+                  data.overallAverageScore < 80,
+                'text-red-500 dark:text-red-400': data.overallAverageScore < 50,
+              }"
+            >
+              {{ data.overallAverageScore | number: "1.1-1" }}%
+            </p>
+          </div>
+          <div
+            class="w-14 h-14 rounded-full flex items-center justify-center border"
+            [ngClass]="{
+              'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border-green-100 dark:border-green-800/30':
+                data.overallAverageScore >= 80,
+              'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800/30':
+                data.overallAverageScore >= 50 && data.overallAverageScore < 80,
+              'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-red-100 dark:border-red-800/30':
+                data.overallAverageScore < 50,
+            }"
+          >
+            <i class="pi pi-percentage text-2xl"></i>
+          </div>
+        </div>
+      </div>
+      <!-- End KPI Cards Grid -->
+
+      <!-- Charts Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Timeline Line Chart -->
+        <div
+          class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm flex flex-col transition-all hover:shadow-md"
+        >
+          <h3
+            class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6 flex items-center gap-2"
+          >
+            <i class="pi pi-bolt text-cyan-500"></i> Zaman İçindeki Gelişim
+          </h3>
+          <div class="h-80 w-full relative">
+            <canvas
+              *ngIf="timelineChartData()"
+              baseChart
+              [data]="timelineChartData()"
+              [options]="chartOptions()"
+              [type]="'line'"
+            >
+            </canvas>
+            <div
+              *ngIf="!timelineChartData()"
+              class="absolute inset-0 flex items-center justify-center text-slate-400 font-medium"
+            >
+              Geçmiş sınav verisi bulunamadı / No timeline data available
+            </div>
+          </div>
+        </div>
+
+        <!-- Course Bar Chart -->
+        <div
+          class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm flex flex-col transition-all hover:shadow-md"
+        >
+          <h3
+            class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6 flex items-center gap-2"
+          >
+            <i class="pi pi-book text-purple-500"></i> Ders Bazlı Ortalamalar
+          </h3>
+          <div class="h-80 w-full relative">
+            <canvas
+              *ngIf="courseChartData()"
+              baseChart
+              [data]="courseChartData()"
+              [options]="chartOptions()"
+              [type]="'bar'"
+            >
+            </canvas>
+            <div
+              *ngIf="!courseChartData()"
+              class="absolute inset-0 flex items-center justify-center text-slate-400 font-medium"
+            >
+              Ders verisi bulunamadı / No course data available
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Charts Grid -->
+    </ng-container>
+  </div>
+</div>

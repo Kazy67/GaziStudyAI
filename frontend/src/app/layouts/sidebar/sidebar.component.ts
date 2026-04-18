@@ -28,10 +28,8 @@ export class SidebarComponent {
       icon: 'pi pi-bolt',
       route: '/ai-study-room',
     },
-    { label: 'Mock Exams', icon: 'pi pi-file', route: '/mock-exams' },
     { label: 'My History', icon: 'pi pi-history', route: '/history' },
     { label: 'Performance', icon: 'pi pi-chart-line', route: '/performance' },
-    { label: 'Settings', icon: 'pi pi-cog', route: '/settings' },
   ];
 
   adminNavItems = [

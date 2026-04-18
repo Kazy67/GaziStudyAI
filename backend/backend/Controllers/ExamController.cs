@@ -1,4 +1,5 @@
 ﻿using GaziStudyAI.Application.DTOs.Exam;
+using GaziStudyAI.Application.DTOs.Student;
 using GaziStudyAI.Application.DTOs.Test;
 using GaziStudyAI.Application.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
@@ -56,6 +57,41 @@ namespace GaziStudyAI.WebAPI.Controllers
         {
             Guid userId = GetUserId();
             var result = await _aiExamService.GetStudentDashboardAsync(userId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetMyHistory()
+        {
+            Guid userId = GetUserId(); // Securely get user from JWT Token
+            var result = await _aiExamService.GetStudentExamHistoryAsync(userId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("history/{examId}")]
+        public async Task<IActionResult> GetExamReview(Guid examId)
+        {
+            Guid userId = GetUserId(); // Securely get user from JWT Token
+            var result = await _aiExamService.GetExamReviewDetailsAsync(examId, userId);
+            if (!result.IsSuccess) return NotFound(result);
+            return Ok(result);
+        }
+
+        [HttpGet("analytics")]
+        public async Task<IActionResult> GetAnalytics()
+        {
+            Guid userId = GetUserId(); // Securely get user from JWT Token
+            var result = await _aiExamService.GetStudentAnalyticsAsync(userId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPost("study-room/chat")]
+        public async Task<IActionResult> SendChatMessage([FromBody] SendChatMessageDto request)
+        {
+            var result = await _aiExamService.SendChatMessageAsync(request);
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }

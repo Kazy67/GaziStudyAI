@@ -1,6 +1,8 @@
 {
   "devDependencies": {
+    "@types/marked": "^5.0.2",
     "autoprefixer": "^10.4.24",
+    "marked": "^18.0.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18"
   },
