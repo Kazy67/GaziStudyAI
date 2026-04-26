@@ -30,15 +30,33 @@ export class VpCodeCompletionComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.parseCodeSnippet();
+    if (this.question && this.question.userAnswer) {
+      this.userCode = this.question.userAnswer;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['question'] && this.question) {
       this.resetState();
       this.parseCodeSnippet();
+      if (this.question.userAnswer) {
+        this.userCode = this.question.userAnswer;
+      }
     }
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.calculateScore();
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.calculateScore();
+      } else {
+        // Retake: reset visual state
+        this.resetState();
+        this.parseCodeSnippet();
+      }
+    }
+  }
+
+  onCodeChange() {
+    if (this.question) {
+      this.question.userAnswer = this.userCode;
     }
   }
 

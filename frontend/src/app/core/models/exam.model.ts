@@ -89,3 +89,13 @@ export interface StudentDashboardDto {
   averageScore: number;
   recentExams: ExamHistoryDto[];
 }
+
+export interface MockExamRequest {
+  courseId: string;
+  examType: string;
+}
+
+export interface MockExamResult {
+  testQuestions: any[];
+  classicQuestions: any[];
+}

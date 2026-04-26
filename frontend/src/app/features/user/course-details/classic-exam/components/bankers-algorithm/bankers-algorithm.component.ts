@@ -33,8 +33,36 @@ export class BankersAlgorithmComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.calculateScore();
+    if (changes['question'] && this.question) {
+      this.userIsSafe = null;
+      this.userSafeSequence = '';
+      if (this.question.userAnswer) {
+        try {
+          const parsed = JSON.parse(this.question.userAnswer);
+          this.userIsSafe = parsed.isSafe;
+          this.userSafeSequence = parsed.sequence || '';
+        } catch {}
+      }
+    }
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.calculateScore();
+      } else {
+        this.userIsSafe = null;
+        this.userSafeSequence = '';
+      }
+    }
+  }
+
+  onAnswerChange() {
+    if (this.question) {
+      if (this.userIsSafe === false) {
+        this.userSafeSequence = '';
+      }
+      this.question.userAnswer = JSON.stringify({
+        isSafe: this.userIsSafe,
+        sequence: this.userSafeSequence,
+      });
     }
   }
 

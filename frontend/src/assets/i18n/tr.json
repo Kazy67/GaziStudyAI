@@ -58,6 +58,7 @@
     "LOADING": "Ders detayları yükleniyor..."
   },
   "EXAM": {
+    "MOCK_EXAM": "Deneme Sınavı",
     "SUBMIT_SUCCESS": "Sınav başarıyla gönderildi!",
     "SUBMIT_FAILED": "Sınav gönderilirken hata oluştu.",
     "CONFIGURE_TITLE": "Sınavınızı Yapılandırın",
@@ -235,6 +236,28 @@
     "ADD_NEW_COURSE": "Yeni Ders Ekle",
     "MANAGE_COURSES": "Dersleri Yönet",
     "MANAGE_COURSES_DESC": "Dersleri ekleyin, düzenleyin veya kaldırın ve detaylarını yönetin.",
-    "SEARCH_PLACEHOLDER": "Önek, isim ile ara..."
-  }
+    "SEARCH_PLACEHOLDER": "Önek, isim ile ara...",
+    "STUDENT_DIRECTORY": "Öğrenci Dizini",
+    "STUDENT_DIRECTORY_DESC": "Platforma kayıtlı tüm öğrencileri görüntüleyin.",
+    "NAME": "İsim",
+    "STUDENT_NO": "Öğrenci No",
+    "EMAIL": "E-posta",
+    "DEPARTMENT": "Bölüm",
+    "EXAMS": "Sınavlar",
+    "REGISTERED_ON": "Kayıt Tarihi",
+    "CLEAR_FILTER": "Filtreyi Temizle",
+    "AI_LOGS": "Sistem ve Yapay Zeka Logları",
+    "AI_LOGS_DESC": "Platform üzerindeki yapay zeka işlemlerinin ve sistem hatalarının anlık dökümünü görüntüleyin.",
+    "REFRESH": "Yenile",
+    "TIME": "ZAMAN",
+    "ACTION": "İŞLEM",
+    "DETAILS": "DETAYLAR",
+    "STATE": "DURUM",
+    "NO_AI_LOGS": "Henüz bir yapay zeka kaydı bulunmuyor."
+  },
+  "WEAK_COURSE_TITLE": "Zayıf Ders",
+  "SMART_PRACTICE": "Akıllı Pratik",
+  "DASHBOARD_OVERVIEW": "Kontrol Paneli Genel Bakış",
+  "WELCOME_MESSAGE": "Hoş geldin, {{ username }}! Burada faaliyetlerinle ilgili bir genel bakış bulabilirsin.",
+  "START_PRACTICE": "Pratiğe Başla"
 }

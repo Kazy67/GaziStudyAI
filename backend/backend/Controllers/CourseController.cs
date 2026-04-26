@@ -93,5 +93,14 @@ namespace GaziStudyAI.WebAPI.Controllers
             if (!result.IsSuccess) return NotFound(result);
             return Ok(result);
         }
+
+        [HttpGet("courses-average")]
+        public async Task<IActionResult> GetCourseAverageScore()
+        {
+            Guid userId = GetUserId();
+            var result = await _courseService.GetCourseAverageScore(userId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
     }
 }

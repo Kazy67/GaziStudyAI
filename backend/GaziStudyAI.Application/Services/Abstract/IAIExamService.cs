@@ -15,5 +15,7 @@ namespace GaziStudyAI.Application.Services.Abstract
         Task<IResult<ExamReviewDetailDto>> GetExamReviewDetailsAsync(Guid examId, Guid userId);
         Task<IResult<StudentAnalyticsDto>> GetStudentAnalyticsAsync(Guid userId);
         Task<IResult<string>> SendChatMessageAsync(SendChatMessageDto request);
+
+        Task<IResult<MockExamResultDto>> GenerateMockExamAsync(GenerateMockExamRequestDto request);
     }
 }

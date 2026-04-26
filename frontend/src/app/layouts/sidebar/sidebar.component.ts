@@ -45,11 +45,10 @@ export class SidebarComponent {
       route: '/admin/students',
     },
     {
-      label: 'AI Settings / Logs',
+      label: 'AI Logs',
       icon: 'pi pi-server',
-      route: '/admin/ai-settings',
+      route: '/admin/ai-logs',
     },
-    { label: 'Settings', icon: 'pi pi-cog', route: '/settings' },
   ];
 
   get isAdmin(): boolean {

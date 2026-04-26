@@ -33,13 +33,26 @@ export class BdoRegexComponent implements OnChanges {
   isLoading = signal<boolean>(false);
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.evaluate();
+    if (changes['question'] && this.question) {
+      if (this.question.userAnswer) {
+        this.studentRegex.set(this.question.userAnswer);
+      } else {
+        this.reset();
+      }
     }
 
-    // Reset if question changes (retake logic)
-    if (changes['question'] && !changes['question'].firstChange) {
-      this.reset();
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.evaluate();
+      } else {
+        this.reset();
+      }
+    }
+  }
+
+  onAnswerChange() {
+    if (this.question) {
+      this.question.userAnswer = this.studentRegex();
     }
   }
 

@@ -5,6 +5,7 @@ import {
   EventEmitter,
   signal,
   OnChanges,
+  OnInit,
   SimpleChanges,
   inject,
 } from '@angular/core';
@@ -19,7 +20,7 @@ import { ExamService } from '../../../../../../core/services/exam.service';
   imports: [CommonModule, FormsModule, MathjaxDirective],
   templateUrl: './generic-math.component.html',
 })
-export class GenericMathComponent implements OnChanges {
+export class GenericMathComponent implements OnChanges, OnInit {
   @Input() question!: any;
   @Input() isSubmitted: boolean = false;
   @Output() answerChange = new EventEmitter<string>();
@@ -33,13 +34,33 @@ export class GenericMathComponent implements OnChanges {
   finalScore = signal<number | null>(null);
   feedback = signal<string[]>([]);
 
+  ngOnInit() {
+    if (this.question?.userAnswer) {
+      this.userAnswer = this.question.userAnswer;
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.evaluate();
+    if (changes['question'] && this.question) {
+      this.userAnswer = this.question.userAnswer || '';
+      this.finalScore.set(null);
+      this.feedback.set([]);
+    }
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.evaluate();
+      } else {
+        this.userAnswer = '';
+        this.finalScore.set(null);
+        this.feedback.set([]);
+      }
     }
   }
 
   onAnswerChange() {
+    if (this.question) {
+      this.question.userAnswer = this.userAnswer;
+    }
     this.answerChange.emit(this.userAnswer);
   }
 

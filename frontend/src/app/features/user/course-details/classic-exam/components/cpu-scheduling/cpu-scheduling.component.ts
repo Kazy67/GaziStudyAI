@@ -67,17 +67,16 @@ export class CpuSchedulingComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['question'] && !changes['question'].firstChange) {
+    if (changes['question']) {
       this.initialize();
     }
 
-    // Check if isSubmitted changed from false (or undefined) to true
-    if (
-      changes['isSubmitted'] &&
-      changes['isSubmitted'].currentValue === true &&
-      changes['isSubmitted'].previousValue === false
-    ) {
-      this.calculateScore();
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.calculateScore();
+      } else {
+        this.initialize();
+      }
     }
   }
 

@@ -33,10 +33,35 @@ export class PageReplacementComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['question'] && this.question) {
-      this.initGrid();
+      if (this.question.userAnswer) {
+        try {
+          const parsed = JSON.parse(this.question.userAnswer);
+          this.userFrames = parsed.frames || [];
+          this.userStatus = parsed.status || [];
+          this.userFaults = parsed.faults || null;
+        } catch {
+          this.initGrid();
+        }
+      } else {
+        this.initGrid();
+      }
     }
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.calculateScore();
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.calculateScore();
+      } else {
+        this.initGrid();
+      }
+    }
+  }
+
+  onAnswerChange() {
+    if (this.question) {
+      this.question.userAnswer = JSON.stringify({
+        frames: this.userFrames,
+        status: this.userStatus,
+        faults: this.userFaults,
+      });
     }
   }
 

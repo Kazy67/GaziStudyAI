@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+/* Additional custom styles can go here for primeNG overwrites if needed */
+::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  padding: 1rem;
+}
+::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem;
+}

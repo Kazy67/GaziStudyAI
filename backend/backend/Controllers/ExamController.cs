@@ -95,5 +95,13 @@ namespace GaziStudyAI.WebAPI.Controllers
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
+
+        [HttpPost("generate-mock")]
+        public async Task<IActionResult> GenerateMockExam([FromBody] GenerateMockExamRequestDto request)
+        {
+            var result = await _aiExamService.GenerateMockExamAsync(request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
     }
 }

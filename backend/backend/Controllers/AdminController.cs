@@ -19,5 +19,20 @@ namespace GaziStudyAI.WebAPI.Controllers
             var result = await _adminService.GetPlatformStatisticsAsync();
             return Ok(result);
         }
+
+        [HttpGet("students")]
+        public async Task<IActionResult> GetAllStudents()
+        {
+            var result = await _adminService.GetAllStudentsAsync();
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("system-logs")]
+        public async Task<IActionResult> GetSystemLogs()
+        {
+            var result = await _adminService.GetSystemLogsAsync();
+            return Ok(result);
+        }
     }
 }

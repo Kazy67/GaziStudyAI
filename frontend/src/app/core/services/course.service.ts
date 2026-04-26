@@ -64,4 +64,8 @@ export class CourseService {
       `${this.apiUrl}/${courseId}/student-exam-setup?t=${new Date().getTime()}`,
     );
   }
+
+  getCourseAverageScore(): Observable<ServiceResult<any>> {
+    return this.http.get<ServiceResult<any>>(`${this.apiUrl}/courses-average`);
+  }
 }

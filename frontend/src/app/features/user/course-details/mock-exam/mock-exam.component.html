@@ -1,0 +1,578 @@
+<div
+  class="min-h-[calc(100vh-10rem)] p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl flex flex-col items-center"
+>
+  <!-- PHASE 1: SELECTION STATE -->
+  <ng-container *ngIf="!examData() && !isGenerating()">
+    <div class="max-w-4xl w-full text-center mt-10">
+      <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-8">
+        Deneme Sınavı Simülasyonu
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+        <!-- Vize Card -->
+        <div
+          (click)="selectType('Vize')"
+          class="cursor-pointer rounded-2xl p-6 border-2 transition-all duration-200"
+          [ngClass]="
+            selectedType() === 'Vize'
+              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 shadow-md'
+              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-300 dark:hover:border-slate-600'
+          "
+        >
+          <div
+            class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900/50 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4"
+          >
+            <i class="pi pi-file-edit text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+            Vize Sınavı
+          </h3>
+          <p class="text-slate-500 dark:text-slate-400">
+            1-7. haftaları kapsar. 5 Test, 2 Klasik soru.
+          </p>
+        </div>
+
+        <!-- Final Card -->
+        <div
+          (click)="selectType('Final')"
+          class="cursor-pointer rounded-2xl p-6 border-2 transition-all duration-200"
+          [ngClass]="
+            selectedType() === 'Final'
+              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 shadow-md'
+              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-300 dark:hover:border-slate-600'
+          "
+        >
+          <div
+            class="w-14 h-14 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 mb-4"
+          >
+            <i class="pi pi-verified text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+            Final Sınavı
+          </h3>
+          <p class="text-slate-500 dark:text-slate-400">
+            Tüm dönemi kapsar. 5 Test, 2 Klasik soru.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-12">
+        <button
+          (click)="generateExam()"
+          [disabled]="!selectedType()"
+          class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-xl font-bold text-lg shadow-lg flex items-center gap-3 mx-auto transition-all disabled:cursor-not-allowed"
+        >
+          <i class="pi pi-play"></i> Sınavı Başlat
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- PHASE 2: LOADING STATE -->
+  <ng-container *ngIf="isGenerating()">
+    <div
+      class="flex-1 flex flex-col items-center justify-center flex-grow w-full py-20 text-center animate-fade-in"
+    >
+      <div class="relative w-24 h-24 mb-6">
+        <div
+          class="absolute inset-0 border-4 border-slate-200 dark:border-slate-700 rounded-full"
+        ></div>
+        <div
+          class="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"
+        ></div>
+        <div
+          class="absolute inset-0 flex items-center justify-center text-indigo-500"
+        >
+          <i class="pi pi-sparkles text-2xl animate-pulse"></i>
+        </div>
+      </div>
+      <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">
+        Sınav Hazırlanıyor...
+      </h3>
+      <p class="text-slate-500 dark:text-slate-400 max-w-md">
+        Yapay zeka size özel çoktan seçmeli ve klasik soruları oluşturuyor.
+        Lütfen bekleyin.
+      </p>
+    </div>
+  </ng-container>
+
+  <!-- PHASE 3: EXAM STATE -->
+  <ng-container *ngIf="examData()">
+    <div
+      class="w-full max-w-5xl bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden animate-fade-in"
+    >
+      <!-- Sticky Header -->
+      <div
+        class="sticky top-0 z-20 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 p-4 sm:p-6 flex items-center justify-between"
+      >
+        <div>
+          <span
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 font-bold text-sm mb-1 uppercase tracking-wider"
+          >
+            <i class="pi pi-bookmark"></i> {{ selectedType() }} Sınavı
+          </span>
+          <h2
+            class="text-xl font-bold text-slate-800 dark:text-white hidden sm:block"
+          >
+            Deneme Sınavı
+          </h2>
+        </div>
+      </div>
+
+      <!-- Exam Body -->
+      <div class="p-4 sm:p-8 space-y-12">
+        <!-- Section 1: Multiple Choice -->
+        <div *ngIf="examData()?.testQuestions?.length" class="space-y-8">
+          <div
+            class="border-b border-slate-200 dark:border-slate-700 pb-4 mb-6"
+          >
+            <h3
+              class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3"
+            >
+              <span
+                class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center text-sm"
+                >1</span
+              >
+              Çoktan Seçmeli Sorular
+            </h3>
+          </div>
+
+          <div
+            *ngFor="let q of examData()?.testQuestions; let i = index"
+            class="bg-slate-50 dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 transition-colors relative"
+            [ngClass]="{
+              'border-green-500/50 bg-green-50/50 dark:bg-green-900/10':
+                isSubmitted() &&
+                getTestOptionStyle(q, testAnswers()[q.id || i] || '') ===
+                  'correct',
+              'border-red-500/50 bg-red-50/50 dark:bg-red-900/10':
+                isSubmitted() &&
+                getTestOptionStyle(q, testAnswers()[q.id || i] || '') ===
+                  'incorrect',
+            }"
+          >
+            <!-- Optional Score visual -->
+            <div
+              class="absolute top-0 right-0 -mt-3 mr-4"
+              *ngIf="isSubmitted()"
+            >
+              <span
+                class="px-3 py-1 text-sm font-bold bg-white dark:bg-slate-800 rounded-full border shadow-sm"
+                [ngClass]="{
+                  'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400':
+                    getTestOptionStyle(q, testAnswers()[q.id || i] || '') ===
+                    'correct',
+                  'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400':
+                    getTestOptionStyle(q, testAnswers()[q.id || i] || '') ===
+                    'incorrect',
+                }"
+              >
+                Skor:
+                {{
+                  getTestOptionStyle(q, testAnswers()[q.id || i] || "") ===
+                  "correct"
+                    ? 100
+                    : 0
+                }}%
+              </span>
+            </div>
+
+            <div
+              class="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 font-medium mb-6"
+            >
+              <span class="font-bold mr-2 text-indigo-600 dark:text-indigo-400"
+                >Soru {{ i + 1 }}:</span
+              >
+              <span [appMathjax]="q.question || q.text"></span>
+            </div>
+
+            <div class="space-y-3">
+              <label
+                *ngFor="let opt of q.options; let optIndex = index"
+                class="flex items-center p-4 border rounded-xl transition-colors"
+                [ngClass]="getOptionClass(q, q.id || i, optIndex.toString())"
+              >
+                <input
+                  type="radio"
+                  [name]="'test_q_' + (q.id || i)"
+                  [value]="optIndex.toString()"
+                  [disabled]="isSubmitted()"
+                  (change)="selectOption(q.id || i, optIndex.toString())"
+                  class="w-5 h-5 text-indigo-600 border-slate-300 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 disabled:opacity-50 cursor-pointer"
+                  [checked]="testAnswers()[q.id || i] === optIndex.toString()"
+                />
+                <div
+                  class="ml-3 text-slate-700 dark:text-slate-300 font-medium flex-1 cursor-pointer"
+                  [appMathjax]="opt"
+                ></div>
+                <div
+                  *ngIf="isSubmitted() && isOptionActuallyCorrect(q, optIndex)"
+                  class="text-green-500"
+                >
+                  <i class="pi pi-check-circle text-xl"></i>
+                </div>
+                <div
+                  *ngIf="
+                    isSubmitted() &&
+                    testAnswers()[q.id || i] === optIndex.toString() &&
+                    !isOptionActuallyCorrect(q, optIndex)
+                  "
+                  class="text-red-500"
+                >
+                  <i class="pi pi-times-circle text-xl"></i>
+                </div>
+              </label>
+            </div>
+
+            <div
+              *ngIf="isSubmitted() && q.answer"
+              class="mt-6 p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800/50"
+            >
+              <h4
+                class="text-sm font-bold text-indigo-800 dark:text-indigo-400 mb-2"
+              >
+                Doğru Cevap:
+              </h4>
+              <p
+                class="text-slate-700 dark:text-slate-300 font-medium"
+                [appMathjax]="q.answer"
+              ></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Classic Questions -->
+        <div *ngIf="examData()?.classicQuestions?.length" class="space-y-8">
+          <div
+            class="border-b border-slate-200 dark:border-slate-700 pb-4 mb-6"
+          >
+            <h3
+              class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3"
+            >
+              <span
+                class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-600 flex items-center justify-center text-sm"
+                >2</span
+              >
+              Klasik Sorular
+            </h3>
+          </div>
+
+          <div
+            *ngFor="let cq of examData()?.classicQuestions; let ci = index"
+            class="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-slate-200 dark:border-slate-700 shadow-sm"
+          >
+            <div class="mb-4">
+              <span
+                class="inline-block px-2.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold uppercase mb-3"
+              >
+                {{ cq.visualType }}
+              </span>
+              <div
+                class="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 font-medium text-lg"
+              >
+                <span
+                  class="font-bold mr-2 text-purple-600 dark:text-purple-400"
+                  >Klasik Soru {{ ci + 1 }}:</span
+                >
+                <!-- <span [appMathjax]="cq.questionText"></span> -->
+              </div>
+            </div>
+
+            <!-- DYNAMIC COMPONENT RENDERER -->
+            <div class="mt-6 relative">
+              <!-- Optional Inline Score visual -->
+              <div class="absolute top-0 right-0 -mt-14" *ngIf="isSubmitted()">
+                <span
+                  class="px-3 py-1 text-sm font-bold rounded-full border shadow-sm"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400':
+                      (classicScores()[cq.id || ci] || 0) > 80,
+                    'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-800 dark:text-yellow-400':
+                      (classicScores()[cq.id || ci] || 0) >= 50 &&
+                      (classicScores()[cq.id || ci] || 0) <= 80,
+                    'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400':
+                      (classicScores()[cq.id || ci] || 0) < 50,
+                  }"
+                >
+                  Skor:
+                  {{ classicScores()[cq.id || ci] || 0 | number: "1.0-0" }}%
+                </span>
+              </div>
+
+              <ng-container [ngSwitch]="true">
+                <!-- CPU Scheduling -->
+                <div
+                  *ngSwitchCase="
+                    cq.visualType && cq.visualType.includes('cpu_scheduling')
+                  "
+                >
+                  <app-cpu-scheduling
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-cpu-scheduling>
+                </div>
+
+                <!-- Bankers Algorithm -->
+                <div
+                  *ngSwitchCase="
+                    cq.visualType && cq.visualType.includes('bankers')
+                  "
+                >
+                  <app-bankers-algorithm
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-bankers-algorithm>
+                </div>
+
+                <!-- Page Replacement -->
+                <div
+                  *ngSwitchCase="
+                    cq.visualType && cq.visualType.includes('page_replacement')
+                  "
+                >
+                  <app-page-replacement
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-page-replacement>
+                </div>
+
+                <!-- Memory Allocation -->
+                <div
+                  *ngSwitchCase="
+                    cq.visualType &&
+                    (cq.visualType.includes('memory_allocation') ||
+                      cq.visualType.includes('memory'))
+                  "
+                >
+                  <app-memory-allocation
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-memory-allocation>
+                </div>
+
+                <!-- VP Code Completion -->
+                <div *ngSwitchCase="cq.visualType === 'vp_code_completion'">
+                  <app-vp-code-completion
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-vp-code-completion>
+                </div>
+
+                <!-- VP SQL Query -->
+                <div *ngSwitchCase="cq.visualType === 'vp_sql_query'">
+                  <app-vp-sql-query
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-vp-sql-query>
+                </div>
+
+                <!-- BDO Regex -->
+                <div *ngSwitchCase="cq.visualType === 'bdo_regex'">
+                  <app-bdo-regex
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-bdo-regex>
+                </div>
+
+                <!-- BDO Automata Builder -->
+                <div
+                  *ngSwitchCase="
+                    cq.visualType === 'bdo_dfa_builder' ||
+                    cq.visualType === 'bdo_nfa_builder'
+                  "
+                >
+                  <app-bdo-automata-builder
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-bdo-automata-builder>
+                </div>
+
+                <!-- BDO PDA Builder -->
+                <div *ngSwitchCase="cq.visualType === 'bdo_pda_builder'">
+                  <app-bdo-pda-builder
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-bdo-pda-builder>
+                </div>
+
+                <!-- BDO DFA Reduction -->
+                <div *ngSwitchCase="cq.visualType === 'bdo_dfa_reduction'">
+                  <app-bdo-dfa-reduction
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-bdo-dfa-reduction>
+                </div>
+
+                <!-- BDO Grammar Derivation -->
+                <div *ngSwitchCase="cq.visualType === 'bdo_grammar_derivation'">
+                  <app-bdo-grammar-derivation
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-bdo-grammar-derivation>
+                </div>
+
+                <!-- BDO Turing Machine Trace -->
+                <div *ngSwitchCase="cq.visualType === 'bdo_tm_trace'">
+                  <app-bdo-tm-trace
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-bdo-tm-trace>
+                </div>
+
+                <!-- Generic Math -->
+                <div *ngSwitchCase="cq.visualType === 'generic_math'">
+                  <app-generic-math
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-generic-math>
+                </div>
+
+                <!-- Generic Fallback / Theory -->
+                <div *ngSwitchDefault>
+                  <app-generic-theory
+                    [question]="cq"
+                    [isSubmitted]="isSubmitted()"
+                    (scoreCalculated)="
+                      onClassicScoreCalculated($event, cq.id || ci)
+                    "
+                  ></app-generic-theory>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div
+          class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700 flex flex-col items-center gap-6"
+        >
+          <button
+            *ngIf="!isSubmitted()"
+            (click)="submitExam()"
+            [disabled]="submitLoading()"
+            class="px-8 py-4 w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-lg shadow-lg flex justify-center items-center gap-3 transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i
+              class="pi"
+              [ngClass]="
+                submitLoading() ? 'pi-spin pi-spinner' : 'pi-check-circle'
+              "
+            ></i>
+            {{ submitLoading() ? "Sonuçlar Hesaplanıyor..." : "Sınavı Bitir" }}
+          </button>
+
+          <ng-container *ngIf="isSubmitted()">
+            <div
+              class="p-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl w-full text-center"
+            >
+              <h3
+                class="text-2xl font-bold text-slate-800 dark:text-white mb-2 flex justify-center items-center gap-2"
+              >
+                <i class="pi pi-verified text-green-500"></i> Sınav Tamamlandı!
+              </h3>
+
+              <!-- SCORE DISPLAY -->
+              <div class="my-6">
+                <div
+                  class="inline-block p-1 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-500 shadow-xl"
+                >
+                  <div
+                    class="bg-white dark:bg-slate-800 rounded-xl px-12 py-8 flex flex-col items-center justify-center min-w-[250px]"
+                  >
+                    <span
+                      class="text-slate-500 dark:text-slate-400 font-medium uppercase tracking-widest text-sm mb-2"
+                      >Toplam Puan</span
+                    >
+                    <div
+                      class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400"
+                    >
+                      {{ finalScore() | number: "1.0-1" }}
+                    </div>
+                    <span
+                      class="text-slate-400 dark:text-slate-500 font-bold mt-1 text-lg"
+                      >/ 100</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-slate-600 dark:text-slate-400 mb-6">
+                Sonuçlarınızı ve doğru cevapları yukarıdan inceleyebilirsiniz.
+              </p>
+
+              <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button
+                  (click)="retakeExam()"
+                  class="px-6 py-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 dark:bg-indigo-900/50 dark:hover:bg-indigo-800 dark:text-indigo-300 rounded-lg font-bold flex justify-center items-center gap-2 transition-colors"
+                >
+                  <i class="pi pi-refresh"></i> Aynı Sınavı Tekrar Et
+                </button>
+                <button
+                  (click)="resetConfig()"
+                  class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold flex justify-center items-center gap-2 shadow-md transition-colors"
+                >
+                  <i class="pi pi-cog"></i> Yeni Sınav Yapılandır
+                </button>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</div>

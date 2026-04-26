@@ -80,6 +80,7 @@
           <div class="relative">
             <select
               [(ngModel)]="userAllocations[proc.id]"
+              (ngModelChange)="onAnswerChange()"
               [disabled]="isSubmitted"
               class="w-full p-2.5 text-sm border rounded-lg appearance-none bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
               [ngClass]="{

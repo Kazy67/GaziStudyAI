@@ -115,6 +115,7 @@
           <input
             type="radio"
             [(ngModel)]="userIsSafe"
+            (ngModelChange)="onAnswerChange()"
             [value]="true"
             [disabled]="isSubmitted"
             class="form-radio text-purple-600 focus:ring-purple-500 w-4 h-4 cursor-pointer"
@@ -127,6 +128,7 @@
           <input
             type="radio"
             [(ngModel)]="userIsSafe"
+            (ngModelChange)="onAnswerChange()"
             [value]="false"
             [disabled]="isSubmitted"
             class="form-radio text-purple-600 focus:ring-purple-500 w-4 h-4 cursor-pointer"
@@ -148,6 +150,7 @@
       <input
         type="text"
         [(ngModel)]="userSafeSequence"
+        (ngModelChange)="onAnswerChange()"
         [disabled]="isSubmitted"
         class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
         placeholder="{{

@@ -212,14 +212,22 @@ export class ClassicExamComponent implements OnInit {
       questionCount: this.questions.length,
       score: this.finalScore || 0,
       difficulty: this.difficulty,
-      questions: this.questions.map((q, i) => ({
-        text: q.questionText,
-        type: 1, // Classic
-        isCorrect: (this.questionScores[i] || 0) >= 50, // Threshold for correct? Or just store score? Logic says IsCorrect boolean.
-        studentAnswer: JSON.stringify(q.userAnswer),
-        inputDataJson: JSON.stringify(q.inputData),
-        solutionJson: JSON.stringify(q.solutionData),
-      })),
+      questions: this.questions.map((q, i) => {
+        const rawAns = q.userAnswer;
+        const studentAnsStr =
+          typeof rawAns === 'object'
+            ? JSON.stringify(rawAns)
+            : String(rawAns || '');
+
+        return {
+          text: q.questionText,
+          type: 1, // Classic
+          isCorrect: (this.questionScores[i] || 0) >= 50,
+          studentAnswer: studentAnsStr,
+          inputDataJson: JSON.stringify(q.inputData || {}),
+          solutionJson: JSON.stringify(q.solutionData || {}),
+        };
+      }),
     };
 
     this.examService
@@ -260,6 +268,13 @@ export class ClassicExamComponent implements OnInit {
     this.submitted = false;
     this.questionScores = new Array(this.questions.length).fill(0);
     this.finalScore = null;
+
+    // Clear user answers from classic questions to reset components
+    if (this.questions) {
+      this.questions.forEach((q: any) => {
+        delete q.userAnswer;
+      });
+    }
 
     // 3. Trigger component re-initialization
     this.isRetaking = true;

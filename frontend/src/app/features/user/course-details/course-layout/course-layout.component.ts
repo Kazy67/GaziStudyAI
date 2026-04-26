@@ -26,8 +26,7 @@ export class CourseLayoutComponent implements OnInit {
   tabs = [
     { label: 'EXAM.MULTIPLE_CHOICE', route: 'multiple-choice' },
     { label: 'EXAM.CLASSIC_QUESTIONS', route: 'classic-questions' },
-    { label: 'EXAM.MOCK_MIDTERM', route: 'mock-midterm' },
-    { label: 'EXAM.MOCK_FINAL', route: 'mock-final' },
+    { label: 'EXAM.MOCK_EXAM', route: 'mock-midterm' },
   ];
 
   ngOnInit() {

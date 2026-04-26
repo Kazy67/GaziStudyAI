@@ -1,0 +1,168 @@
+<div class="space-y-6 text-slate-800 dark:text-white">
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+  >
+    <div>
+      <h1 class="text-3xl font-bold mb-2">
+        {{ "ADMIN.STUDENT_DIRECTORY" | translate }}
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400">
+        {{ "ADMIN.STUDENT_DIRECTORY_DESC" | translate }}
+      </p>
+    </div>
+  </div>
+
+  <div
+    *ngIf="error"
+    class="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 dark:bg-red-900/20 dark:border-red-900/50 dark:text-red-400"
+  >
+    <i class="pi pi-exclamation-triangle mr-2"></i> {{ error }}
+  </div>
+
+  <!-- Table Container -->
+  <div
+    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm"
+  >
+    <p-table
+      #dt
+      [value]="students"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [globalFilterFields]="[
+        'fullName',
+        'studentNumber',
+        'department',
+        'email',
+      ]"
+      [loading]="loading"
+      styleClass="p-datatable-striped"
+    >
+      <ng-template pTemplate="caption">
+        <div
+          class="flex justify-between items-center flex-col sm:flex-row gap-4 mb-4"
+        >
+          <button
+            pButton
+            label="{{ 'ADMIN.CLEAR_FILTER' | translate }}"
+            class="p-button-outlined"
+            icon="pi pi-filter-slash"
+            (click)="clearFilter(dt)"
+          ></button>
+          <div class="relative w-full sm:w-auto">
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="globalFilterValue"
+              (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+              [placeholder]="'ADMIN.SEARCH_PLACEHOLDER' | translate"
+              class="w-full sm:w-64 pl-3 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-950 dark:border-slate-700 dark:text-white"
+            />
+            <i
+              class="pi pi-search text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            ></i>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th
+            pSortableColumn="fullName"
+            class="text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700"
+          >
+            {{ "ADMIN.NAME" | translate }}
+            <p-sortIcon field="fullName"></p-sortIcon>
+          </th>
+          <th
+            pSortableColumn="studentNumber"
+            class="text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700"
+          >
+            {{ "ADMIN.STUDENT_NO" | translate }}
+            <p-sortIcon field="studentNumber"></p-sortIcon>
+          </th>
+          <th
+            pSortableColumn="email"
+            class="text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700"
+          >
+            {{ "ADMIN.EMAIL" | translate }}
+            <p-sortIcon field="email"></p-sortIcon>
+          </th>
+          <th
+            pSortableColumn="department"
+            class="text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700"
+          >
+            {{ "ADMIN.DEPARTMENT" | translate }}
+            <p-sortIcon field="department"></p-sortIcon>
+          </th>
+          <th
+            pSortableColumn="totalExamsTaken"
+            class="text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-center"
+          >
+            {{ "ADMIN.EXAMS" | translate }}
+            <p-sortIcon field="totalExamsTaken"></p-sortIcon>
+          </th>
+          <th
+            pSortableColumn="registeredDate"
+            class="text-slate-800 dark:text-slate-200 font-semibold bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700"
+          >
+            {{ "ADMIN.REGISTERED_ON" | translate }}
+            <p-sortIcon field="registeredDate"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-student>
+        <tr
+          class="dark:border-slate-800 border-b border-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors dark:text-slate-300"
+        >
+          <td class="py-3 px-4 font-medium">{{ student.fullName }}</td>
+          <td class="py-3 px-4">{{ student.studentNumber }}</td>
+          <td class="py-3 px-4 text-slate-500 dark:text-slate-400">
+            {{ student.email }}
+          </td>
+          <td class="py-3 px-4">
+            <span
+              class="px-2.5 py-1 bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 rounded-lg text-xs font-semibold whitespace-nowrap"
+            >
+              {{
+                student.department
+                  ? ("DEPARTMENTS." + student.department | translate)
+                  : "N/A"
+              }}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-center">
+            <span
+              class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 font-bold text-sm"
+            >
+              {{ student.totalExamsTaken }}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-sm text-slate-500 dark:text-slate-400">
+            {{
+              translate.currentLang === "tr"
+                ? (student.registeredDate | date: "dd.MM.yyyy ")
+                : (student.registeredDate | date: "MMM d, yyyy")
+            }}
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td
+            colspan="6"
+            class="text-center py-8 text-slate-500 dark:text-slate-400"
+          >
+            No students found.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

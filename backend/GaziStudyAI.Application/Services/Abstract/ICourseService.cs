@@ -15,5 +15,6 @@ namespace GaziStudyAI.Application.Services.Abstract
         Task<IResult<Dictionary<string, string>>> GetCourseMaterialsStatusAsync(Guid courseId);
         Task<IResult<bool>> DeleteCourseMaterialAsync(string weekTag);
         Task<IResult<StudentExamSetupDto>> GetStudentExamSetupAsync(Guid courseId);
+        Task<IResult<List<CourseAverageScoreDto>>> GetCourseAverageScore(Guid userId);
     }
 }

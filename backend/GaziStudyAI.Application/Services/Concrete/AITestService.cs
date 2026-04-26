@@ -10,17 +10,21 @@ namespace GaziStudyAI.Application.Services.Concrete
     public class AITestService : IAITestService
     {
         private readonly HttpClient _httpClient;
+        private readonly ISystemLoggerService _logger;
 
-        public AITestService(HttpClient httpClient)
+        public AITestService(HttpClient httpClient, ISystemLoggerService logger)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri("http://127.0.0.1:8000/"); // Python API URL
+            _logger = logger;
         }
 
         public async Task<IResult<List<GeneratedQuestionDto>>> GenerateMultipleChoiceExamAsync(GenerateTestRequestDto request)
         {
             try
             {
+                _logger.LogInfo("AI Multiple Choice Test", $"Started generating multiple choice exam for course: {request.CoursePrefix}");
+
                 // 👇 1. Create an anonymous object with EXACT snake_case names for Python
                 var pythonPayload = new
                 {
@@ -40,6 +44,7 @@ namespace GaziStudyAI.Application.Services.Concrete
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("AI Multiple Choice Failed", $"API Error ({response.StatusCode}): {errorContent}");
                     return ServiceResult<List<GeneratedQuestionDto>>.Failure($"Python API Error: {errorContent}", "AI_API_ERROR");
                 }
 
@@ -48,12 +53,17 @@ namespace GaziStudyAI.Application.Services.Concrete
                 var pythonResult = JsonSerializer.Deserialize<PythonTestResponse>(responseString, options);
 
                 if (pythonResult == null || !pythonResult.Success || pythonResult.Data == null)
+                {
+                    _logger.LogError("AI Multiple Choice Failed", $"Internal Python Error: {pythonResult?.Error ?? "Python fail"}");
                     return ServiceResult<List<GeneratedQuestionDto>>.Failure(pythonResult?.Error ?? "Python fail", "AI_FAIL");
+                }
 
+                _logger.LogInfo("AI Multiple Choice Test", $"Successfully generated {pythonResult.Data.Count} multiple choice questions for {request.CoursePrefix}");
                 return ServiceResult<List<GeneratedQuestionDto>>.Success(pythonResult.Data);
             }
             catch (Exception ex)
             {
+                _logger.LogError("AI Multiple Choice Exception", $"System Error: {ex.Message}");
                 return ServiceResult<List<GeneratedQuestionDto>>.Failure(ex.Message, "AI_CONNECTION_ERROR");
             }
         }

@@ -32,17 +32,26 @@ export class GenericTheoryComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.userAnswer = '';
+    this.userAnswer = this.question?.userAnswer || '';
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['question'] && this.question) {
       this.resetState();
+      this.userAnswer = this.question.userAnswer || '';
     }
     if (changes['isSubmitted']) {
       if (this.isSubmitted) {
         this.calculateScore();
+      } else {
+        this.resetState();
       }
+    }
+  }
+
+  onAnswerChange() {
+    if (this.question) {
+      this.question.userAnswer = this.userAnswer;
     }
   }
 

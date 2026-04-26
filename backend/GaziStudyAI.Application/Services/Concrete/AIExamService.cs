@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GaziStudyAI.Application.DTOs.Exam;
 using GaziStudyAI.Application.DTOs.Student;
+using GaziStudyAI.Application.DTOs.Test;
 using GaziStudyAI.Application.Services.Abstract;
 using GaziStudyAI.Common.Result.Abstract;
 using GaziStudyAI.Common.Result.Concrete;
@@ -19,8 +20,10 @@ namespace GaziStudyAI.Application.Services.Concrete
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly ICourseService _courseService;
+        private readonly IAITestService _aiTestService;
+        private readonly ISystemLoggerService _logger;
 
-        public AIExamService(HttpClient httpClient, IUnitOfWork uow, IMapper mapper, ICourseService courseService)
+        public AIExamService(HttpClient httpClient, IUnitOfWork uow, IMapper mapper, ICourseService courseService, IAITestService aiTestService, ISystemLoggerService loggerService)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri("http://127.0.0.1:8000/"); // Python API URL
@@ -28,11 +31,14 @@ namespace GaziStudyAI.Application.Services.Concrete
             _uow = uow;
             _mapper = mapper;
             _courseService = courseService;
+            _aiTestService = aiTestService;
+            _logger = loggerService;
         }
         public async Task<IResult<List<GeneratedClassicQuestionDto>>> GenerateClassicExamAsync(GenerateClassicRequestDto request)
         {
             try
             {
+                _logger.LogInfo("AI Classic Exam", $"Started generating Classic Exam for course: {request.CoursePrefix}");
                 var course = await _uow.CourseRepository.GetAsync(c => c.Prefix.ToLower() == request.CoursePrefix.ToLower());
 
                 bool allowTheory = course?.AllowTheoryQuestions ?? true;
@@ -60,6 +66,7 @@ namespace GaziStudyAI.Application.Services.Concrete
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("AI Classic Exam API Error", $"Failed with status {response.StatusCode}. Details: {errorContent}");
                     return ServiceResult<List<GeneratedClassicQuestionDto>>.Failure($"API Error: {errorContent}", "AI_API_ERROR");
                 }
 
@@ -68,12 +75,17 @@ namespace GaziStudyAI.Application.Services.Concrete
                 var pythonResult = JsonSerializer.Deserialize<PythonClassicResponse>(responseString, options);
 
                 if (pythonResult == null || !pythonResult.Success || pythonResult.Data == null)
+                {
+                    _logger.LogError("AI Classic Exam Python Error", $"Internal Python failure: {pythonResult?.Error ?? "Unknown error"}");
                     return ServiceResult<List<GeneratedClassicQuestionDto>>.Failure(pythonResult?.Error ?? "Python fail", "AI_FAIL");
+                }
 
+                _logger.LogInfo("AI Classic Exam", $"Successfully generated {pythonResult.Data.Count} classic questions for {request.CoursePrefix}");
                 return ServiceResult<List<GeneratedClassicQuestionDto>>.Success(pythonResult.Data);
             }
             catch (Exception ex)
             {
+                _logger.LogError("AI Classic Exam Exception", $"System Error: {ex.Message}");
                 return ServiceResult<List<GeneratedClassicQuestionDto>>.Failure(ex.Message, "AI_CONNECTION_ERROR");
             }
         }
@@ -166,6 +178,7 @@ namespace GaziStudyAI.Application.Services.Concrete
         {
             try
             {
+                _logger.LogInfo("AI Evaluation", $"Starting AI evaluation for visual type {request.VisualType}");
                 var pythonPayload = new
                 {
                     visualType = request.VisualType,
@@ -182,6 +195,7 @@ namespace GaziStudyAI.Application.Services.Concrete
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("AI Evaluation API Error", $"Failed with status {response.StatusCode}. Details: {errorContent}");
                     return ServiceResult<EvaluationResultDto>.Failure($"API Error: {errorContent}", "AI_API_ERROR");
                 }
 
@@ -190,12 +204,17 @@ namespace GaziStudyAI.Application.Services.Concrete
                 var pythonResult = JsonSerializer.Deserialize<PythonEvaluationResponse>(responseString, options);
 
                 if (pythonResult == null || !pythonResult.Success || pythonResult.Data == null)
+                {
+                    _logger.LogError("AI Evaluation Python Error", $"Internal Python failure: {pythonResult?.Error ?? "Unknown error"}");
                     return ServiceResult<EvaluationResultDto>.Failure(pythonResult?.Error ?? "Python fail", "AI_FAIL");
+                }
 
+                _logger.LogInfo("AI Evaluation", "Successfully evaluated classic question response");
                 return ServiceResult<EvaluationResultDto>.Success(pythonResult.Data);
             }
             catch (Exception ex)
             {
+                _logger.LogError("AI Evaluation Exception", $"System Error: {ex.Message}");
                 return ServiceResult<EvaluationResultDto>.Failure(ex.Message, "AI_CONNECTION_ERROR");
             }
         }
@@ -220,7 +239,12 @@ namespace GaziStudyAI.Application.Services.Concrete
                     Score = (decimal)(e.Score ?? 0),
                     Difficulty = e.Difficulty.ToString(),
                     TotalQuestions = e.Questions.Count,
-                    ExamType = e.Questions.FirstOrDefault()?.Type.ToString() ?? "MultipleChoice"
+                    ExamType = e.Questions.Any(q => q.Type == QuestionType.Classic) &&
+                        e.Questions.Any(q => q.Type == QuestionType.MultipleChoice)
+                        ? "Mock Exam"
+                        : e.Questions.Any(q => q.Type == QuestionType.Classic)
+                        ? "Classic"
+                        : "MultipleChoice"
                 }).ToList();
 
                 return ServiceResult<List<ExamHistoryItemDto>>.Success(dtos);
@@ -333,10 +357,11 @@ namespace GaziStudyAI.Application.Services.Concrete
                     // Group by Course to get performance per subject
                     CoursePerformances = exams
                         .Where(e => e.Course != null)
-                        .GroupBy(e => e.Course.Prefix + " - " + e.Course.NameTr)
+                        .GroupBy(e => new { e.Course.Id, Name = e.Course.Prefix + " - " + e.Course.NameTr })
                         .Select(g => new CoursePerformanceDto
                         {
-                            CourseName = g.Key,
+                            CourseId = g.Key.Id,
+                            CourseName = g.Key.Name,
                             ExamsTaken = g.Count(),
                             AverageScore = Math.Round(g.Average(e => (decimal)(e.Score ?? 0)), 1)
                         })
@@ -369,7 +394,13 @@ namespace GaziStudyAI.Application.Services.Concrete
             {
                 // 1. Get Course Prefix
                 var course = await _uow.CourseRepository.GetByIdAsync(request.CourseId);
-                if (course == null) return ServiceResult<string>.Failure("Course not found.");
+                if (course == null) 
+                {
+                    _logger.LogError("AI Chat Failed", $"Course not found with ID {request.CourseId}");
+                    return ServiceResult<string>.Failure("Course not found.");
+                }
+
+                _logger.LogInfo("AI Chat", $"Processing incoming chat request for course: {course.Prefix}");
 
                 // 2. Use the injected CourseService to find uploaded weeks!
                 var materialsResult = await _courseService.GetCourseMaterialsStatusAsync(request.CourseId);
@@ -398,7 +429,11 @@ namespace GaziStudyAI.Application.Services.Concrete
                 var content = new StringContent(JsonSerializer.Serialize(pythonPayload), Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync("ai/chat", content);
 
-                if (!response.IsSuccessStatusCode) return ServiceResult<string>.Failure("AI API Error");
+                if (!response.IsSuccessStatusCode) 
+                {
+                    _logger.LogError("AI Chat Failed", $"AI API returned non-success status code: {response.StatusCode}");
+                    return ServiceResult<string>.Failure("AI API Error");
+                }
 
                 var responseString = await response.Content.ReadAsStringAsync();
                 using var doc = JsonDocument.Parse(responseString);
@@ -406,14 +441,85 @@ namespace GaziStudyAI.Application.Services.Concrete
                 if (doc.RootElement.GetProperty("success").GetBoolean())
                 {
                     var reply = doc.RootElement.GetProperty("data").GetProperty("reply").GetString();
+                    _logger.LogInfo("AI Chat", $"Successfully generated a chat response for course: {course.Prefix}");
                     return ServiceResult<string>.Success(reply ?? "");
                 }
 
+                _logger.LogError("AI Chat Failed", "AI failed to process the message internally (success flag was false).");
                 return ServiceResult<string>.Failure("AI Failed to process.");
             }
             catch (Exception ex)
             {
+                _logger.LogError("AI Chat Exception", $"System Error: {ex.Message}");
                 return ServiceResult<string>.Failure(ex.Message);
+            }
+        }
+
+        public async Task<IResult<MockExamResultDto>> GenerateMockExamAsync(GenerateMockExamRequestDto request)
+        {
+            try
+            {
+                // 1. Fetch the course to get its Prefix
+                var course = await _uow.CourseRepository.GetByIdAsync(request.CourseId);
+                if (course == null) return ServiceResult<MockExamResultDto>.Failure("Course not found.");
+
+                // 2. Automatically assign weeks based on Vize/Final logic
+                // Vize = Weeks 1 to 7 | Final = Weeks 1 to 14
+                var weeks = request.ExamType.ToLower() == "vize"
+                    ? Enumerable.Range(1, 7).ToList()
+                    : Enumerable.Range(1, 14).ToList();
+
+                // 3. Prepare both requests (5 Test + 2 Classic)
+                var testReq = new GenerateTestRequestDto
+                {
+                    CoursePrefix = course.Prefix,
+                    Weeks = weeks,
+                    QuestionCount = 3,
+                    Difficulty = "Medium"
+                };
+
+                var classicReq = new GenerateClassicRequestDto
+                {
+                    CoursePrefix = course.Prefix,
+                    Weeks = weeks,
+                    QuestionCount = 1,
+                    Difficulty = "Medium"
+                };
+
+                _logger.LogInfo("AI Mock Exam", $"Started generating Mock Exam for {course.Prefix}");
+
+                // 4. Fire them Sequentially (Wait for one to finish before starting the next)
+                var testTask = await _aiTestService.GenerateMultipleChoiceExamAsync(testReq);
+                var classicTask = await GenerateClassicExamAsync(classicReq);
+
+
+
+                // 5. Check if either failed and print the EXACT error message
+                if (!testTask.IsSuccess)
+                {
+                    _logger.LogError("AI Mock Exam Failed", testTask.Message);
+                    return ServiceResult<MockExamResultDto>.Failure($"Test Soruları Hatası: {testTask.Message}");
+                }
+
+                if (!classicTask.IsSuccess)
+                {
+                    _logger.LogError("AI Mock Exam Failed", classicTask.Message);
+                    return ServiceResult<MockExamResultDto>.Failure($"Klasik Sorular Hatası: {classicTask.Message}");
+                }
+
+                // 6. Combine and return!
+                var resultDto = new MockExamResultDto
+                {
+                    TestQuestions = testTask.Data,
+                    ClassicQuestions = classicTask.Data
+                };
+                _logger.LogInfo("AI Mock Exam", $"Successfully generated mixed exam for {course.Prefix}");
+
+                return ServiceResult<MockExamResultDto>.Success(resultDto);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<MockExamResultDto>.Failure($"Mock Exam Error: {ex.Message}");
             }
         }
 

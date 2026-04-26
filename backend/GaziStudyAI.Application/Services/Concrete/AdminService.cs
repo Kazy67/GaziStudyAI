@@ -11,10 +11,12 @@ namespace GaziStudyAI.Application.Services.Concrete
     public class AdminService : IAdminService
     {
         private readonly IUnitOfWork _uow;
+        private readonly ISystemLoggerService _logger;
 
-        public AdminService(IUnitOfWork uow)
+        public AdminService(IUnitOfWork uow, ISystemLoggerService loggerService)
         {
             _uow = uow;
+            _logger = loggerService;
         }
         public async Task<IResult<AdminDashboardDto>> GetPlatformStatisticsAsync()
         {
@@ -67,6 +69,41 @@ namespace GaziStudyAI.Application.Services.Concrete
             {
                 return ServiceResult<AdminDashboardDto>.Failure($"Failed to load admin stats: {ex.Message}");
             }
+        }
+
+        public async Task<IResult<List<StudentDirectoryItemDto>>> GetAllStudentsAsync()
+        {
+            try
+            {
+                var students = await _uow.UserRepository.GetQueryable()
+                    .Include(u => u.Exams)
+                    .Where(u => u.Role == UserRole.Student && u.IsActive)
+                    .Select(u => new StudentDirectoryItemDto
+                    {
+                        Id = u.Id,
+                        FullName = $"{u.FirstName} {u.LastName}",
+                        Email = u.Email,
+                        StudentNumber = u.StudentNumber ?? "Belirtilmemiş",
+                        Department = u.Department ?? "Belirtilmemiş",
+                        // Only count the exams they actually finished
+                        TotalExamsTaken = u.Exams.Count(e => e.IsCompleted),
+                        RegisteredDate = u.CreatedDate
+                    })
+                    .OrderByDescending(s => s.RegisteredDate) // Show newest students first
+                    .ToListAsync();
+
+                return ServiceResult<List<StudentDirectoryItemDto>>.Success(students);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<List<StudentDirectoryItemDto>>.Failure($"Failed to fetch students: {ex.Message}");
+            }
+        }
+
+        public async Task<IResult<List<SystemLogDto>>> GetSystemLogsAsync()
+        {
+            var logs = _logger.GetRecentLogs(50);
+            return ServiceResult<List<SystemLogDto>>.Success(logs);
         }
     }
 }

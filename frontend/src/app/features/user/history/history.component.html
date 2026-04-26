@@ -156,17 +156,12 @@
                   <i class="pi pi-pencil mr-1.5 text-[10px]"></i> Classic
                 </span>
                 <span
-                  *ngIf="exam.examType == 'Midterm'"
+                  *ngIf="exam.examType == 'Mock Exam'"
                   class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800/10"
                 >
-                  <i class="pi pi-star mr-1.5 text-[10px]"></i> Midterm
+                  <i class="pi pi-star mr-1.5 text-[10px]"></i> Mock Exam
                 </span>
-                <span
-                  *ngIf="exam.examType == 'Final'"
-                  class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300 border border-rose-200 dark:border-rose-800/10"
-                >
-                  <i class="pi pi-shield mr-1.5 text-[10px]"></i> Final
-                </span>
+                
               </td>
 
               <!-- Soru Sayısı -->

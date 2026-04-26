@@ -28,15 +28,26 @@ export class VpSqlQueryComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    this.userQuery = '';
+    this.userQuery = this.question?.userAnswer || '';
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['question'] && this.question) {
       this.resetState();
+      this.userQuery = this.question.userAnswer || '';
     }
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.calculateScore();
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.calculateScore();
+      } else {
+        this.resetState();
+      }
+    }
+  }
+
+  onQueryChange() {
+    if (this.question) {
+      this.question.userAnswer = this.userQuery;
     }
   }
 

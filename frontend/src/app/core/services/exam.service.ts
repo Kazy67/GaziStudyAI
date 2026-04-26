@@ -8,6 +8,8 @@ import {
   StudentDashboardDto,
   EvaluateClassicRequest,
   EvaluationResult,
+  MockExamRequest,
+  MockExamResult,
 } from '../models/exam.model';
 import { ServiceResult } from '../models/service-result.model';
 import { Observable } from 'rxjs';
@@ -80,6 +82,15 @@ export class ExamService {
   }): Observable<ServiceResult<string>> {
     return this.http.post<ServiceResult<string>>(
       `${this.apiUrl}/study-room/chat`,
+      request,
+    );
+  }
+
+  generateMockExam(
+    request: MockExamRequest,
+  ): Observable<ServiceResult<MockExamResult>> {
+    return this.http.post<ServiceResult<MockExamResult>>(
+      `${this.apiUrl}/generate-mock`,
       request,
     );
   }

@@ -31,10 +31,28 @@ export class MemoryAllocationComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['question'] && this.question) {
-      this.initForm();
+      if (this.question.userAnswer) {
+        try {
+          this.userAllocations = JSON.parse(this.question.userAnswer);
+        } catch {
+          this.initForm();
+        }
+      } else {
+        this.initForm();
+      }
     }
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.calculateScore();
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.calculateScore();
+      } else {
+        this.initForm();
+      }
+    }
+  }
+
+  onAnswerChange() {
+    if (this.question) {
+      this.question.userAnswer = JSON.stringify(this.userAllocations);
     }
   }
 

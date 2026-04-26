@@ -352,5 +352,32 @@ namespace GaziStudyAI.Application.Services.Concrete
 
             return ServiceResult<StudentExamSetupDto>.Success(responseDto);
         }
+
+        public async Task<IResult<List<CourseAverageScoreDto>>> GetCourseAverageScore(Guid userId)
+        {
+            try
+            {
+                var courses = await _uow.CourseRepository.GetQueryable()
+                    .Include(c => c.Exams.Where(e => e.UserId == userId && e.IsCompleted))
+                    .Where(c => c.IsActive)
+                    .ToListAsync();
+                var courseAverageScore = new List<CourseAverageScoreDto>();
+                foreach (var course in courses)
+                {
+                    decimal average = course.Exams.Any() ? (decimal)course.Exams.Average(e => e.Score ?? 0) : 0;
+                    courseAverageScore.Add(new CourseAverageScoreDto
+                    {
+                        CourseNameEn = course.NameEn,
+                        CourseNameTr = course.NameTr,
+                        AverageScore = Math.Round(average, 1)
+                    });
+                }
+                return ServiceResult<List<CourseAverageScoreDto>>.Success(courseAverageScore);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<List<CourseAverageScoreDto>>.Failure($"Error calculating averages: {ex.Message}");
+            }
+        }
     }
 }

@@ -58,6 +58,7 @@
     "LOADING": "Loading course details..."
   },
   "EXAM": {
+    "MOCK_EXAM": "Mock Exam",
     "SUBMIT_SUCCESS": "Exam submitted successfully!",
     "SUBMIT_FAILED": "Failed to submit exam.",
     "CONFIGURE_TITLE": "Configure Your Exam",
@@ -235,6 +236,28 @@
     "ADD_NEW_COURSE": "Add New Course",
     "MANAGE_COURSES": "Manage Courses",
     "MANAGE_COURSES_DESC": "Add, edit, or remove courses and their details.",
-    "SEARCH_PLACEHOLDER": "Search by prefix, name..."
-  }
+    "SEARCH_PLACEHOLDER": "Search by prefix, name...",
+    "STUDENT_DIRECTORY": "Student Directory",
+    "STUDENT_DIRECTORY_DESC": "View all registered students on the platform.",
+    "NAME": "Name",
+    "STUDENT_NO": "Student No",
+    "EMAIL": "Email",
+    "DEPARTMENT": "Department",
+    "EXAMS": "Exams",
+    "REGISTERED_ON": "Registered On",
+    "CLEAR_FILTER": "Clear Filter",
+    "AI_LOGS": "System & AI Logs",
+    "AI_LOGS_DESC": "View real-time logs of AI operations and system errors on the platform.",
+    "REFRESH": "Refresh",
+    "TIME": "TIME",
+    "ACTION": "ACTION",
+    "DETAILS": "DETAILS",
+    "STATE": "STATE",
+    "NO_AI_LOGS": "No AI logs available."
+  },
+  "WEAK_COURSE_TITLE": "Weak Course",
+  "SMART_PRACTICE": "Smart Practice",
+  "DASHBOARD_OVERVIEW": "Dashboard Overview",
+  "WELCOME_MESSAGE": "Welcome back, {{ username }}! Here you can find an overview of your activities.",
+  "START_PRACTICE": "Start Practice"
 }

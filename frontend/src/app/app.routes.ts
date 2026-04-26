@@ -155,7 +155,17 @@ export const routes: Routes = [
       },
       {
         path: 'admin/students',
-        redirectTo: 'admin/dashboard',
+        loadComponent: () =>
+          import('./features/admin/students/students.component').then(
+            (m) => m.StudentsComponent,
+          ),
+      },
+      {
+        path: 'admin/ai-logs',
+        loadComponent: () =>
+          import('./features/admin/ai-logs/ai-logs.component').then(
+            (m) => m.AiLogsComponent,
+          ),
       },
       {
         path: 'admin/ai-settings',

@@ -17,3 +17,21 @@ export interface AdminDashboardDto {
   courseStatistics: CourseStatsDto[];
   topStudents: TopStudentDto[];
 }
+
+export interface StudentDirectoryItemDto {
+  id: string;
+  fullName: string;
+  email: string;
+  studentNumber: string;
+  department: string;
+  totalExamsTaken: number;
+  registeredDate: string;
+}
+
+export interface SystemLogDto {
+  id: string;
+  timestamp: string;
+  action: string;
+  details: string;
+  status: string;
+}

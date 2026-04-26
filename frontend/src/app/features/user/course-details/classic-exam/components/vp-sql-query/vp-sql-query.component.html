@@ -41,6 +41,7 @@
     </div>
     <textarea
       [(ngModel)]="userQuery"
+      (ngModelChange)="onQueryChange()"
       [disabled]="isSubmitted"
       rows="4"
       spellcheck="false"

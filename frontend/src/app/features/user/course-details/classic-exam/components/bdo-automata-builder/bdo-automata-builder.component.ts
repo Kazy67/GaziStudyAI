@@ -41,13 +41,39 @@ export class BdoAutomataBuilderComponent implements OnChanges {
   isLoading = signal<boolean>(false);
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['isSubmitted'] && this.isSubmitted) {
-      this.evaluate();
+    if (changes['question'] && this.question) {
+      if (this.question.userAnswer) {
+        try {
+          const parsed = JSON.parse(this.question.userAnswer);
+          this.studentStates.set(parsed.states || []);
+          this.studentTransitions.set(parsed.transitions || []);
+          this.studentStartState.set(parsed.startState || '');
+          this.studentAcceptStates.set(parsed.acceptStates || []);
+        } catch {
+          this.reset();
+        }
+      } else {
+        this.reset();
+      }
     }
 
-    // Reset if question changes (retake logic)
-    if (changes['question'] && !changes['question'].firstChange) {
-      this.reset();
+    if (changes['isSubmitted']) {
+      if (this.isSubmitted) {
+        this.evaluate();
+      } else {
+        this.reset();
+      }
+    }
+  }
+
+  onAnswerChange() {
+    if (this.question) {
+      this.question.userAnswer = JSON.stringify({
+        states: this.studentStates(),
+        transitions: this.studentTransitions(),
+        startState: this.studentStartState(),
+        acceptStates: this.studentAcceptStates(),
+      });
     }
   }
 
